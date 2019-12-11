@@ -45,7 +45,7 @@
 <script>
 import {ipcRenderer} from 'electron'
 import {mapState,mapMutations,mapActions} from 'vuex'
-import { EventBus } from "../../assets/js/EventBus";    //引入EventBus
+
 const {
   dialog,
   BrowserWindow
@@ -150,14 +150,14 @@ export default {
                         // _this.$store.state.socketParam = setSocketParam
                         // this.$store.dispatch('setSocketParam',setSocketParam)
                         localStorage.setItem(_this.$store.state.localStorageUid, JSON.stringify(res.msg));
-                        localStorage.setItem(_this.$store.state.localStorageLogin, true);
+                        // localStorage.setItem(_this.$store.state.localStorageLogin, true);
+                        this.resetSetItem(_this.$store.state.localStorageLogin,true)
                         // _this.$store.commit('setLoginStatus', true);
                         console.log(_this.$store.state.account.loginStatus)
-                        // ipcRenderer.send('MainMsgFromRender',true)
+                        
                         // _this.$store.state.account.loginStatus = true
                         
                         //提交状态EVNT_COMM_SHOW_STATIUS就是固定的id
-                        EventBus.$emit('EVNT_COMM_SHOW_STATIUS', "your message");
                         // this.$store.dispatch('loginStatus')
 
                         console.log(_this.$store.state.account.loginStatus)
@@ -169,6 +169,7 @@ export default {
                         // _this.$store.dispatch('connectSocket');
                         // _this.$router.push('./index');
                         // this.closeWinC()
+                        ipcRenderer.send('MainMsgFromRender',true)
                     }else{
                         alert(res.message)
                     }

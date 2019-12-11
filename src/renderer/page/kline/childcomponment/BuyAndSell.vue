@@ -56,10 +56,10 @@
       <!-- 底部买入卖出按键展示区域 -->
       <div class="button flex">
         <div class="buttonChildL">
-          <el-button type="danger">买入</el-button>
+          <el-button type="danger" @click="guadan(1)">买入</el-button>
         </div>
         <div class="buttonChildR">
-          <el-button type="primary">卖出</el-button>
+          <el-button type="primary" @click="guadan(2)">卖出</el-button>
         </div>
       </div>
     </div>
@@ -125,6 +125,13 @@ export default {
     };
   },
   methods: {
+    guadan(type){
+      if(type == 1){
+
+      }else{
+        
+      }
+    },
     heyueChange(value) {
       for (var i = 0; i < this.heyueClassOptions.length; i++) {
         if (value === this.heyueClassOptions[i].id) {

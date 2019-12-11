@@ -240,11 +240,11 @@ export default {
         // console.log(this.accountState.loginStatus)
         // console.log(this.main)
       },
-      loginstate(){
+      abc(){
          this.name = JSON.parse(localStorage.getItem('ycxUserInfo_QXJF')).name
-        this.isLogin = true
+          this.isLogin = true
+          console.log(this.name,this.isLogin)
       },
-   
       closeWinC(){},login(){},setPrLoss(){},
       async showBoxxiadan() {
       let data = await this.$Win.openWin({
@@ -264,17 +264,26 @@ export default {
       });
     }
   },
+  created(){
+    
+   window.addEventListener('setItem', ()=> {
+      this.name = localStorage.getItem('ycxUserLoginState_QXJF');
+       this.isLogin = true
+       console.log("触发localStorage监听")
+    })
+    ipcRenderer.on('RenderMsgFromMain', function (event, arg) {
+    alert(arg)
+    window.parent.location.reload()
+    let _this = this
+   
+    })
+  },
   computed:{
     ...mapGetters([
       'loginStatus'
     ])
   },
-  watch(){
-     //监听事件EVNT_COMM_SHOW_STATIUS就是固定的id
-      EventBus.$on('EVNT_COMM_SHOW_STATIUS', arg => {
-          console.log("printf >>", arg);
-      });
-  },
+  
   watch:{
     
     '$store.state.path':function(){
