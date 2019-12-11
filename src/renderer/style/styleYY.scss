@@ -1,0 +1,249 @@
+
+body{
+	margin: 0px;
+}
+.kline{
+	.el-input--prefix .el-input__inner,.el-range-editor.el-input__inner {
+		height: 30px;
+		background: #2F343B;
+		border: #2F343B;
+	}
+	.el-input__icon{
+		line-height: 30px;
+	}
+	.el-date-editor .el-range__icon{
+		line-height: 26px;
+	}
+	.el-date-editor .el-range-input{
+		background: #2F343B;
+	}
+	.el-date-editor--daterange.el-input__inner{
+		width: 260px
+	}
+	
+}
+
+// k线展示页面交易清单的样式
+.List{
+	.el-tabs--bottom .el-tabs__header.is-bottom {
+		margin-top: 0px;
+	}
+	.el-tabs--border-card>.el-tabs__content{
+		padding: 0px;
+		padding-left: 5px;
+	}
+	.el-table__header-wrapper{
+		overflow: unset;
+	}
+	.el-tabs--border-card{
+		// background: rgba(34, 39, 46, 1);
+		background: #191B1F;
+		border-color: #000000 ;
+		border-left: 1px solid #000000 ;
+		border-right: none;
+		.el-tabs__header{
+			background: #191B1F;
+			// background: rgba(34, 39, 46, 1);
+			.el-tabs__item{
+				border-bottom-left-radius: 5px;
+				border-bottom-right-radius: 5px;
+				background-color: rgb(56, 59, 63);
+				overflow: hidden;
+				padding: 0 15px;
+				height: 24px;
+				line-height: 24px;
+				font-size: 14px;
+			}
+			.el-tabs__item.is-active {
+				background:rgba(25,27,31,1);
+				border: none;
+			}
+		}
+	}
+	.el-table{
+		// border: none;
+		background: #191B1F;
+		// background: rgba(34, 39, 46, 1);
+		overflow: unset;
+	}
+	// 设置表格高度
+	.el-tabs__content{
+		// height: 481px;
+		padding: 0px;
+
+	}
+	.el-tabs--bottom.el-tabs--border-card .el-tabs__header.is-bottom{
+		border-top: none;
+	}
+	.el-table::before{
+		width: 0%;
+	}
+	
+	// 表格样式
+	.el-table td,.el-table th{
+		background: #191B1F;
+		// background: rgba(34, 39, 46, 1);
+		border-right: none;
+		height: 30px;
+		padding: 5px 0px;
+		text-align: center;
+		border-bottom:none;
+	}
+    .el-table th.is-leaf{
+	   border-bottom: 1px solid #000000;
+   }
+//    撤单按键背景色
+   .weituo{
+	.el-table__body tr>td {
+		.chedan{
+			background:rgba(34,48,76,1);
+		  }
+		}
+	}
+	// tsble中选中某行时修改改行当背景颜色
+	.el-table__body tr.current-row>td {
+		background:rgba(34,48,76,1);
+		.chedan{
+			background: rgba(51, 92, 168, 1);
+		  }
+	}
+	  .el-table--scrollable-x .el-table__body-wrapper {
+		  overflow-x: inherit;
+	  }
+	  .el-table__body-wrapper{
+		overflow: inherit;
+	  }
+};
+// 模拟交易弹窗样式
+.moni,.dingdan,.zhuye{
+	.el-table::before {
+		z-index: 0;
+	}
+	// .el-tabs__header
+	.el-tabs--card>.el-tabs__header {
+		border-bottom: none;
+		background: #1E2329;
+		margin: 0px;
+		.el-tabs__nav {
+			border: none;
+		}
+		.el-tabs__item {
+			background:rgba(42,45,50,1);
+			border-top: none;
+			border-left: 1px solid #1E2329;
+			width: 75px;
+			text-align: center;
+			color: #a7a7a7;
+			padding: 0 15px;
+			height: 24px;
+			line-height: 24px;
+			font-size: 14px;
+		}
+		// 选中时的样式
+		.el-tabs__item.is-active{
+			border-bottom:none;
+			background:rgba(47,52,59,1);
+		}
+	}
+	// 表格样式
+	.el-table td,.el-table th{
+		background:rgba(47,52,59,1);
+		border-right: none;
+		height: 30px;
+		padding: 5px 0px;
+		text-align: center;
+		border-bottom:none;
+	}
+    .el-table th.is-leaf{
+	   border-bottom: 1px solid #000000;
+   }
+   // tsble中选中某行时修改改行当背景颜色
+   .el-table__body tr.current-row>td {
+	   background:rgba(34,48,76,1);
+   }
+//    .el-table--enable-row-hover .el-table__body tr:hover>td {
+// 	   background:rgba(34,48,76,1)!important;
+//    }
+   // 滚动条的宽度
+   .el-table__body-wrapper::-webkit-scrollbar {
+	   width: 4px; // 横向滚动条
+	   height: 4px;
+	//    background:#33373c;
+	 }
+	 .el-table__body-wrapper::-webkit-scrollbar-corner{
+		background:rgba(42,47,56,1);
+		// display: none
+	 }
+	//  // 滚动条的滑块
+	//  .el-table__body-wrapper::-webkit-scrollbar-thumb {
+	//    background-color: rgba(34,48,76,1);
+	//  }
+
+	.el-table__body-wrapper::-webkit-scrollbar-thumb {/*滚动条里面小方块*/
+        border-radius: 5px;
+        // -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.7);
+        background: rgb(29,33,37);
+    }
+    .el-table__body-wrapper::-webkit-scrollbar-track {/*滚动条里面轨道*/
+        // -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+        border-radius: 0;
+        background: rgb(39,44,50);
+    }
+}
+// 买卖页面的下拉选择框的样式设置
+.transaction{
+	.cont{
+		.el-input__inner{
+			color:rgba(183,183,183,1);
+			border:1px solid rgba(67,67,67,1);
+			background: #191B1F;
+		}
+	}
+}
+//修改密码
+.login{
+	.el-progress{
+		.el-progress-bar__inner{
+			background-color: rgba(65,118,216,1) !important;
+		}
+	}
+}
+// 止盈止损弹窗样式设置
+.zhisunTanchuang{
+	.el-table{
+		border-left:1px solid rgba(28,28,28,1);
+		border-top:1px solid rgba(28,28,28,1);
+		border-right:1px solid rgba(28,28,28,1);
+		position: unset;
+		th{
+			border-right:1px solid rgba(28,28,28,1);
+			border-bottom:1px solid rgba(28,28,28,1);
+			background:rgba(42,47,56,1);
+			text-align: center;
+		}
+		td{
+			border-right:1px solid rgba(28,28,28,1);
+			border-bottom:1px solid rgba(28,28,28,1);
+			background:rgba(42,47,56,1);
+			text-align: center;
+		}
+		th.is-leaf{
+			border-bottom: 1px #1c1c1c solid;
+		}
+	}
+	.el-table::before,.el-table::after{
+		background-color: unset;
+	}
+	.el-button{
+		padding: 6px 10px;
+		margin-left: 30px;
+	}
+	.el-button:hover{
+		background:rgba(78,87,102,1);
+		color: #FFFFFF;
+	}
+	.el-button{
+		background:rgba(46,53,63,1);
+		color: #FFFFFF;
+	}
+}

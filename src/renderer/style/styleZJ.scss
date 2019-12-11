@@ -1,0 +1,290 @@
+//改变默认选中颜色
+
+*{
+    user-select:none;
+}
+
+//隐藏默认滚动条
+body::-webkit-scrollbar {
+    display: none;
+}
+//内盘样式
+
+//首页app样式调整
+#App{
+    font-family: "微软雅黑",monospace;
+    //-webkit-app-region: drag;
+    // 修改element ui table组件内容自带字体颜色设置
+    .el-table__row .el-tooltip{
+        color: #999999;
+    }
+    .el-table--enable-row-hover .el-table__body tr:hover>td {
+        background:rgba(34,48,76,1)!important;
+    }
+     @media screen and (max-width: 1600px){
+        .el-menu{
+            width: 100%;
+            height: 60px;
+            //min-width: 1050px;
+            margin-bottom: 0px;
+            
+            .el-menu-item{
+              //width: 6%;
+              padding: 0 5px !important;
+              
+              span{
+                font-size: 14px !important;
+              }
+            }
+            
+
+          }
+    }
+    @media screen and (max-width:1050px){
+        .el-menu{
+            .el-menu-item:nth-child(10){
+                display: none;
+            }
+        }
+        .el-menu-item:nth-child(11){
+            display: none;
+        }
+        .el-menu-item:nth-child(12){
+            display: none;
+        }
+        .el-menu-item:nth-child(13){
+            display: none;
+        }
+        .el-menu-item:nth-child(14){
+            display: none;
+        }
+        .centerR{
+            .klineInfo{
+                font-size: 14px;
+                .top{
+                    .infoname{
+                        padding-left: 0;
+                        h2{
+                            font-size: 17px;
+                        }
+                    }
+                    .flex1{
+                        font-size: 14px;
+                        span{
+                            padding-right:10px;
+                        }
+                        .spanL{
+                            flex: 2;
+                        }
+                        .spanM{}
+                        .spanR{
+                            flex: 4;
+                        }
+                    }
+                    .jiaoyi{
+                        font-size: 12px;
+                        .jiaoyi span:first-child{
+                            flex: 2;
+                        }
+                    }
+                }
+                .center{
+                    padding: 0;
+                    .left>ul>li,.right>ul>li{
+                        padding-left: 0;
+                        padding-right: 0;
+                        font-size: 13px;
+                    }
+                }
+                .bottom{
+                    table{
+                        thead{}
+                        tbody{
+                            tr{
+                                td{
+                                    text-indent: 0;
+                                    font-size: 13px;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    @media screen and (max-width:740px){
+        .el-menu-item:nth-child(6){
+            display: none;
+        }
+    }
+    @media screen and (max-width:680px){
+        .el-menu-item:nth-child(5){
+            display: none;
+        }
+    }
+    @media screen and (max-width:550px){
+        .el-menu-item:nth-child(4){
+            display: none;
+        }
+    }
+    @media screen and (max-width:450px){
+        .el-menu-item:nth-child(3){
+            display: none;
+        }
+    }
+    @media screen and (max-width:380px){
+        .el-menu-item:nth-child(2){
+            display: none;
+        }
+    }
+    @media screen and (max-width:300px){
+        .el-menu-item:nth-child(1){
+            display: none;
+        }
+    }
+        
+  
+}
+//行情页面样式调整
+.hangqing{
+    .el-tabs--border-card{
+        background: transparent;
+        border:none;
+        height: 100%;
+        position: relative;
+        
+   
+        //tabs组件身体部分
+        .el-tabs__content{ 
+                padding: 0 !important;
+        }
+        //tabs组件头部部分
+        .el-tabs__header.is-bottom{
+            position: fixed;
+            bottom: 27px;
+            border: none !important;
+            background-color: #1e2126;
+            width: 100%;
+            .el-tabs__nav-wrap{
+                margin: 0;
+                margin-top: -1px;
+            }
+            // #1e2126
+            .el-tabs__item.is-bottom{
+                width: 92px;
+                height: 30px;
+                line-height: 30px;
+                font-size: 14px;
+                font-family: Microsoft YaHei;
+                font-weight: 300;
+                color: white;
+                background: #2f343b;
+                margin: 0 ;
+                padding: 0;
+                text-align: center;
+                border-radius: 0 0 8px 8px;
+                .is-active{
+                    background: rgb(0, 0, 0);
+                }
+            }
+            .el-tabs--border-card .el-tabs__item.is-bottom{
+                margin: 0;
+            }
+            .el-tabs__item.is-active {
+                color: #409EFF;
+                background-color: rgb(0, 0, 0);
+                border: none;
+            }
+        }
+    }
+}
+//智能交易--账户--交易订单的table组件样式
+.dingdan{
+    .el-table::before{
+        background: none;
+    }
+    // .cell{
+    //     color: #DCDC0A;
+    // }
+}
+//智能交易--跟单--跟随账户的table组件样式
+.gendan{
+    
+    .el-input__inner{
+        background: black;
+        border: none;
+    }
+    
+    .el-table{
+        thead tr{
+            //background: red;
+        }
+        
+    }
+    .el-table th,.el-table tr{
+        background: none;
+        //text-align: center;
+    }
+    .el-table td, .el-table th.is-leaf{
+        border-bottom:none;
+    }
+    .el-table--striped .el-table__body tr.el-table__row--striped td{
+        background: none;
+    }
+    .el-table--border::after, .el-table--group::after, .el-table::before{
+       background: none;
+    }
+
+    .el-table--enable-row-hover .el-table__body tr:hover>td{
+        //background: red;
+    }
+    // &>>>.el-select-dropdown{
+    //     background: red !important;
+    // }
+}
+//首页--银期转账--银行卡--期货的table组件样式
+.zhuanzhang{
+    h1{
+        height:20px;width:20px;
+        .el-icon-close:before{
+            display: inline-block;height:20px;width:20px;
+        }
+        .el-icon-close{
+            display: inline-block;height:20px;width:20px;
+        }
+    }
+    .el-tabs--card>.el-tabs__header,.el-tabs--card>.el-tabs__header .el-tabs__item.is-active,.el-tabs--card>.el-tabs__header .el-tabs__nav,.el-tabs--card>.el-tabs__header .el-tabs__item{
+        border: none;
+        
+        //border-radius: 4px;
+    }
+    
+    .el-tabs__item{
+        font-size:16px;
+        font-family:Microsoft YaHei;
+        font-weight:300;
+        color:#585858;
+        border-radius: 4px;
+        background:rgba(255,255,255,1);
+    }
+ 
+    .el-tabs__item.is-active{
+        font-size:16px;
+        font-family:Microsoft YaHei;
+        font-weight:400;
+        color: #409EFF;
+        border-radius: 0;
+        border-bottom:1px solid #409EFF !important;
+
+        
+    }
+}
+// 去除input类型为number后面的加减号
+//在chrome下
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button{
+    -webkit-appearance: none !important;
+    margin: 0; 
+}
+//Firefox下
+input[type="number"]{-moz-appearance:textfield;}

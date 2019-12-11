@@ -1,0 +1,365 @@
+<template>
+  <div id="klineInfo" class="klineInfo">
+    <div class="top">
+      <div class="infoname">
+        <h2>{{proInfo.name}}</h2>
+      </div>
+      <p class="flex1">
+        <span class="spanL">卖出</span>
+        <span class="spanM">{{proInfo.sole}}</span>
+        <span class="spanR">{{proInfo.soleF}}</span>
+      </p>
+      <p class="flex1">
+        <span class="spanL">买入</span>
+        <span class="spanM">{{proInfo.buy}}</span>
+        <span class="spanR">{{proInfo.buyF}}</span>
+      </p>
+      <p class="jiaoyi">
+        <span>交易中</span>
+        <span>{{proInfo.time}}</span>
+      </p>
+    </div>
+    <div class="center flex">
+      <div class="left">
+        <ul>
+          <li class="flex flex-align-items-center flex-justify-content-sb">
+            <span>最新</span>
+            <span style="color: #00BD00;">{{proInfo.print}}</span>
+          </li>
+          <li class="flex flex-align-items-center flex-justify-content-sb">
+            <span>现手</span>
+            <span style="color: #D7B018;">{{proInfo.nowNum}}</span>
+          </li>
+          <li class="flex flex-align-items-center flex-justify-content-sb">
+            <span>总手</span>
+            <span style="color: #D7B018;">{{proInfo.allNum}}</span>
+          </li>
+          <li class="flex flex-align-items-center flex-justify-content-sb">
+            <span>持仓</span>
+            <span style="color: #3071E8;">{{proInfo.chicang}}</span>
+          </li>
+          <li class="flex flex-align-items-center flex-justify-content-sb">
+            <span>涨停</span>
+            <span style="color: #00BD00;">{{proInfo.upClose}}</span>
+          </li>
+          <li class="flex flex-align-items-center flex-justify-content-sb">
+            <span>跌停</span>
+            <span style="color: #00BD00;">{{proInfo.downClose}}</span>
+          </li>
+        </ul>
+      </div>
+      <div class="right">
+        <ul>
+          <li class="flex flex-align-items-center flex-justify-content-sb">
+            <span>涨跌</span>
+            <span style="color: #FF3322;">{{proInfo.upDown}}</span>
+          </li>
+          <li class="flex flex-align-items-center flex-justify-content-sb">
+            <span>涨幅</span>
+            <span style="color: #00BD00;">{{proInfo.upF}}</span>
+          </li>
+          <li class="flex flex-align-items-center flex-justify-content-sb">
+            <span>开盘</span>
+            <span style="color: #FF3322;">{{proInfo.open}}</span>
+          </li>
+          <li class="flex flex-align-items-center flex-justify-content-sb">
+            <span>最高</span>
+            <span style="color: #FF3322;">{{proInfo.high}}</span>
+          </li>
+          <li class="flex flex-align-items-center flex-justify-content-sb">
+            <span>最低</span>
+            <span style="color: #00BD00;">{{proInfo.slow}}</span>
+          </li>
+          <li class="flex flex-align-items-center flex-justify-content-sb">
+            <span>昨结</span>
+            <span style="color: #00BD00;">{{proInfo.old}}</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="bottom">
+      <table>
+        <thead>
+          <th>时间</th>
+          <th>价位</th>
+          <th>现手</th>
+          <th>开平</th>
+        </thead>
+        <tbody>
+          <tr v-for="(item, index) in list" :key="index">
+            <td>{{item.time}}</td>
+            <td :style="item.type == '多平' ? 'color:#00BD00;' : 'color:#FF3322;'">{{item.price}}</td>
+            <td>{{item.nowNum}}</td>
+            <td :style="item.type == '多平' ? 'color:#00BD00;' : 'color:#FF3322;'">{{item.type}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      proInfo: {
+        name: "恒生1905 HSI1905",
+        sole: 123.8,
+        soleF: 20,
+        buy: 1236.9,
+        buyF: 19,
+        time: "05-08 14:45",
+        print: 2874.9,
+        nowNum: 1,
+        allNum: 1334,
+        chicang: 673333,
+        upClose: "-0.34",
+        downClose: "-0.34",
+        upDown: 0.9,
+        upF: "-0.3",
+        open: 23334,
+        high: 1236.4,
+        slow: 123.5,
+        old: 1333.4
+      },
+      list: [
+        {
+          time: "13:13:45",
+          price: 13334,
+          nowNum: 25,
+          type: "多平"
+        },
+        {
+          time: "13:13:45",
+          price: 13334,
+          nowNum: 25,
+          type: "多平"
+        },
+        {
+          time: "13:13:45",
+          price: 13334,
+          nowNum: 25,
+          type: "多平"
+        },
+        {
+          time: "13:13:45",
+          price: 13334,
+          nowNum: 25,
+          type: "多平"
+        },
+        {
+          time: "13:13:45",
+          price: 13334,
+          nowNum: 25,
+          type: "多平"
+        },
+        {
+          time: "13:13:45",
+          price: 13334,
+          nowNum: 25,
+          type: "多平"
+        },
+        {
+          time: "13:13:45",
+          price: 13334,
+          nowNum: 25,
+          type: "多平"
+        },
+        {
+          time: "13:13:45",
+          price: 13334,
+          nowNum: 25,
+          type: "多平"
+        },
+        {
+          time: "13:13:45",
+          price: 13334,
+          nowNum: 25,
+          type: "多平"
+        },
+        {
+          time: "13:13:45",
+          price: 13334,
+          nowNum: 25,
+          type: "多平"
+        },
+        {
+          time: "13:13:45",
+          price: 13334,
+          nowNum: 25,
+          type: "多平"
+        },
+        {
+          time: "13:13:45",
+          price: 13334,
+          nowNum: 25,
+          type: "多平"
+        },
+        {
+          time: "13:13:45",
+          price: 13334,
+          nowNum: 25,
+          type: "多平"
+        },
+      ],
+      // proInfos:this.$store.state.klineMsgs
+    };
+  },
+  mounted(){
+    // this.$store.state.klineMsg
+    // console.log('打印合约详情',this.proInfos)
+    // this.$store.state.chanpinInfo
+  },
+  // methods(){},
+};
+</script>
+
+<style lang="scss" scoped>
+.klineInfo {
+  color: #eaeaea;
+  // border: 1px solid #323232;
+  border: black 1px solid;
+  border-top: none;
+  // background: rgba(34, 39, 46, 1);
+  background: #191B1F;
+  height: 100%;
+  .top {
+    height: 20%;
+    // border-bottom: 1px solid #323232;
+    border-bottom: black 1px solid;
+    white-space:nowrap;
+    overflow: hidden;
+    .infoname {
+      height: 30%;
+      // border-bottom: 1px solid #323232;
+      // border-bottom: black 1px solid;
+      padding-top: 5%;
+      padding-left: 5%;
+    }
+    h2 {
+      margin: 0px;
+      font-size: 20px;
+    }
+    p {
+      margin: 0px;
+      font-size: 18px;
+      padding: 1% 5%;
+      span {
+        padding-right: 30px;
+      }
+    }
+    .flex1 {
+      height: 15%;
+      display: flex;
+      // border-bottom: 1px solid #323232;
+      // border-bottom: black 1px solid;
+      .spanL {
+        flex: 3;
+      }
+      .spanM {
+        flex: 4;
+        color: #00bd00;
+      }
+      .spanR {
+        flex: 3;
+        color: #3071e8;
+      }
+    }
+    .jiaoyi {
+      font-size: 14px;
+      display: flex;
+      span:first-child {
+        color: #b7b7b7;
+        flex: 3;
+      }
+      span:last-child {
+        color: #808080;
+        flex: 7;
+      }
+    }
+  }
+  .center {
+    white-space:nowrap;
+    overflow: hidden;
+    height: 30%;
+    margin: 0px;
+    display: flex;
+    font-size: 14px;
+    padding: 0 5%;
+    color: #eaeaea;
+    // border-bottom: 1px solid #323232;
+    border-bottom: black 1px solid;
+    .left,
+    .right {
+      flex: 1;
+      ul {
+        list-style: none;
+        padding: 0px;
+      }
+      ul li {
+        padding: 3% 0;
+      }
+    }
+    .left {
+      // border-right: 1px dashed #323232;
+      border-right: black 1px dotted;
+      ul li {
+        padding-right: 8%;
+      }
+    }
+    .right {
+      ul li {
+        padding-left: 8%;
+      }
+    }
+  }
+  .bottom {
+    white-space:nowrap;
+    overflow-x: hidden;
+    height: 49.7%;
+    overflow-y: scroll;
+    table {
+      width: 100%;
+      max-height: 63px;
+      border-spacing: 0px;
+      thead {
+        font-size: 15px;
+        color: #b7b7b7;
+
+        th {
+          background-color: #22304c;
+          padding: 5px 0;
+          margin: -2px;
+        }
+        th:first-child {
+          text-align: left;
+          text-indent: 10%;
+          width: 100px;
+        }
+      }
+      tbody {
+        tr {
+          height: 20px !important;
+          td {
+            text-align: center;
+            color: #b7b7b7;
+            font-size: 14px;
+            padding: 2px 0;
+            height: 20px !important;
+          }
+          td:first-child {
+            text-align: left;
+            text-indent: 10%;
+          }
+          td:nth-child(3) {
+            color: #D7B018;
+          }
+        }
+      }
+    }
+  }
+  .bottom::-webkit-scrollbar {
+    display: none;
+  }
+}
+</style>
