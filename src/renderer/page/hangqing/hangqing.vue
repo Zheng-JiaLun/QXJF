@@ -173,28 +173,11 @@ export default {
     },
    
 
-    mounted(){
+    // mounted(){
         
-    },
+    // },
     created(){
-          
-           
-        //   this.$http.post('http://39.100.151.138:8082'+'/appapi/app/get',{      
-        //     'cmd': 'get_menu',
-        //     // 'timestamp': new Date().getTime(),
-        //     // 'UUID':uuid ,
-        //     // 'token': uuid,
-        //     }).then((res) =>{
-        //         console.log(res);
-        //         this.msg = res.data.msg
-        //         console.log(this.msg)
-        //     }).catch(function (error) {
-        //         console.log(error);
-        //     });
-    this.axiosPost();
-    
-       
-        
+        this.axiosPost();
     },
     // computed:{
     //     ...mapGetters([

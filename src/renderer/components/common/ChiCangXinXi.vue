@@ -1,6 +1,6 @@
 <template>
   <div class="chicang">
-    <div id="chicangTable" v-show="islogin">
+    <div id="chicangTable">
       <el-table :data="tableData" class="table01" highlight-current-row>
         <el-table-column width="45px">
           <template slot-scope>
@@ -44,9 +44,7 @@
         <el-table-column prop="orderType" label="类型" show-overflow-tooltip></el-table-column>
       </el-table>
     </div>
-    <div v-show="!islogin">
-      <h2 style="color:#fff;text-align:center;margin:0;">请登录后查看相关信息~</h2> 
-    </div>
+    
   </div>
 </template>
 <script>
@@ -57,7 +55,7 @@ export default {
     return {
       dialogVisible: false,
       zuixinjia: "暂无数据",
-       islogin:false,
+      
       tableData: [
         {
           number: "MHI1905",
@@ -183,10 +181,10 @@ export default {
 
        if (!localStorage.getItem('ycxUserLoginState_QXJF')) { //判断是否为登录状态
         console.log('未登录状态');
-        this.islogin = false
+       
       } else {
         console.log('登录状态');
-        this.islogin = true
+        
        let msg = JSON.stringify({
         userID:JSON.parse(localStorage.getItem('ycxUserInfo_QXJF')).userId
         })
@@ -228,11 +226,28 @@ export default {
   created(){
     this.axiosChiCang()
   },
+  computed:{
+    changeLoginStatus(){
+      return this.$store.state.account.loginStatus 
+    }
+  },
   watch: {
     //  当窗口发生变化或页面加载时，获父级传递过来的高度，动态修改自身相关元素的高度
     Listheight: {
       handler: function(Val, oldVal) {
         document.getElementById("chicangTable").style.height = +Val - 60 + "px";
+      }
+    },
+    changeLoginStatus:function(val){
+      if(val == true){
+        let msg = JSON.stringify({
+        userID:JSON.parse(localStorage.getItem('ycxUserInfo_QXJF')).userId
+        })
+        this.$pro.post('get_position_list_new', msg).then((res) => {
+            console.log(res.msg.data)
+            this.tableData = res.msg.data
+          
+          })
       }
     }
   }

@@ -1,6 +1,6 @@
 <template>
   <div class="weituo" id="weituo">
-    <el-table :data="weiData" v-show="islogin" tooltip-effect="light" highlight-current-row>
+    <el-table :data="weiData" tooltip-effect="light" highlight-current-row>
       <el-table-column prop="order" label="订单号" show-overflow-tooltip></el-table-column>
       <el-table-column prop="name" label="合约" show-overflow-tooltip></el-table-column>
       <el-table-column label="买卖" show-overflow-tooltip>
@@ -27,9 +27,6 @@
         </template>
       </el-table-column>
     </el-table>
-    <div v-show="!islogin">
-      <h2 style="color:#fff;text-align:center;">请登录后查看相关信息~</h2> 
-    </div>
   </div>
 </template>
 <script>
@@ -40,7 +37,6 @@ export default {
     return {
       dialogVisible: false,
       zuixinjia: "暂无数据",
-      islogin:false,
       weiData: [
         {
           order: "8A89UA",
@@ -197,10 +193,8 @@ export default {
 
        if (!localStorage.getItem('ycxUserLoginState_QXJF')) { //判断是否为登录状态
         console.log('未登录状态');
-        this.islogin = false
       } else {
         console.log('登录状态');
-        this.islogin = true
        let msg = JSON.stringify({
         userID:JSON.parse(localStorage.getItem('ycxUserInfo_QXJF')).userId
         })
@@ -240,6 +234,11 @@ export default {
     
 
   },
+  computed:{
+    changeLoginStatus(){
+      return this.$store.state.account.loginStatus 
+    }
+  },
   created(){
     this.axiosWeiTuo()
   },
@@ -248,6 +247,17 @@ export default {
     Listheight: {
       handler: function(Val, oldVal) {
         document.getElementById("weituo").style.height = +Val + "px";
+      }
+    },
+    changeLoginStatus:function(val){
+      if(val == true){
+        let msg = JSON.stringify({
+        userID:JSON.parse(localStorage.getItem('ycxUserInfo_QXJF')).userId
+        })
+        this.$pro.post('get_position_list_new', msg).then((res) => {
+            console.log(res.msg.data)
+          
+          })
       }
     }
   }

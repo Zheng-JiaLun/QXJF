@@ -1,5 +1,6 @@
 import { app, BrowserWindow,dialog } from 'electron'
-import '../renderer/store/index'
+import "vuex-electron";
+// import '../renderer/store/index'
 const ipcMain = require('electron').ipcMain
 
 /**
@@ -50,11 +51,11 @@ ipcMain.on('max', e => {
 });
 ipcMain.on('close', e=> mainWindow.close());
 //主进程
-ipcMain.on('MainMsgFromRender',function (event, arg) {
+// ipcMain.on('MainMsgFromRender',function (event, arg) {
  
-  event.sender.send('RenderMsgFromMain',arg)
+//   event.sender.send('RenderMsgFromMain',arg)
   
-})
+// })
 app.on('ready', createWindow)
 
 app.on('window-all-closed', () => {

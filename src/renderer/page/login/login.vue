@@ -74,6 +74,9 @@ export default {
 			
         }
     },
+    mounted(){
+        console.log(this.$store)
+    },
     methods:{
         //...mapActions(['accountLogin']),
         //...mapMutations(['accountLogin01','accountLogin02']),
@@ -147,36 +150,29 @@ export default {
                             token: res.msg.token
                         }
                         // _this.$store.commit('setSocketParam', setSocketParam);
-                        // _this.$store.state.socketParam = setSocketParam
+                        
                         // this.$store.dispatch('setSocketParam',setSocketParam)
+                        // this.$store.dispatch('loginStatus',true)
                         localStorage.setItem(_this.$store.state.localStorageUid, JSON.stringify(res.msg));
-                        // localStorage.setItem(_this.$store.state.localStorageLogin, true);
-                        this.resetSetItem(_this.$store.state.localStorageLogin,true)
-                        // _this.$store.commit('setLoginStatus', true);
-                        console.log(_this.$store.state.account.loginStatus)
-                        
-                        // _this.$store.state.account.loginStatus = true
-                        
+                        localStorage.setItem(_this.$store.state.localStorageLogin, true);
+                        // this.resetSetItem(_this.$store.state.localStorageLogin,true)
                         //提交状态EVNT_COMM_SHOW_STATIUS就是固定的id
                         // this.$store.dispatch('loginStatus')
-
-                        console.log(_this.$store.state.account.loginStatus)
+                        console.log(this.$store)
                         // _this.$initChicang();
-                        // console.log(_this.$store.state.quoteSocket);
-                        // _this.$store.state.quoteSocket.close();		
                         // _this.$store.commit('setQuoteStatus', false);
                         // _this.$initHangqing();
                         // _this.$store.dispatch('connectSocket');
                         // _this.$router.push('./index');
-                        // this.closeWinC()
-                        ipcRenderer.send('MainMsgFromRender',true)
+                        this.$Win.closeWin({value:'登陆成功'})
+                        // ipcRenderer.send('MainMsgFromRender',true)
                     }else{
                         alert(res.message)
                     }
                     
                 }).catch((error) => {
                     console.log(error)
-                    alert('错误' + error)
+                    // alert('错误' + error)
                 })
                 
                 

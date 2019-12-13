@@ -170,6 +170,7 @@
 </template>
 
 <script>
+import{mapGetters}from 'vuex'
 import zbEchart from "../../components/zbEchart";
 import BuyAndSell from "../kline/childcomponment/BuyAndSell.vue";
 import List from "../kline/childcomponment/List.vue";
@@ -193,7 +194,8 @@ export default {
         YClose:this.$store.state.klineTopMsg.YClose
       } ,
       userMsg:{
-
+        name:false,
+        money:false
       },
       showorhide1: false,
       showorhide2: false,
@@ -414,8 +416,6 @@ export default {
     this.reboxSize();
     this.klineTooltipData = this.$store.state.klineTopMsg
     
-    //加载用户信息
-    this.users()
     //窗口大小变化时获取屏幕高度
     window.onresize = () => {
       return (() => {
@@ -462,13 +462,6 @@ export default {
   },
   methods: {
     
-    users(){
-      console.log(JSON.parse(localStorage.getItem('ycxUserInfo_QXJF'))) 
-      let msg =  JSON.parse(localStorage.getItem('ycxUserInfo_QXJF'))
-      this.userMsg = msg
-    },
-
-
     // 此函数获取窗口大小，并动态修改相关板块的高度
     reboxSize() {
       
@@ -586,6 +579,20 @@ export default {
     toFatherKline(e){
       console.log(e)
       console.log("040404040040404040")
+    }
+  },
+  computed:{
+   changeLoginStatus(){
+     return this.$store.state.account.loginStatus
+   }
+  },
+  watch:{
+    changeLoginStatus:function(val){
+      if(val == true){
+        console.log(JSON.parse(localStorage.getItem('ycxUserInfo_QXJF'))) 
+        let msg =  JSON.parse(localStorage.getItem('ycxUserInfo_QXJF'))
+        this.userMsg = msg
+      }
     }
   },
   components: {

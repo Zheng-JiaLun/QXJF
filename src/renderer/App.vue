@@ -40,10 +40,10 @@
          <el-menu-item class="fr" style="float:right" @click="minimize">
           <i class="el-icon-minus"></i>
         </el-menu-item>      
-        <el-menu-item class="fr" style="float:right" >
+        <!-- <el-menu-item class="fr" style="float:right">
           <i class="el-icon-refresh"></i>
           <span slot="title">刷新</span>
-        </el-menu-item>  
+        </el-menu-item>   -->
         <el-menu-item class="fr" style="float:right" @click="showBox('/zhuanzhang2')">
           <i class="el-icon-s-finance" ></i>
           <span slot="title" >银期转账</span>
@@ -55,7 +55,7 @@
         <el-menu-item v-show="!isLogin" class="fr" style="float:right" @click="showBox('/login')" @userlogin="getUser">
           <span>登录</span>
         </el-menu-item>
-        <el-menu-item v-show="isLogin" class="fr" style="float:right">
+        <el-menu-item v-show="isLogin" class="fr" style="float:right" @click="isUserShow = !isUserShow">
           <span>{{name}}</span>
            <img style="height:80%;" :src='img' alt="">
         </el-menu-item>
@@ -84,6 +84,9 @@
         </el-menu-item> -->
 
     </el-menu>
+    <div id="userMsg" v-show="isUserShow">
+      <button @click="logout()">退出登录</button>
+    </div>
     <!-- <div class="line"></div> -->
     <router-view ></router-view>
     <!-- <div id="login">
@@ -156,6 +159,7 @@ export default {
         userImg:require('../renderer/assets/work.png'),
         // loginOff:userInfor,
         isLogin:false,
+        isUserShow:false,
         loginInput: {
 					user: '',
 					pwd: ''
@@ -167,8 +171,9 @@ export default {
       };
     },
   methods: {
-     
+    
       handleSelect(keyPath) {
+        
         //console.log(key, keyPath);
         // this.$store.state.path = keyPath;
       },
@@ -208,7 +213,13 @@ export default {
             animation: 'fromLeft' //动画
           }          
         })
-        //console.log(data)
+        console.log(data.value)
+        if(data.value == '登陆成功'){
+          this.$pro.isLogin()
+          this.name = JSON.parse(localStorage.getItem('ycxUserInfo_QXJF')).name
+          this.isLogin = true
+          console.log(this.$store)
+        }
 
 
       },
@@ -220,6 +231,14 @@ export default {
 				}).then(() => {
 					ipcRenderer.send('close')
 				})
+      },
+      //退出登录
+      logout(){
+        localStorage.removeItem('ycxUserInfo_QXJF')
+        localStorage.removeItem('ycxUserLoginState_QXJF')
+        this.$store.state.account.loginStatus = false
+        this.isLogin = false
+        this.isUserShow = false
       },
       zoom(){
         ipcRenderer.send('max')
@@ -240,12 +259,8 @@ export default {
         // console.log(this.accountState.loginStatus)
         // console.log(this.main)
       },
-      abc(){
-         this.name = JSON.parse(localStorage.getItem('ycxUserInfo_QXJF')).name
-          this.isLogin = true
-          console.log(this.name,this.isLogin)
-      },
-      closeWinC(){},login(){},setPrLoss(){},
+      
+      
       async showBoxxiadan() {
       let data = await this.$Win.openWin({
         // browserwindow原生属性
@@ -266,36 +281,32 @@ export default {
   },
   created(){
     
-   window.addEventListener('setItem', ()=> {
-      this.name = localStorage.getItem('ycxUserLoginState_QXJF');
-       this.isLogin = true
-       console.log("触发localStorage监听")
-    })
-    ipcRenderer.on('RenderMsgFromMain', function (event, arg) {
-    alert(arg)
-    window.parent.location.reload()
-    let _this = this
+  //  window.addEventListener('setItem', ()=> {
+  //     this.name = localStorage.getItem('ycxUserLoginState_QXJF');
+  //      this.isLogin = true
+  //      console.log("触发localStorage监听")
+  //   })
+  //   ipcRenderer.on('RenderMsgFromMain', function (event, arg) {
+  //   alert(arg)
+  //   window.parent.location.reload()
+  //   let _this = this
    
-    })
+  //   })
   },
   computed:{
     ...mapGetters([
-      'loginStatus'
+      'loginStatus','path'
     ])
   },
   
   watch:{
     
-    '$store.state.path':function(){
+    path:function(){
       console.log('监听vuex:path,改变就修改菜单栏选中效果')
       this.activeIndex = this.$store.state.path
     },
       
     loginStatus: function(){
-      console.log('进入监听~~~')
-      console.log(this.name)
-      console.log(JSON.parse(localStorage.getItem('ycxUserInfo_QXJF')).name)
-     this.loginstate()
 
       // setInterval(function(){
       //   location.reload();
@@ -306,17 +317,20 @@ export default {
   },
  
   mounted(){
+    console.log(this.$store)
     this.change();
-    if(localStorage.getItem('ycxUserLoginState_QXJF') == null){
-      //第一次登录
-      this.isLogin = false
-    }else{
-      this.name = JSON.parse(localStorage.getItem('ycxUserInfo_QXJF')).name
+    if(JSON.parse(localStorage.getItem('ycxUserLoginState_QXJF')) == true){
+      this.$pro.isLogin()
+       this.name = JSON.parse(localStorage.getItem('ycxUserInfo_QXJF')).name
       this.isLogin = true
+    }else{
+      this.isLogin = false
+       this.$store.state.account.loginStatus = false
     }
 
 
      this.$store.dispatch('startUpInitConnSignalr');//启动socket
+    //  this.$store.commit('initConnSignalr');//启动socket
     //  console.log(this.$store.state.market.quoteData.openPoint) //行情Socket
 
     
@@ -349,114 +363,35 @@ function generateUUID() {
   
 
   }
-  #login{
-    width: 494px;
-    height: 550px;
+  #userMsg{
+    width: 500px;
+    height: 300px;
+    background: lightblue;
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%,-50%);
-    .content{
-        height: 400px;
-        margin:10px auto;
-        background:rgba(255,255,255,1);
-        border-radius:4px;
-        font-size:16px;
-        font-family:Microsoft YaHei;
-        font-weight:400;
-        color:#333333;
-        h1{
-            width: 92%;
-            line-height: 50px;
-            font-size:20px;
-            font-family:Microsoft YaHei;
-            font-weight:400;
-            color:rgba(59,59,59,1);
-            text-align: left;
-            margin:auto;
-            border-bottom:1px solid #EEEEEE;
-            i{  
-                
-                
-                float: right;
-                margin-right: 0px;
-                line-height: 50px;
-            }
-            
-        }
-        .user,.pwd{
-            width: 90%;
-            margin: 0 auto;
-        }
-        .el-button{
-            width: 90%;
-            margin: 20px 5%;
-            height:52px;
-            background:rgba(65,118,216,1);
-            border-radius:4px;
-            font-size:20px;
-            font-family:Microsoft YaHei;
-            font-weight:400;
-            color:rgba(255,255,255,1);
-
-        }
-        .zidong{
-            display: flex;
-            width: 90%;
-            margin:10px auto;
-            .left{
-                width: 50%;
-                font-family:Microsoft YaHei;
-                font-weight:400;
-                color:rgba(51,51,51,1);
-            }
-            .right{
-                
-                width: 50%;
-                text-align: right;
-                font-family:Microsoft YaHei;
-                font-weight:400;
-                color:rgba(65,118,216,1);
-                a{
-                    text-decoration: none;
-                    font-size: 14px;
-                    font-family:Microsoft YaHei;
-                    font-weight:400;
-                    color:rgba(65,118,216,1);
-                    
-                }
-            }
-        }
-        
+    z-index: 2;
+    button{
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 50px;
+      background: #409eff;
+      color: #fff;
+      border: none;
+      outline: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 17px;
+      font-weight: 600;
+      
     }
-    .footer{
-            width:100%;
-            height:100px;
-            background:rgba(51,65,100,1);
-            display: flex;
-            border-radius:4px;
-            margin: 25px auto 0 auto;
-            
-
-            img{
-                
-                display:block;
-                height: 60%;
-                margin: auto 20px;
-                
-            }
-            .middle{
-                flex: 1;
-                p{
-                    text-align: left;
-                    height:12px;
-                    font-size:12px;
-                    font-family:Microsoft YaHei;
-                    font-weight:400;
-                    color:rgba(255,255,255,1);
-                }
-            }
-    }
+    button:hover{
+        background: #2e71b4;
+      }
   }
 .el-menu{
     width: 100%;

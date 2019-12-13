@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 Vue.use(Vuex)
-import { createPersistedState, createSharedMutations } from 'vuex-electron'
+import {createPersistedState,createSharedMutations} from 'vuex-electron'
+import persistedState from 'vuex-persistedstate' //vuex持久化插件
 import actions from './action'
 import mutations from './mutations'
 import getters from './getters'
@@ -47,8 +48,8 @@ const ADD_ITEMNUM = 'ADD_ITEMNUM'
 const accountLogin01 = 'accountLogin01'
 const registerLogin ='registerLogin'
 const setKlineTopMsg ='setKlineTopMsg'
-const store = new Vuex.Store({
-  // strict:false,//关闭严格模式
+export default new Vuex.Store({
+  strict:false,//关闭严格模式
    modules:{
     account,
     market,
@@ -57,8 +58,8 @@ const store = new Vuex.Store({
   state:{
     
     main: 0,
-    apiUrl: 'http://39.100.151.138:8082', //axios api 'http://47.103.78.230:8082'
-    imUrl: 'ws://39.100.151.138:6300/Quotation.ashx', //webScoket api 'ws://47.103.78.230:6300/Quotation.ashx'
+    apiUrl: 'http://39.100.151.138:8082', //axios api 
+    imUrl: 'ws://39.100.151.138:6300/Quotation.ashx', //webScoket api 
     imUrlSignalr: 'http://39.100.151.138:8081', //webSocket signalr地址 
     version:'1.0.4', //app版本号 1.2.7
     appName:'期鑫金服', //app名字
@@ -103,12 +104,14 @@ const store = new Vuex.Store({
   actions,
   // 返回改变后的数值
 	getters,
-  plugins: [
+  plugins:[
     createPersistedState(),
-    //不建议使用此插件[Vuex Electron] Please, don't use direct commit's, use dispatch instead of this.
-    // createSharedMutations()
+
+    // persistedState() //vuex持久化插件
+    
+    // createSharedMutations()  //不建议使用此插件 [Vuex Electron] Please, don't use direct commit's, use dispatch instead of this.
   ],
   // strict: process.env.NODE_ENV !== 'production',
 })
-export default store
+// export default store
 

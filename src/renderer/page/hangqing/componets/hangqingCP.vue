@@ -190,9 +190,11 @@ export default {
         hangqingbg(a,code){
            this.isactive=a
            console.log(code)
-        //    this.$store.state.chanpinInfo = code
-           this.$store.dispatch("aCChanpinInfo",code)
-           this.$store.dispatch("setPath",'/kline')
+           this.$store.state.chanpinInfo = code
+           this.$store.state.path = '/kline'
+           console.log(this.$store.state.path)
+        //    this.$store.dispatch("aCChanpinInfo",code)
+        //    this.$store.dispatch("setPath",'/kline')
            this.$router.push('/kline')
         //    this.$store.commit('setChanpinInfo',code)//把当前股票的code赋值给vuex里面的生成K线图需要的参数
         //    this.$store.commit('klineMsgs',code)

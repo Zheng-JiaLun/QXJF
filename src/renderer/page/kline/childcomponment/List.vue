@@ -151,6 +151,11 @@ export default {
        
       }
    },
+   computed:{
+     changeLoginStatus(){
+       return this.$store.state.account.loginStatus
+     }
+   },
    watch: {
     //  当窗口发生变化或页面加载时，获父级传递过来的高度，动态修改自身的高度
     listSize: {
@@ -163,6 +168,13 @@ export default {
          document.getElementById("jiaoge").style.height = this.Listheight-28 + "px";
       }
     },
+    changeLoginStatus:function(val){
+      if(val == true){
+        this.islogin = true
+      }else{
+        this.islogin = false
+      }
+    }
   },
   methods: {
     setPrLoss() {

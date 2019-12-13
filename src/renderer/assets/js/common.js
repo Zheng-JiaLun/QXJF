@@ -731,6 +731,15 @@ pro = {
 				}, self.timeout)
 			}, this.timeout)
 		}
+	},
+	//判断成功登录之后操作
+	isLogin(){
+		let setSocketParam = {
+			userId: JSON.parse(localStorage.getItem('ycxUserInfo_QXJF')).userId,
+			token: JSON.parse(localStorage.getItem('ycxUserInfo_QXJF')).token
+		}
+		store.state.socketParam = setSocketParam
+        store.state.account.loginStatus = true
 	}
 }
 export default pro

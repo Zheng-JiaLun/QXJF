@@ -6,6 +6,7 @@ const registerLogin ='registerLogin'
 const setKlineTopMsg ='setKlineTopMsg'
 const setChanpinInfo ='setChanpinInfo'
 export default{
+	
     [ADD_ITEMNUM](state, num) {
 		//state.main += num;
 	  },
@@ -110,7 +111,7 @@ export default{
 	  
 	  initConnSignalr(state){
 		let msg = {}
-		if (!localStorage.getItem('ycxUserLoginState_QXJF')) { //判断是否为登录状态
+		if (!state.account.loginStatus) { //判断是否为登录状态
 		  console.log('未登录状态连接websocket开始');
 		  let uuid = generateUUID();
 		  msg = {
@@ -133,7 +134,7 @@ export default{
 		//   }
 		//创建行情连接
 		state.connSignalr = null;
-		state.connSignalr = $.connection('http://39.100.151.138:8081' + "/myconnection", msg)
+		state.connSignalr = $.connection(state.imUrlSignalr + "/myconnection", msg)
 		//开始行情连接
 		state.connSignalr.start()
 		  .done(() => {
