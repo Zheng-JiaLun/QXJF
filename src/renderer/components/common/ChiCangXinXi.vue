@@ -21,13 +21,17 @@
             <span style="color: #DCDC0A;">{{scope.row.position}}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="position_price" label="持仓价格" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="futures_price" label="持仓价格" show-overflow-tooltip></el-table-column>
         <el-table-column prop="futures_num" label="变动单位" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="contract_multiplier" label="合约乘数" show-overflow-tooltip></el-table-column>
+        <el-table-column label="最新价格" show-overflow-tooltip>
+           <template slot-scope="scope">
+            <span :style="scope.row.buyPoint >scope.row.futures_price?'color:#FF3322;':'color:#00BD00;'">{{scope.row.buyPoint}}</span>
+          </template>
+        </el-table-column>
         <el-table-column  label="盈亏" show-overflow-tooltip>
            <template slot-scope="scope">
-            <span :style="scope.row.pro_loss >= 0 ? 'color:#FF3322;' : 'color:#00BD00;'"
-            >{{scope.row.pro_loss}}</span>
+            <span :style="scope.row.buyPoint - scope.row.futures_price >= 0 ? 'color:#FF3322;' : 'color:#00BD00;'"
+            >{{(scope.row.buyPoint*100 - scope.row.futures_price*100)*scope.row.futures_num/100}}</span>
           </template>
         </el-table-column>
         <el-table-column  label="本币盈亏" show-overflow-tooltip>
@@ -55,7 +59,7 @@ export default {
     return {
       dialogVisible: false,
       zuixinjia: "暂无数据",
-      
+      equity:null,
       tableData: [
         {
           number: "MHI1905",
@@ -178,45 +182,34 @@ export default {
       });
     },
     axiosChiCang(){
-
+      let _this = this
        if (!localStorage.getItem('ycxUserLoginState_QXJF')) { //判断是否为登录状态
         console.log('未登录状态');
        
       } else {
         console.log('登录状态');
-        
        let msg = JSON.stringify({
         userID:JSON.parse(localStorage.getItem('ycxUserInfo_QXJF')).userId
         })
         this.$pro.post('get_position_list_new', msg).then((res) => {
-            console.log(res.msg.data)
-            this.tableData = res.msg.data
-          
-          })
+          _this.tableData = res.msg.data
+          let hqMsg = JSON.parse(localStorage.getItem(_this.$store.state.localStorageHq)),
+              arr   = [];
+          for(let i=0;i<_this.tableData.length;i++){
+
+            for(let j=0;j<hqMsg.length;j++){
+              if(_this.tableData[i].futures_code == hqMsg[j].code ){
+                _this.tableData[i].buyPoint = hqMsg[j].buyPoint
+               arr.push((_this.tableData[i].buyPoint*1000 - _this.tableData[i].futures_price*1000)*_this.tableData[i].futures_num/1000) 
+              }
+            }
+          }
+            _this.equity = eval(arr.join("+"))
+            _this.$store.state.equityData = _this.equity
+        })
+       
       }
-      // addtime:"2019-12-03T14:16:03"
-      // cs:200
-      // currencyFlag:"CNY"
-      // currencyName:"人民币"
-      // currencyRate:1
-      // dyyk:0
-      // futures_code:"IC1912"
-      // futures_name:"中证500"
-      // futures_num:1
-      // futures_price:4902
-      // isTradeTime:false
-      // lastprice:0
-      // orderTradeType:1
-      // orderType:"市价成交"
-      // price_unit:0.2
-      // serialnum:"42B265AD6CFA44A88D35A3ED1139EDBD"
-      // state:0
-      // stoploss:0
-      // stopprofit:0
-      // sx:400
-      // total:0
-      // traderNickname:""
-      // updown:1
+     
       
     },
     c(row) {
@@ -229,25 +222,44 @@ export default {
   computed:{
     changeLoginStatus(){
       return this.$store.state.account.loginStatus 
+    },
+    changeQuoteData(){
+      return this.$store.state.market.quoteData
     }
   },
   watch: {
-    //  当窗口发生变化或页面加载时，获父级传递过来的高度，动态修改自身相关元素的高度
+    // 当窗口发生变化或页面加载时，获父级传递过来的高度，动态修改自身相关元素的高度
     Listheight: {
       handler: function(Val, oldVal) {
         document.getElementById("chicangTable").style.height = +Val - 60 + "px";
       }
     },
+    //监听登录状态
     changeLoginStatus:function(val){
       if(val == true){
         let msg = JSON.stringify({
         userID:JSON.parse(localStorage.getItem('ycxUserInfo_QXJF')).userId
         })
         this.$pro.post('get_position_list_new', msg).then((res) => {
-            console.log(res.msg.data)
+            // console.log(res.msg.data)
             this.tableData = res.msg.data
           
           })
+      }else{
+        this.tableData = []
+      }
+    },
+    //监听webScoket数据变化
+    changeQuoteData:function(val){
+      // console.log(val)
+      for(let i=0;i<this.tableData.length;i++){
+        
+        if(val.code == this.tableData[i].futures_code){
+          
+          
+          this.tableData[i].buyPoint = val.buyPoint
+          // console.log(this.tableData)
+        }
       }
     }
   }

@@ -84,7 +84,7 @@
             <p>{{userMsg.name?userMsg.name:"未登录"}}</p>
             <p class="flex">
               <span>权益:</span>
-              <span>900.00</span>
+              <span>{{changeEquityData}}</span>
             </p>
             <p class="flex" @click="click01()">
               <span>可用资金:</span>
@@ -584,6 +584,9 @@ export default {
   computed:{
    changeLoginStatus(){
      return this.$store.state.account.loginStatus
+   },
+   changeEquityData:function(){
+     return this.$store.state.equityData
    }
   },
   watch:{

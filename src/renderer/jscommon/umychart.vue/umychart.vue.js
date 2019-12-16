@@ -23403,8 +23403,9 @@ function KLineChartContainer(uielement) {
         var self = this;
         console.log("更新实时分钟数据")
         var realTimeData = store.state.realTimeData;
-        var date = Number(realTimeData.createTime.split(' ')[0].replace(/-/g, ''));
-        var time = Number((realTimeData.createTime.split(' ')[1].replace(/:/g, '')).substring(0, 4));
+        // console.log(realTimeData.createTime)
+        var date = Number(realTimeData.createTime.split('')[0].replace(/-/g, ''));
+        var time = Number((realTimeData.createTime.split('')[1].replace(/:/g, '')).substring(0, 4));
         var vol = Number(realTimeData.totalNum) - Number(HistoryMinuteData[HistoryMinuteData.length - 1].total_volume);
         if (vol <= 0) {
             vol = 0;

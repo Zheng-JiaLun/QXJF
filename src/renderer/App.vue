@@ -217,6 +217,7 @@ export default {
         if(data.value == '登陆成功'){
           this.$pro.isLogin()
           this.name = JSON.parse(localStorage.getItem('ycxUserInfo_QXJF')).name
+          this.img = 'http://39.100.151.138:8082' + JSON.parse(localStorage.getItem('ycxUserInfo_QXJF')).headImg
           this.isLogin = true
           console.log(this.$store)
         }
@@ -259,7 +260,13 @@ export default {
         // console.log(this.accountState.loginStatus)
         // console.log(this.main)
       },
-      
+      //请求存储行情信息在localStorage
+      postHangqing(){
+        let _this = this
+        this.$pro.post('get_menu','').then((res) =>{
+          localStorage.setItem(_this.$store.state.localStorageHq,JSON.stringify(res.msg[0].item))
+        })
+      },
       
       async showBoxxiadan() {
       let data = await this.$Win.openWin({
@@ -280,7 +287,7 @@ export default {
     }
   },
   created(){
-    
+    this.postHangqing()
   //  window.addEventListener('setItem', ()=> {
   //     this.name = localStorage.getItem('ycxUserLoginState_QXJF');
   //      this.isLogin = true
@@ -322,6 +329,7 @@ export default {
     if(JSON.parse(localStorage.getItem('ycxUserLoginState_QXJF')) == true){
       this.$pro.isLogin()
        this.name = JSON.parse(localStorage.getItem('ycxUserInfo_QXJF')).name
+       this.img = 'http://39.100.151.138:8082' + JSON.parse(localStorage.getItem('ycxUserInfo_QXJF')).headImg
       this.isLogin = true
     }else{
       this.isLogin = false

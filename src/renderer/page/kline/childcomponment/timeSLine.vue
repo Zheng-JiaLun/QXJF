@@ -57,6 +57,11 @@ export default {
             this.$emit("function",this.Line.JSChart)//传递数据给父组件（传着玩儿的）
         },
     },
+    computed:{
+        klineData() {
+            return this.$store.getters.kDataSocket
+        }
+    },
     watch: {
         
         'candleHeight'() {
@@ -72,7 +77,24 @@ export default {
             console.log(e)
             console.log(this.Line.JSChart)
              this.Line.JSChart.ChangePeriod(e);
-        }
+        },
+        klineData: {
+            handler: function(val, oldVal) {
+                var flag = 0;
+                if (val.code == this.$store.state.chanpinInfo) {//this.proInfo.code
+                    flag++;
+                    if (flag == 1) {
+                        // console.log('更新了');
+                        //this.mySetInterval();
+                    }
+                        this.$store.state.realTimeData=val;
+                        this.$store.state.isDataChange=true;
+                    //this.kData.socketData = val;
+                    //this.updataKline();
+                }
+            },
+            deep: true
+        },
     }
 }
 </script>

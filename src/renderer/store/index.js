@@ -89,6 +89,7 @@ export default new Vuex.Store({
     chanpinInfo:'FDAX1912',		//产品编号(默认德指)
     realTimeData:'',
     isDataChange:false,
+    equityData:null,
     klineMsg:null,//K线页面右侧详情信息
     klineMsgs:null,//K线页面右侧详情信息
     klineTopMsg:{

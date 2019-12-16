@@ -25,5 +25,8 @@ export default{
     },
     loginStatus(state){
     return state.account.loginStatus
+    },
+    equityData(state){
+    return state.equityData
     }
 }

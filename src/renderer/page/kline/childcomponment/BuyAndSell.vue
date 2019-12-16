@@ -31,7 +31,8 @@
       <!-- 合约名字展示框 -->
       <div class="heyue flex">
         <span>合约：</span>
-        <input class="heyueInput" type="text" readonly='true' :value="heyue.heyueName"/>
+        <!-- <input class="heyueInput" type="text" readonly='true' :value="heyue.heyueName"/> -->
+        <input class="heyueInput" type="text" readonly='true' v-model="code"/>
         <!-- <span class="span">{{heyue.heyueName}}</span> -->
       </div>
       <!-- 相关操作展示区域 -->
@@ -72,9 +73,10 @@ export default {
   data() {
     return {
       gen: 88888,
-      num: 666,
-      stopPrint: 55555,
-      stopLoss: 9999,
+      num: 1,
+      stopPrint: 0,
+      stopLoss: 0,
+      code:'FDAX1912',
       heyue: {
         heyueClass: "",
         heyueName: ""
@@ -126,11 +128,68 @@ export default {
   },
   methods: {
     guadan(type){
-      if(type == 1){
-
+      let _this = this
+      if(localStorage.getItem('ycxUserLoginState_QXJF')){
+         if(type == 1){
+          this.$confirm('确定买入?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            var msg = JSON.stringify({
+              userID: JSON.parse(localStorage.getItem(localStorageUid)).userId,
+              tradeNum: _this.num,
+              tradePrice: _this.initPoint,
+              futuresCode: _this.code,
+              updown: 1,
+              priceType: 2,
+              stopLoss: Number(_this.stopLoss),
+              stopProfit: Number(_this.stopProfit)
+            })
+            _this.$pro.post('buy_sale_order', msg).then((res) => {
+               this.$message({
+                type: 'success',
+                message: res.message
+              });
+              // _this.guadanState1 = false;
+              // if (res.result == 1) {
+              //   _this.active = 0;
+              // }
+            })
+           
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消买入'
+            });          
+          });
+        }else{
+          this.$confirm('确定卖出?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.$message({
+              type: 'success',
+              message: '卖出成功!'
+            });
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消卖出'
+            });          
+          });
+        }
       }else{
-        
+        	this.$confirm('未登录,请登录后操作~', '温馨提示', {
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+					type: 'warning'
+				}).then(() => {
+					
+				})
       }
+     
     },
     heyueChange(value) {
       for (var i = 0; i < this.heyueClassOptions.length; i++) {
