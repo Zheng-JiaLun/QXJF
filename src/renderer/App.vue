@@ -264,7 +264,7 @@ export default {
       postHangqing(){
         let _this = this
         this.$pro.post('get_menu','').then((res) =>{
-          localStorage.setItem(_this.$store.state.localStorageHq,JSON.stringify(res.msg[0].item))
+          localStorage.setItem(_this.$store.state.localStorageHq,JSON.stringify(res.msg))
         })
       },
       

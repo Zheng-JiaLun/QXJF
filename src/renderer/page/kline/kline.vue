@@ -84,7 +84,7 @@
             <p>{{userMsg.name?userMsg.name:"未登录"}}</p>
             <p class="flex">
               <span>权益:</span>
-              <span>{{changeEquityData}}</span>
+              <span>{{changeEquityData}}元</span>
             </p>
             <p class="flex" @click="click01()">
               <span>可用资金:</span>

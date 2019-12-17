@@ -60,7 +60,7 @@ export default{
 		  if (data.messageType == 1) {
 			// console.log(data);
 			let dataObject = JSON.parse(data.content);
-			// console.log(dataObject);
+			// console.log(dataObject[0]);
 			state.market.quoteData = dataObject[0]
 			// commit('setQuoteData', dataObject[0]);
 			// console.log(state.market.quoteData)

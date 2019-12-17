@@ -1,6 +1,7 @@
 <template>
   <div class="chicang">
     <div id="chicangTable">
+     
       <el-table :data="tableData" class="table01" highlight-current-row>
         <el-table-column width="45px">
           <template slot-scope>
@@ -31,13 +32,13 @@
         <el-table-column  label="盈亏" show-overflow-tooltip>
            <template slot-scope="scope">
             <span :style="scope.row.buyPoint - scope.row.futures_price >= 0 ? 'color:#FF3322;' : 'color:#00BD00;'"
-            >{{(scope.row.buyPoint*100 - scope.row.futures_price*100)*scope.row.futures_num/100}}</span>
+            >{{(scope.row.buyPoint*1000 - scope.row.futures_price*1000)*scope.row.futures_num/1000}}</span>
           </template>
         </el-table-column>
         <el-table-column  label="本币盈亏" show-overflow-tooltip>
             <template slot-scope="scope">
-              <span :style="scope.row.this_pro_loss >= 0 ? 'color:#FF3322;' : 'color:#00BD00;'"
-              >{{scope.row.this_pro_loss}}</span>
+              <span :style="scope.row.buyPoint - scope.row.futures_price >= 0 ? 'color:#FF3322;' : 'color:#00BD00;'"
+              >{{(scope.row.buyPoint*1000 - scope.row.futures_price*1000)*scope.row.futures_num/1000*scope.row.cs}}元</span>
             </template>
         </el-table-column>
         <el-table-column label="止盈止亏" show-overflow-tooltip>
@@ -52,6 +53,7 @@
   </div>
 </template>
 <script>
+import { setInterval } from 'timers';
 export default {
   name: "chicang",
   props: ["Listheight"],
@@ -193,14 +195,15 @@ export default {
         })
         this.$pro.post('get_position_list_new', msg).then((res) => {
           _this.tableData = res.msg.data
-          let hqMsg = JSON.parse(localStorage.getItem(_this.$store.state.localStorageHq)),
+          console.log(_this.tableData)
+          let hqMsg = JSON.parse(localStorage.getItem(_this.$store.state.localStorageHq))[0].item,
               arr   = [];
           for(let i=0;i<_this.tableData.length;i++){
 
             for(let j=0;j<hqMsg.length;j++){
               if(_this.tableData[i].futures_code == hqMsg[j].code ){
                 _this.tableData[i].buyPoint = hqMsg[j].buyPoint
-               arr.push((_this.tableData[i].buyPoint*1000 - _this.tableData[i].futures_price*1000)*_this.tableData[i].futures_num/1000) 
+               arr.push((hqMsg[j].buyPoint*1000 - _this.tableData[i].futures_price*1000)*_this.tableData[i].futures_num/1000) 
               }
             }
           }
@@ -217,7 +220,20 @@ export default {
     }
   },
   created(){
-    this.axiosChiCang()
+    let _this = this
+    this.axiosChiCang();
+     //监听webScoket数据变化  , 在created里执行监听,是因为要先执行上面一步初始化之后才进行动态赋值
+    //  setTimeout(function(){
+    //    _this.$watch('changeQuoteData',(val)=>{
+    //     for(let i=0;i<_this.tableData.length;i++){
+    //       if(val.code == _this.tableData[i].futures_code){
+    //         _this.tableData[i].buyPoint = val.buyPoint
+    //         // console.log(this.tableData)
+    //       }
+    //     }
+    //   })
+    //  },500)
+    
   },
   computed:{
     changeLoginStatus(){
@@ -225,7 +241,19 @@ export default {
     },
     changeQuoteData(){
       return this.$store.state.market.quoteData
-    }
+    },
+    // changeTableData(){
+    //   let _this = this
+    //     for(let i=0;i<_this.tableData.length;i++){
+    //       if(_this.$store.state.market.quoteData.code == _this.tableData[i].futures_code){
+    //         _this.tableData[i].buyPoint = _this.$store.state.market.quoteData.buyPoint
+    //         // console.log(this.tableData)
+    //       }
+    //     }
+     
+     
+    //   return this.tableData
+    // }
   },
   watch: {
     // 当窗口发生变化或页面加载时，获父级传递过来的高度，动态修改自身相关元素的高度
@@ -237,31 +265,32 @@ export default {
     //监听登录状态
     changeLoginStatus:function(val){
       if(val == true){
-        let msg = JSON.stringify({
-        userID:JSON.parse(localStorage.getItem('ycxUserInfo_QXJF')).userId
-        })
-        this.$pro.post('get_position_list_new', msg).then((res) => {
-            // console.log(res.msg.data)
-            this.tableData = res.msg.data
-          
-          })
+       this.axiosChiCang()
       }else{
         this.tableData = []
       }
     },
-    //监听webScoket数据变化
-    changeQuoteData:function(val){
-      // console.log(val)
-      for(let i=0;i<this.tableData.length;i++){
-        
-        if(val.code == this.tableData[i].futures_code){
-          
-          
-          this.tableData[i].buyPoint = val.buyPoint
-          // console.log(this.tableData)
+   changeQuoteData:function(val){
+     let _this =this
+     let nullObj     = {}
+     let arr = []
+    for(let i=0;i<this.tableData.length;i++){
+      if(val.code == this.tableData[i].futures_code){
+        this.tableData[i].buyPoint = val.buyPoint
+        nullObj = this.tableData[i]
+        this.$set(this.tableData,i,nullObj)  //强制刷新视图
+        //计算动态权益
+        for(let i=0;i<this.tableData.length;i++){
+          arr.push(((this.tableData[i].buyPoint*1000 - this.tableData[i].futures_price*1000)/1000)*this.tableData[i].futures_num*this.tableData[i].cs)  
         }
+        _this.$store.state.equityData = eval(arr.join("+")).toFixed(2)
       }
+
     }
+    
+    
+   }
+    
   }
 };
 </script>

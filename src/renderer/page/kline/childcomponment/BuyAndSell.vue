@@ -8,7 +8,7 @@
         <el-select
           class="select"
           v-model="heyue.heyueClass"
-          placeholder="请选择"
+          placeholder="请选择交易所"
           @change="heyueChange"
         >
           <el-option
@@ -19,20 +19,20 @@
           ></el-option>
         </el-select>
         <!-- 右边下拉选择框 -->
-        <el-select class="select" v-model="heyue.heyueName" placeholder="请选择" @change="heyueNameCh">
+        <el-select class="select" v-model="heyue.heyueName" placeholder="请选择合约代码" @change="heyueNameCh">
           <el-option
             v-for="(item, index) in heyueNameOptions"
             :key="index"
-            :label="item.name"
-            :value="item.name"
+            :label="item.name+' '+item.code"
+            :value="item.code"
           ></el-option>
         </el-select>
       </div>
       <!-- 合约名字展示框 -->
       <div class="heyue flex">
         <span>合约：</span>
-        <!-- <input class="heyueInput" type="text" readonly='true' :value="heyue.heyueName"/> -->
-        <input class="heyueInput" type="text" readonly='true' v-model="code"/>
+        <input class="heyueInput" type="text" readonly='true' :value="heyue.heyueCode" />
+        <!-- <input class="heyueInput" type="text" readonly='true' v-model="code"/> -->
         <!-- <span class="span">{{heyue.heyueName}}</span> -->
       </div>
       <!-- 相关操作展示区域 -->
@@ -76,52 +76,47 @@ export default {
       num: 1,
       stopPrint: 0,
       stopLoss: 0,
-      code:'FDAX1912',
+      
       heyue: {
         heyueClass: "",
-        heyueName: ""
+        heyueName: "",
+        heyueCode: ""
       },
       heyueClassOptions: [
         {
-          id: "交易所一",
-          subject: [
-            { name: 11 },
-            { name: 12 },
-            { name: 13 },
-            { name: 14 },
-            { name: 15 }
+          name: "交易所一",
+          id:1,
+          item: [
+            { name: 11 ,code:"111"},
+            { name: 12 ,code:"111"},
+            { name: 13 ,code:"111"},
+            { name: 14 ,code:"111"},
+            { name: 15 ,code:"111"}
           ]
         },
         {
-          id: "交易所二",
-          subject: [
-            { name: 21 },
-            { name: 22 },
-            { name: 23 },
-            { name: 24 },
-            { name: 25 }
+          name: "交易所一",
+          id:2,
+          item: [
+            { name: 11 ,code:"111"},
+            { name: 12 ,code:"111"},
+            { name: 13 ,code:"111"},
+            { name: 14 ,code:"111"},
+            { name: 15 ,code:"111"}
           ]
         },
         {
-          id: "交易所三",
-          subject: [
-            { name: 31 },
-            { name: 32 },
-            { name: 33 },
-            { name: 34 },
-            { name: 35 }
+          name: "交易所一",
+          id:3,
+          item: [
+            { name: 11 ,code:"111"},
+            { name: 12 ,code:"111"},
+            { name: 13 ,code:"111"},
+            { name: 14 ,code:"111"},
+            { name: 15 ,code:"111"}
           ]
         },
-        {
-          id: "交易所四",
-          subject: [
-            { name: 41 },
-            { name: 42 },
-            { name: 43 },
-            { name: 44 },
-            { name: 45 }
-          ]
-        }
+       
       ],
       heyueNameOptions: []
     };
@@ -140,7 +135,7 @@ export default {
               userID: JSON.parse(localStorage.getItem(localStorageUid)).userId,
               tradeNum: _this.num,
               tradePrice: _this.initPoint,
-              futuresCode: _this.code,
+              futuresCode: _this.heyue.heyueCode,
               updown: 1,
               priceType: 2,
               stopLoss: Number(_this.stopLoss),
@@ -149,7 +144,7 @@ export default {
             _this.$pro.post('buy_sale_order', msg).then((res) => {
                this.$message({
                 type: 'success',
-                message: res.message
+                message:'买入成功'
               });
               // _this.guadanState1 = false;
               // if (res.result == 1) {
@@ -198,14 +193,27 @@ export default {
           break;
         }
       }
-      this.heyueNameOptions = this.heyueClassOptions[this.indexNum].subject;
+      this.heyueNameOptions = this.heyueClassOptions[this.indexNum].item;
       this.heyue.heyueClass = value;
-      this.heyue.heyueName = this.heyueClassOptions[
+      this.heyue.heyueName = this.heyueClassOptions[this.indexNum].item[0].name + ' ' +this.heyueClassOptions[this.indexNum].item[0].code;
+      this.heyue.heyueCode = this.heyueClassOptions[
         this.indexNum
-      ].subject[0].name;
+      ].item[0].code;
     },
     heyueNameCh(value) {
-      this.heyue.heyueName = value;
+      this.heyue.heyueCode = value;
+     
+      
+    }
+  },
+  created(){
+    this.heyueClassOptions = JSON.parse(localStorage.getItem(this.$store.state.localStorageHq))
+    console.log(this.heyueClassOptions) 
+  },
+  watch:{
+    'heyue.heyueCode'(){
+       console.log('触发~~~~~~~~~~~~~~~~合约代码监听')
+       //执行请求跟盘数据
     }
   }
 };
