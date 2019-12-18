@@ -573,12 +573,10 @@ export default {
     //父组件中接受来自子组件的信息
 
     toFatherMinute(e){
-      console.log(e)
-      console.log("040404040040404040")
+     
     },
     toFatherKline(e){
-      console.log(e)
-      console.log("040404040040404040")
+     
     }
   },
   computed:{
@@ -592,7 +590,7 @@ export default {
   watch:{
     changeLoginStatus:function(val){
       if(val == true){
-        console.log(JSON.parse(localStorage.getItem('ycxUserInfo_QXJF'))) 
+        // console.log(JSON.parse(localStorage.getItem('ycxUserInfo_QXJF'))) 
         let msg =  JSON.parse(localStorage.getItem('ycxUserInfo_QXJF'))
         this.userMsg = msg
       }

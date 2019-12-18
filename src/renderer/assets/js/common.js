@@ -208,6 +208,75 @@ pro = {
 				break;
 		}
 	},
+	//获取时间 2017-07-07 02:05:00
+	getTime:function(){     	
+		var date=new Date();
+
+		var year=date.getFullYear();
+		var month=date.getMonth();
+		var day=date.getDate();
+
+		var hour=date.getHours();
+		var minute=date.getMinutes();
+		var second=date.getSeconds();
+
+		//这样写显示时间在1~9会挤占空间；所以要在1~9的数字前补零;
+		if (hour<10) {
+			hour='0'+hour;
+		}
+		if (minute<10) {
+			minute='0'+minute;
+		}
+		if (second<10) {
+			second='0'+second;
+		}
+
+
+		var x=date.getDay();//获取星期
+
+
+		var time=year+'/'+month+'/'+day+' '+hour+':'+minute+':'+second
+		return time
+	},
+	/***
+	 *判断当前时间是否包含在时间段内 
+	 * beginTime
+	 * endTime
+	 * nowTime
+	 */
+	time_range:function (beginTime, endTime, nowTime) {
+		var strb = beginTime.split (":");
+		if (strb.length != 2) {
+			return false;
+		}
+	 
+		var stre = endTime.split (":");
+		if (stre.length != 2) {
+			return false;
+		}
+	 
+		var strn = nowTime.split (":");
+		if (stre.length != 2) {
+			return false;
+		}
+		var b = new Date ();
+		var e = new Date ();
+		var n = new Date ();
+	 
+		b.setHours (strb[0]);
+		b.setMinutes (strb[1]);
+		e.setHours (stre[0]);
+		e.setMinutes (stre[1]);
+		n.setHours (strn[0]);
+		n.setMinutes (strn[1]);
+	 
+		if (n.getTime () - b.getTime () > 0 && n.getTime () - e.getTime () < 0) {
+			return true;
+		} else {
+			// alert ("当前时间是：" + n.getHours () + ":" + n.getMinutes () + "，不在该时间范围内！");
+			return false;
+		}
+	},
 	/**
 	 * 数组取最大值、最小值
 	 * 

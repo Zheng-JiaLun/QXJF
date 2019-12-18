@@ -72,7 +72,7 @@ export default {
   name: "transaction",
   data() {
     return {
-      gen: 88888,
+      gen: 0,
       num: 1,
       stopPrint: 0,
       stopLoss: 0,
@@ -211,8 +211,10 @@ export default {
     console.log(this.heyueClassOptions) 
   },
   watch:{
-    'heyue.heyueCode'(){
+    'heyue.heyueCode'(val){
        console.log('触发~~~~~~~~~~~~~~~~合约代码监听')
+       this.$store.state.chanpinInfo = val
+       
        //执行请求跟盘数据
     }
   }

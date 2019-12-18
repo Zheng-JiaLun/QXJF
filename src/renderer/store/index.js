@@ -86,8 +86,9 @@ export default new Vuex.Store({
     heartBeatTimeNow:0,
     orderId:null ,//订单号
     connSignalr:null,
-    chanpinInfo:'FDAX1912',		//产品编号(默认德指)
+    chanpinInfo:'',		//产品编号(默认第一个)
     realTimeData:'',
+    nowTime:'',//当前时间
     isDataChange:false,
     equityData:null,
     klineMsg:null,//K线页面右侧详情信息

@@ -2,21 +2,21 @@
   <div id="klineInfo" class="klineInfo">
     <div class="top">
       <div class="infoname">
-        <h2>{{proInfo.name}}</h2>
+        <h2>{{proInfo.name+' '+proInfo.code}}</h2>
       </div>
       <p class="flex1">
         <span class="spanL">卖出</span>
-        <span class="spanM">{{proInfo.sole}}</span>
+        <span class="spanM">{{proInfo.salePoint}}</span>
         <span class="spanR">{{proInfo.soleF}}</span>
       </p>
       <p class="flex1">
         <span class="spanL">买入</span>
-        <span class="spanM">{{proInfo.buy}}</span>
+        <span class="spanM">{{proInfo.buyPoint}}</span>
         <span class="spanR">{{proInfo.buyF}}</span>
       </p>
       <p class="jiaoyi">
-        <span>交易中</span>
-        <span>{{proInfo.time}}</span>
+        <span>{{isTransaction}}</span>
+        <span>{{this.$store.state.nowTime}}</span>
       </p>
     </div>
     <div class="center flex">
@@ -60,19 +60,19 @@
           </li>
           <li class="flex flex-align-items-center flex-justify-content-sb">
             <span>开盘</span>
-            <span style="color: #FF3322;">{{proInfo.open}}</span>
+            <span style="color: #FF3322;">{{proInfo.openPoint}}</span>
           </li>
           <li class="flex flex-align-items-center flex-justify-content-sb">
             <span>最高</span>
-            <span style="color: #FF3322;">{{proInfo.high}}</span>
+            <span style="color: #FF3322;">{{proInfo.higePoint}}</span>
           </li>
           <li class="flex flex-align-items-center flex-justify-content-sb">
             <span>最低</span>
-            <span style="color: #00BD00;">{{proInfo.slow}}</span>
+            <span style="color: #00BD00;">{{proInfo.lowPoint}}</span>
           </li>
           <li class="flex flex-align-items-center flex-justify-content-sb">
             <span>昨结</span>
-            <span style="color: #00BD00;">{{proInfo.old}}</span>
+            <span style="color: #00BD00;">{{proInfo.preClosePoint}}</span>
           </li>
         </ul>
       </div>
@@ -102,6 +102,7 @@
 export default {
   data() {
     return {
+      isTransaction:"交易中",
       proInfo: {
         name: "恒生1905 HSI1905",
         sole: 123.8,
@@ -204,6 +205,100 @@ export default {
       ],
       // proInfos:this.$store.state.klineMsgs
     };
+  },
+  methods:{
+    lodingKinfo(){
+      let hqArr = JSON.parse(localStorage.getItem(this.$store.state.localStorageHq))[0].item
+      let chanpinInfo = this.$store.state.chanpinInfo
+      let date =new Date()
+      //  console.log(hqArr)
+       for(let i=0;i<hqArr.length;i++){
+         if(hqArr[i].code == chanpinInfo){
+           hqArr[i].tradeTime = eval(hqArr[i].tradeTime)
+           hqArr[i].time = this.$pro.getTime()
+           this.proInfo = hqArr[i]
+          //  console.log('~~~~~~~~~~~~~~~~~~~~~',this.proInfo)
+         }
+       }
+      
+    }
+  },
+  created(){
+    this.lodingKinfo()
+  },
+  computed:{
+    changeNowTime(){
+      return this.$store.state.nowTime
+    },
+    changChanpinInfo(){
+      return this.$store.state.chanpinInfo
+    }
+  },
+  watch:{
+     changChanpinInfo:function(val){
+      this.lodingKinfo()
+    },
+    changeNowTime:function(val){
+      
+      let dateVal   =   val.replace(/\//g,'-')//吧时间格式 2019/01/01 00:00:00 转换成 2019-01-01 00:00:00 方便后面转化成时间戳进行对比
+      
+      let nowdata   =   dateVal.slice(0,val.indexOf(' ')+1)//取转换后的时间日期部分，用于拼接开盘得时段，方便转换成时间戳对比
+      let flag      = false,
+          flag2      = false
+      let tradeTime = this.proInfo.tradeTime
+      // let hqArr = JSON.parse(localStorage.getItem(this.$store.state.localStorageHq))[0].item
+      // for(let i=0;i<hqArr.length;i++){
+      //   if(hqArr[i].code == this.$store.state.chanpinInfo){
+
+      //   }
+      // }
+      if(tradeTime){
+        
+         
+        // console.log(tradeTime)
+        for(let i=0;i<tradeTime.length;i++){
+          if(tradeTime[i].open.slice(0,1) == '0'){//判断是否结束时间是第二天得情况
+            let _newdate1 = (new Date().getYear()+1900)+'-'+(new Date().getMonth()+1)+'-'+(new Date().getDate()+1)//当前天数加一天
+            let _newdate2 = (new Date().getYear()+1900)+'-'+(new Date().getMonth()+1)+'-'+(new Date().getDate()-1)//当前天数减一天
+            // if(){  //是否是凌晨得情况
+            //   if(new Date(_newdate2+tradeTime[i].open+':00').getTime() <= new Date(dateVal).getTime()  <= new Date(_newdate1+tradeTime[i].end+':00').getTime()){
+            //     // console.log("当前为交易时段")
+            //     flag = true
+            //   }else{
+            //     console.log("非交易时段")
+            //   }
+            // }else{
+            //   if(new Date(_newdate2+tradeTime[i].open+':00').getTime() <= new Date(dateVal).getTime()  <= new Date(_newdate1+tradeTime[i].end+':00').getTime()){
+            //     // console.log("当前为交易时段")
+            //     flag = true
+            //   }else{
+            //     console.log("非交易时段")
+            //   }
+            // }
+            console.log(_newdate1,_newdate2)
+            
+          }else{
+            if(new Date(nowdata+tradeTime[i].open+':00').getTime() <= new Date(dateVal).getTime()  <= new Date(nowdata+tradeTime[i].end+':00').getTime()){
+              // console.log("当前为交易时段")
+              flag = true
+            }else{
+              console.log("非交易时段")
+            }
+          }
+          
+          
+
+        }
+        if(flag){
+          this.isTransaction = '交易中'
+        }else{
+          this.isTransaction = '停止交易'
+        }
+      }
+      
+    },
+
+   
   },
   mounted(){
     // this.$store.state.klineMsg

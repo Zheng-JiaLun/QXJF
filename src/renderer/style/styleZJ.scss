@@ -40,6 +40,28 @@ body::-webkit-scrollbar {
 
           }
     }
+    @media screen and(max-width:1400px){
+        .centerR{
+            .klineInfo{
+                font-size: 14px;
+                .top{
+                    .infoname{
+                        padding-left: 0;
+                        h2{
+                            font-size: 17px;
+                        }
+                    }
+                    .jiaoyi{
+                        font-size: 12px;
+                        flex-direction: column;
+                        .jiaoyi span:first-child{
+                            flex: 2;
+                        }
+                    }
+                }
+            }
+        }
+    }
     @media screen and (max-width:1050px){
         .el-menu{
             .el-menu-item:nth-child(10){
@@ -83,6 +105,7 @@ body::-webkit-scrollbar {
                     }
                     .jiaoyi{
                         font-size: 12px;
+                        flex-direction: column;
                         .jiaoyi span:first-child{
                             flex: 2;
                         }

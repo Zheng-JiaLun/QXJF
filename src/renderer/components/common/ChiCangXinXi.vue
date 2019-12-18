@@ -195,7 +195,7 @@ export default {
         })
         this.$pro.post('get_position_list_new', msg).then((res) => {
           _this.tableData = res.msg.data
-          console.log(_this.tableData)
+         
           let hqMsg = JSON.parse(localStorage.getItem(_this.$store.state.localStorageHq))[0].item,
               arr   = [];
           for(let i=0;i<_this.tableData.length;i++){
@@ -203,11 +203,12 @@ export default {
             for(let j=0;j<hqMsg.length;j++){
               if(_this.tableData[i].futures_code == hqMsg[j].code ){
                 _this.tableData[i].buyPoint = hqMsg[j].buyPoint
-               arr.push((hqMsg[j].buyPoint*1000 - _this.tableData[i].futures_price*1000)*_this.tableData[i].futures_num/1000) 
+               arr.push((hqMsg[j].buyPoint*1000 - _this.tableData[i].futures_price*1000)*_this.tableData[i].futures_num*_this.tableData[i].cs/1000) 
               }
             }
           }
             _this.equity = eval(arr.join("+"))
+           
             _this.$store.state.equityData = _this.equity
         })
        
@@ -273,7 +274,7 @@ export default {
    changeQuoteData:function(val){
      let _this =this
      let nullObj     = {}
-     let arr = []
+     let arr = [],a;
     for(let i=0;i<this.tableData.length;i++){
       if(val.code == this.tableData[i].futures_code){
         this.tableData[i].buyPoint = val.buyPoint
@@ -281,9 +282,14 @@ export default {
         this.$set(this.tableData,i,nullObj)  //强制刷新视图
         //计算动态权益
         for(let i=0;i<this.tableData.length;i++){
-          arr.push(((this.tableData[i].buyPoint*1000 - this.tableData[i].futures_price*1000)/1000)*this.tableData[i].futures_num*this.tableData[i].cs)  
+          
+         
+          arr.push((this.tableData[i].buyPoint*1000 - this.tableData[i].futures_price*1000)*this.tableData[i].futures_num*this.tableData[i].cs/1000)
         }
-        _this.$store.state.equityData = eval(arr.join("+")).toFixed(2)
+       
+        _this.equity = eval(arr.join("+")).toFixed(2)
+        _this.$store.state.equityData = _this.equity
+        arr = []//清空arr
       }
 
     }

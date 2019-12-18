@@ -264,9 +264,19 @@ export default {
       postHangqing(){
         let _this = this
         this.$pro.post('get_menu','').then((res) =>{
+          this.$store.state.chanpinInfo = res.msg[0].item[0].code
+          console.log('~~~~~~~~~~~~~~~~~~~~~~',this.$store.state.chanpinInfo)
           localStorage.setItem(_this.$store.state.localStorageHq,JSON.stringify(res.msg))
         })
       },
+      //设置一个全局时间，存到vuex，每秒跟新一次
+      timer(){
+        setInterval(() => {
+          this.$store.state.nowTime = this.$pro.getTime()
+          
+        }, 1000)
+      },
+     
       
       async showBoxxiadan() {
       let data = await this.$Win.openWin({
@@ -288,6 +298,7 @@ export default {
   },
   created(){
     this.postHangqing()
+    this.timer()
   //  window.addEventListener('setItem', ()=> {
   //     this.name = localStorage.getItem('ycxUserLoginState_QXJF');
   //      this.isLogin = true
