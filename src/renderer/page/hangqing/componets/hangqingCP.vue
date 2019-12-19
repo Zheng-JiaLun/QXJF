@@ -189,10 +189,9 @@ export default {
        
         hangqingbg(a,code){
            this.isactive=a
-           console.log(code)
            this.$store.state.chanpinInfo = code
-           this.$store.state.path = '/kline'
-           console.log(this.$store.state.path)
+           this.$store.state.activeIndex = '/kline'
+          
         //    this.$store.dispatch("aCChanpinInfo",code)
         //    this.$store.dispatch("setPath",'/kline')
            this.$router.push('/kline')

@@ -57,10 +57,10 @@
       <!-- 底部买入卖出按键展示区域 -->
       <div class="button flex">
         <div class="buttonChildL">
-          <el-button type="danger" @click="guadan(1)">买入</el-button>
+          <el-button type="danger" @click="shijia(1)">买入</el-button>
         </div>
         <div class="buttonChildR">
-          <el-button type="primary" @click="guadan(2)">卖出</el-button>
+          <el-button type="primary" @click="shijia(2)">卖出</el-button>
         </div>
       </div>
     </div>
@@ -76,7 +76,7 @@ export default {
       num: 1,
       stopPrint: 0,
       stopLoss: 0,
-      
+      isTransaction:false,
       heyue: {
         heyueClass: "",
         heyueName: "",
@@ -122,35 +122,50 @@ export default {
     };
   },
   methods: {
-    guadan(type){
+    shijia(type){
       let _this = this
+      // console.log(this.isTransaction,"````",this.$store.state.isTransaction)
       if(localStorage.getItem('ycxUserLoginState_QXJF')){
          if(type == 1){
+           
           this.$confirm('确定买入?', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            var msg = JSON.stringify({
-              userID: JSON.parse(localStorage.getItem(localStorageUid)).userId,
-              tradeNum: _this.num,
-              tradePrice: _this.initPoint,
-              futuresCode: _this.heyue.heyueCode,
-              updown: 1,
-              priceType: 2,
-              stopLoss: Number(_this.stopLoss),
-              stopProfit: Number(_this.stopProfit)
-            })
-            _this.$pro.post('buy_sale_order', msg).then((res) => {
+            if(this.isTransaction){
+              var msg = JSON.stringify({
+                userID: JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId,
+                tradeNum: _this.num,
+                tradePrice: _this.gen,
+                futuresCode: _this.heyue.heyueCode,
+                updown: 1,
+                priceType: 2,
+                stopLoss: Number(_this.stopLoss),
+                stopProfit: Number(_this.stopProfit)
+              })
+              _this.$pro.post('buy_sale_order', msg).then((res) => {
+                // _this.guadanState1 = false;
+                if (res.result == 1) {
+                  // _this.active = 0;
+                  // console.log(res)
+                  _this.$store.state.market.initChicang++
+                  _this.$message({
+                    type: 'success',
+                    message:'买入成功'
+                  });
+                }else{
+                  this.$message.error(res.message);
+                  // alert(res.message)
+                }
+              })
+            }else{
                this.$message({
-                type: 'success',
-                message:'买入成功'
-              });
-              // _this.guadanState1 = false;
-              // if (res.result == 1) {
-              //   _this.active = 0;
-              // }
-            })
+                  type: 'warning',
+                  message:'失败,未开盘~'
+                });
+            }
+            
            
           }).catch(() => {
             this.$message({
@@ -210,13 +225,41 @@ export default {
     this.heyueClassOptions = JSON.parse(localStorage.getItem(this.$store.state.localStorageHq))
     console.log(this.heyueClassOptions) 
   },
+  computed:{
+    changeQuoteData(){
+      return this.$store.state.market.quoteData
+    },
+    changeIsTransaction(){
+      return this.$store.state.isTransaction
+    }
+  },
   watch:{
     'heyue.heyueCode'(val){
-       console.log('触发~~~~~~~~~~~~~~~~合约代码监听')
-       this.$store.state.chanpinInfo = val
-       
+      
+       let hqMsg = JSON.parse(localStorage.getItem(this.$store.state.localStorageHq))[0].item
+       this.$store.state.market.quoteData
+      for(let i=0;i<hqMsg.length;i++){
+        if(hqMsg[i].code == val){
+          let time = eval(hqMsg[i].tradeTime)
+          this.gen = hqMsg[i].buyPoint
+          if(this.$pro.dateTime_range(time)){
+            this.isTransaction = true
+          }else{
+            this.isTransaction = false
+          }
+        }
+      }
+      
+
        //执行请求跟盘数据
-    }
+    },
+    changeQuoteData:function(val){
+      // console.log(val)
+      if(val.code == this.heyue.heyueCode){
+        this.gen = val.buyPoint
+      }
+    },
+    
   }
 };
 </script>

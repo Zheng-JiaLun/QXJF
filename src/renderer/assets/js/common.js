@@ -277,6 +277,42 @@ pro = {
 			return false;
 		}
 	},
+	/***
+	 *判断当前时间是否包含在时间段内 包含日期 以及时间
+	 * timeArr 传入时间节点数组 [{open:09:00,end:11:30},{open:13:00,end:15:00}]
+	 */
+	dateTime_range:function(timeArr){
+					let _newdate1 	= 	(new Date().getYear()+1900)+'-'+(new Date().getMonth()+1)+'-'+(new Date().getDate()+1)+' '//当前天数加一天
+					let _newdate2 	= 	(new Date().getYear()+1900)+'-'+(new Date().getMonth()+1)+'-'+(new Date().getDate()-1)+' '//当前天数减一天
+					let nowdata		=	(new Date().getYear()+1900)+'-'+(new Date().getMonth()+1)+'-'+(new Date().getDate())+' '//当前天数
+					let flag		= 	false
+				for(let i=0;i<timeArr.length;i++){
+					if(timeArr[i].end.slice(0,1) == '0'){//判断是否结束时间是第二天得情况
+						if(new Date().getHours() < timeArr[i].end.slice(0,2)){  //是否是凌晨得情况
+						  if(new Date(_newdate2+timeArr[i].open) <= new Date() && new Date() <= new Date(nowdata+timeArr[i].end)){
+							flag = true
+							break
+						  }
+						}else{
+						  if(new Date(nowdata+timeArr[i].open) <= new Date() && new Date() <= new Date(_newdate1+timeArr[i].end)){
+							flag = true
+							break
+						  }
+						}
+					  }else{
+						if(new Date(nowdata+timeArr[i].open) <= new Date() && new Date()  <= new Date(nowdata+timeArr[i].end)){
+						  flag = true
+						  break
+						}
+					  }
+				}
+
+				if(flag){
+				return true
+				}else{
+				return false
+				}
+	},
 	/**
 	 * 数组取最大值、最小值
 	 * 

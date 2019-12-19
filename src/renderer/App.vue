@@ -1,9 +1,9 @@
 <template>
   <div id="App">
     <el-menu
-     :default-active="activeIndex" 
+     :default-active="_activeIndex" 
      class="el-menu-demo" mode="horizontal"
-     :active='activeIndex'
+     :active='_activeIndex'
      @select="handleSelect"
     router
     text-color="#9fa6b0"
@@ -172,9 +172,9 @@ export default {
     },
   methods: {
     
-      handleSelect(keyPath) {
+      handleSelect(index,indexPath) {
         
-        //console.log(key, keyPath);
+        // console.log(index, indexPath,'22222222222222222222222222222222222222222222222222222222');
         // this.$store.state.path = keyPath;
       },
     
@@ -265,7 +265,7 @@ export default {
         let _this = this
         this.$pro.post('get_menu','').then((res) =>{
           this.$store.state.chanpinInfo = res.msg[0].item[0].code
-          console.log('~~~~~~~~~~~~~~~~~~~~~~',this.$store.state.chanpinInfo)
+          // console.log('~~~~~~~~~~~~~~~~~~~~~~',this.$store.state.chanpinInfo)
           localStorage.setItem(_this.$store.state.localStorageHq,JSON.stringify(res.msg))
         })
       },
@@ -299,6 +299,7 @@ export default {
   created(){
     this.postHangqing()
     this.timer()
+    
   //  window.addEventListener('setItem', ()=> {
   //     this.name = localStorage.getItem('ycxUserLoginState_QXJF');
   //      this.isLogin = true
@@ -313,29 +314,20 @@ export default {
   },
   computed:{
     ...mapGetters([
-      'loginStatus','path'
-    ])
+      'loginStatus'
+    ]),
+  
+    _activeIndex(){
+      return this.$store.state.activeIndex
+    }
   },
   
   watch:{
-    
-    path:function(){
-      console.log('监听vuex:path,改变就修改菜单栏选中效果')
-      this.activeIndex = this.$store.state.path
-    },
-      
-    loginStatus: function(){
-
-      // setInterval(function(){
-      //   location.reload();
-      // },1000)
-      
-    },
-    
+    loginStatus: function(){},
   },
  
   mounted(){
-    console.log(this.$store)
+    // console.log(this.$store)
     this.change();
     if(JSON.parse(localStorage.getItem('ycxUserLoginState_QXJF')) == true){
       this.$pro.isLogin()

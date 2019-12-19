@@ -239,66 +239,50 @@ export default {
       this.lodingKinfo()
     },
     changeNowTime:function(val){
-      
+      // console.log(this.isTransaction)
       let dateVal   =   val.replace(/\//g,'-')//吧时间格式 2019/01/01 00:00:00 转换成 2019-01-01 00:00:00 方便后面转化成时间戳进行对比
       
       let nowdata   =   dateVal.slice(0,val.indexOf(' ')+1)//取转换后的时间日期部分，用于拼接开盘得时段，方便转换成时间戳对比
       let flag      = false,
           flag2      = false
       let tradeTime = this.proInfo.tradeTime
-      // let hqArr = JSON.parse(localStorage.getItem(this.$store.state.localStorageHq))[0].item
-      // for(let i=0;i<hqArr.length;i++){
-      //   if(hqArr[i].code == this.$store.state.chanpinInfo){
-
-      //   }
-      // }
-      if(tradeTime){
-        
-         
-        // console.log(tradeTime)
+      
         for(let i=0;i<tradeTime.length;i++){
-          if(tradeTime[i].open.slice(0,1) == '0'){//判断是否结束时间是第二天得情况
-            let _newdate1 = (new Date().getYear()+1900)+'-'+(new Date().getMonth()+1)+'-'+(new Date().getDate()+1)//当前天数加一天
-            let _newdate2 = (new Date().getYear()+1900)+'-'+(new Date().getMonth()+1)+'-'+(new Date().getDate()-1)//当前天数减一天
-            // if(){  //是否是凌晨得情况
-            //   if(new Date(_newdate2+tradeTime[i].open+':00').getTime() <= new Date(dateVal).getTime()  <= new Date(_newdate1+tradeTime[i].end+':00').getTime()){
-            //     // console.log("当前为交易时段")
-            //     flag = true
-            //   }else{
-            //     console.log("非交易时段")
-            //   }
-            // }else{
-            //   if(new Date(_newdate2+tradeTime[i].open+':00').getTime() <= new Date(dateVal).getTime()  <= new Date(_newdate1+tradeTime[i].end+':00').getTime()){
-            //     // console.log("当前为交易时段")
-            //     flag = true
-            //   }else{
-            //     console.log("非交易时段")
-            //   }
-            // }
-            console.log(_newdate1,_newdate2)
-            
-          }else{
-            if(new Date(nowdata+tradeTime[i].open+':00').getTime() <= new Date(dateVal).getTime()  <= new Date(nowdata+tradeTime[i].end+':00').getTime()){
-              // console.log("当前为交易时段")
-              flag = true
+          if(tradeTime[i].end.slice(0,1) == '0'){//判断是否结束时间是第二天得情况
+            let _newdate1 = (new Date().getYear()+1900)+'-'+(new Date().getMonth()+1)+'-'+(new Date().getDate()+1)+' '//当前天数加一天
+            let _newdate2 = (new Date().getYear()+1900)+'-'+(new Date().getMonth()+1)+'-'+(new Date().getDate()-1)+' '//当前天数减一天
+            if(new Date().getHours() < 10){  //是否是凌晨得情况
+              if(new Date(_newdate2+tradeTime[i].open+':00') <= new Date(dateVal) && new Date(dateVal) <= new Date(nowdata+tradeTime[i].end+':00')){
+                // console.log("当前为交易时段0")
+                flag = true
+                break
+              }
             }else{
-              console.log("非交易时段")
+              if(new Date(nowdata+tradeTime[i].open+':00') <= new Date(dateVal) && new Date(dateVal) <= new Date(_newdate1+tradeTime[i].end+':00')){
+                // console.log("当前为交易时段1")
+                flag = true
+                break
+              }
+            }
+          }else{
+            if(new Date(nowdata+tradeTime[i].open+':00') <= new Date(dateVal) && new Date(dateVal)  <= new Date(nowdata+tradeTime[i].end+':00')){
+              // console.log("当前为交易时段2")
+              // console.log(tradeTime)
+              flag = true
+              break
             }
           }
-          
-          
-
         }
         if(flag){
           this.isTransaction = '交易中'
+          this.$store.state.isTransaction = true
         }else{
           this.isTransaction = '停止交易'
+          this.$store.state.isTransaction = false
         }
-      }
+       
       
     },
-
-   
   },
   mounted(){
     // this.$store.state.klineMsg

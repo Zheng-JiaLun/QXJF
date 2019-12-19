@@ -25728,7 +25728,7 @@ function KLineChartContainer(uielement) {
     //数据自动更新
     this.AutoUpdate = function (waitTime)  //waitTime 更新时间
     {
-        console.log("更新分钟数据")
+        // console.log("更新分钟数据")
         this.CancelAutoUpdate();
         // if (!this.IsAutoUpdate) return;
         // if (!this.Symbol) return;
@@ -27127,7 +27127,7 @@ function MinuteChartContainer(uielement) {
 
     //请求分时数据
     this.RequestMinuteData = function () {
-        console.log('我是分时线请求数据--')
+        // console.log('我是分时线请求数据--')
         var self = this;
         // var fields =
         //     [
@@ -27194,7 +27194,7 @@ function MinuteChartContainer(uielement) {
             })
             JSNetwork.HttpPost('get_hsi_chart', msg).then(function (data) {
                 self.ChartSplashPaint.IsEnableSplash = false;
-                 console.log('打印分时线数据:',data)
+                //  console.log('打印分时线数据:',data)
                  
                 self.ChangeRecvMinuteData(data);
                

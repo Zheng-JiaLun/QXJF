@@ -185,17 +185,18 @@ export default {
     },
     axiosChiCang(){
       let _this = this
-       if (!localStorage.getItem('ycxUserLoginState_QXJF')) { //判断是否为登录状态
+     
+       if (!localStorage.getItem(this.$store.state.localStorageLogin)) { //判断是否为登录状态
         console.log('未登录状态');
        
       } else {
         console.log('登录状态');
        let msg = JSON.stringify({
-        userID:JSON.parse(localStorage.getItem('ycxUserInfo_QXJF')).userId
+        userID:JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId
         })
         this.$pro.post('get_position_list_new', msg).then((res) => {
           _this.tableData = res.msg.data
-         
+          console.log("进入init持仓函数")
           let hqMsg = JSON.parse(localStorage.getItem(_this.$store.state.localStorageHq))[0].item,
               arr   = [];
           for(let i=0;i<_this.tableData.length;i++){
@@ -243,6 +244,9 @@ export default {
     changeQuoteData(){
       return this.$store.state.market.quoteData
     },
+    changeInitChicang(){
+      return this.$store.state.market.initChicang
+    }
     // changeTableData(){
     //   let _this = this
     //     for(let i=0;i<_this.tableData.length;i++){
@@ -271,31 +275,38 @@ export default {
         this.tableData = []
       }
     },
-   changeQuoteData:function(val){
-     let _this =this
-     let nullObj     = {}
-     let arr = [],a;
-    for(let i=0;i<this.tableData.length;i++){
-      if(val.code == this.tableData[i].futures_code){
-        this.tableData[i].buyPoint = val.buyPoint
-        nullObj = this.tableData[i]
-        this.$set(this.tableData,i,nullObj)  //强制刷新视图
-        //计算动态权益
-        for(let i=0;i<this.tableData.length;i++){
+    changeQuoteData:function(val){
+      let _this =this
+      let nullObj     = {}
+      let arr = [],a;
+      for(let i=0;i<this.tableData.length;i++){
+        if(val.code == this.tableData[i].futures_code){
+          this.tableData[i].buyPoint = val.buyPoint
+          nullObj = this.tableData[i]
+          this.$set(this.tableData,i,nullObj)  //强制刷新视图
+          //计算动态权益
+          for(let i=0;i<this.tableData.length;i++){
+            
           
-         
-          arr.push((this.tableData[i].buyPoint*1000 - this.tableData[i].futures_price*1000)*this.tableData[i].futures_num*this.tableData[i].cs/1000)
+            arr.push((this.tableData[i].buyPoint*1000 - this.tableData[i].futures_price*1000)*this.tableData[i].futures_num*this.tableData[i].cs/1000)
+          }
+        
+          _this.equity = eval(arr.join("+")).toFixed(2)
+          _this.$store.state.equityData = _this.equity
+          arr = []//清空arr
         }
-       
-        _this.equity = eval(arr.join("+")).toFixed(2)
-        _this.$store.state.equityData = _this.equity
-        arr = []//清空arr
-      }
 
+      }
+      
+      
+    },
+    //监听持仓变化,初始化持仓列表
+    changeInitChicang:function(val,oldVal){
+      let _this = this
+        _this.axiosChiCang();
+        console.log('初始化持仓成功!')
     }
-    
-    
-   }
+
     
   }
 };

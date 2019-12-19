@@ -23,7 +23,8 @@ const market = {
 		computedFdyk: false, //是否计算浮动盈亏
 		quoteData: [],
 		initHangqingList: [], //初始化行情列表
-		initChicangList: {}, //初始化持仓列表
+    initChicangList: {}, //初始化持仓列表
+    initChicang:0,//初始化持仓
 		updataChicangList: {}, //实时更新持仓列表 浮动盈亏计算
 		initSocketData: {}, //初始化行情最后一条数据
 		updataSocketData: null ,//监听持仓，指价列表新增
@@ -89,6 +90,7 @@ export default new Vuex.Store({
     chanpinInfo:'',		//产品编号(默认第一个)
     realTimeData:'',
     nowTime:'',//当前时间
+    activeIndex:'/',//导航栏默认选中项
     isDataChange:false,
     equityData:null,
     klineMsg:null,//K线页面右侧详情信息

@@ -84,11 +84,11 @@
             <p>{{userMsg.name?userMsg.name:"未登录"}}</p>
             <p class="flex">
               <span>权益:</span>
-              <span>{{changeEquityData}}元</span>
+              <span>{{changeLoginStatus?changeEquityData+'元':'暂无信息'}}</span>
             </p>
             <p class="flex" @click="click01()">
               <span>可用资金:</span>
-              <span>{{userMsg.money?userMsg.money:"未登录"}}</span>
+              <span>{{userMsg.money?userMsg.money:"暂无信息"}}</span>
             </p>
             <p class="flex">
               <span>资金使用率:</span>
@@ -206,9 +206,7 @@ export default {
       value9: "",
       listSize: "",
       klineFlag: "2",
-      proInfo: {
-        code: "HSI1906"
-      },
+     
       // klineFlag: 2,
       proInfo: {
         code: "HSI1906"
@@ -460,6 +458,14 @@ export default {
       this.reboxSize();
     });
   },
+  created(){
+    if(JSON.parse(localStorage.getItem(this.$store.state.localStorageLogin))){
+      this.userMsg = JSON.parse(localStorage.getItem(this.$store.state.localStorageUid))
+    }else{
+      this.userMsg.money = false
+      this.userMsg.name = false
+    }
+  },
   methods: {
     
     // 此函数获取窗口大小，并动态修改相关板块的高度
@@ -591,8 +597,11 @@ export default {
     changeLoginStatus:function(val){
       if(val == true){
         // console.log(JSON.parse(localStorage.getItem('ycxUserInfo_QXJF'))) 
-        let msg =  JSON.parse(localStorage.getItem('ycxUserInfo_QXJF'))
+        let msg =  JSON.parse(localStorage.getItem(this.$store.state.localStorageUid))
         this.userMsg = msg
+      }else{
+        this.userMsg.money = false
+        this.userMsg.name = false
       }
     }
   },

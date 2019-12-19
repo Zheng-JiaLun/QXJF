@@ -60,6 +60,9 @@ export default {
     computed:{
         klineData() {
             return this.$store.getters.kDataSocket
+        },
+        changeCode(){
+            return this.$store.state.chanpinInfo
         }
     },
     watch: {
@@ -95,6 +98,10 @@ export default {
             },
             deep: true
         },
+        // changeCode:function(){
+        //     this.CreateMinuteChart()
+        //     // console.log("k线监听code````````",this)
+        // }
     }
 }
 </script>
