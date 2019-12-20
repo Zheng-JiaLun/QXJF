@@ -4,38 +4,41 @@
       :data="delData"
       tooltip-effect="light"
       highlight-current-row
+     
        @current-change="handleCurrentChange"
     >
-      <el-table-column prop="name" label="合约" show-overflow-tooltip ></el-table-column>
-      <el-table-column prop="position" label="手数" show-overflow-tooltip ></el-table-column>
+      <el-table-column prop="futures_name" label="合约" show-overflow-tooltip ></el-table-column>
+      <el-table-column prop="price_unit" label="手数" show-overflow-tooltip ></el-table-column>
       <el-table-column label="买卖" show-overflow-tooltip >
         <template slot-scope="scope">
           <span
-            :style="scope.row.business == '买' ? 'color:#FF3322;' : 'color:#00BD00;'"
-          >{{scope.row.business}}</span>
+            :style="scope.row.updown == 1 ? 'color:#FF3322;' : 'color:#00BD00;'"
+          >{{scope.row.updown == 1?"买":"卖"}}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="openPrice" label="开仓价格" show-overflow-tooltip ></el-table-column>
-      <el-table-column prop="opentime" label="开仓时间" width="150" show-overflow-tooltip ></el-table-column>
-      <el-table-column prop="openType" label="开仓方式" show-overflow-tooltip ></el-table-column>
-      <el-table-column prop="closePrice" label="平仓价格" show-overflow-tooltip ></el-table-column>
+      <el-table-column prop="open_price" label="开仓价格" show-overflow-tooltip ></el-table-column>
+      <el-table-column prop="open_time" label="开仓时间" width="150" show-overflow-tooltip ></el-table-column>
+      <el-table-column prop="orderOpenType" label="开仓方式" show-overflow-tooltip ></el-table-column>
+      <el-table-column prop="orderType" label="平仓方式" show-overflow-tooltip ></el-table-column>
+      <el-table-column prop="close_price" label="平仓价格" show-overflow-tooltip ></el-table-column>
       <el-table-column label="本币盈亏" show-overflow-tooltip >
         <template slot-scope="scope">
           <span
             :style="scope.row.this_pro_loss > 0 ? 'color:#FF3322;' : 'color:#00BD00;'"
-          >{{scope.row.this_pro_loss}}</span>
+          >{{(scope.row.close_price*1000 - scope.row.open_price*1000)*scope.row.cs/1000}}</span>
         </template>
       </el-table-column>
       <el-table-column label="盈亏" show-overflow-tooltip >
         <template slot-scope="scope">
           <span
-            :style="scope.row.pro_loss > 0 ? 'color:#FF3322;' : 'color:#00BD00;'"
-          >{{scope.row.pro_loss}}</span>
+            :style="scope.row.yk > 0 ? 'color:#FF3322;' : 'color:#00BD00;'"
+          >{{scope.row.yk}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="成交订单" show-overflow-tooltip >
+       <el-table-column prop="sx" label="手续费" show-overflow-tooltip ></el-table-column>
+      <el-table-column label="成交订单号" show-overflow-tooltip >
         <template slot-scope="scope">
-          <span style="color: #DCDC0A;">{{scope.row.delOrder}}</span>
+          <span style="color: #DCDC0A;">{{scope.row.serialnum}}</span>
         </template>
       </el-table-column>
       <el-table-column label="止盈止损" show-overflow-tooltip >
@@ -49,89 +52,10 @@
 <script>
 export default {
   name: "Chengjiao",
-  props: ["Listheight"],
+  props: ["Listheight","value"],
   data() {
     return {
-      delData: [
-        {
-          name: "小恒生1905",
-          position: 1,
-          business: "买",
-          openPrice: 79586,
-          opentime: "05-07 13:15:00",
-          openType: "市价成交",
-          closePrice: 75698,
-          this_pro_loss: 733,
-          pro_loss: -1524,
-          delOrder: "MHI1905",
-          stop_pro_loss: "0/4"
-        },
-        {
-          name: "小恒生1905",
-          position: 1,
-          business: "买",
-          openPrice: 79586,
-          opentime: "05-07 13:15:00",
-          openType: "市价成交",
-          closePrice: 75698,
-          this_pro_loss: 733,
-          pro_loss: 1524,
-          delOrder: "MHI1905",
-          stop_pro_loss: "0/4"
-        },
-        {
-          name: "小恒生1905",
-          position: 1,
-          business: "卖",
-          openPrice: 79586,
-          opentime: "05-07 13:15:00",
-          openType: "市价成交",
-          closePrice: 75698,
-          this_pro_loss: 733,
-          pro_loss: -1524,
-          delOrder: "MHI1905",
-          stop_pro_loss: "0/4"
-        },
-        {
-          name: "小恒生1905",
-          position: 1,
-          business: "卖",
-          openPrice: 79586,
-          opentime: "05-07 13:15:00",
-          openType: "市价成交",
-          closePrice: 75698,
-          this_pro_loss: 733,
-          pro_loss: 1524,
-          delOrder: "MHI1905",
-          stop_pro_loss: "0/4"
-        },
-        {
-          name: "小恒生1905",
-          position: 1,
-          business: "卖",
-          openPrice: 79586,
-          opentime: "05-07 13:15:00",
-          openType: "市价成交",
-          closePrice: 75698,
-          this_pro_loss: 733,
-          pro_loss: -1524,
-          delOrder: "MHI1905",
-          stop_pro_loss: "0/4"
-        },
-        {
-          name: "小恒生1905",
-          position: 1,
-          business: "卖",
-          openPrice: 79586,
-          opentime: "05-07 13:15:00",
-          openType: "市价成交",
-          closePrice: 75698,
-          this_pro_loss: 733,
-          pro_loss: 1524,
-          delOrder: "MHI1905",
-          stop_pro_loss: "0/4"
-        }
-      ]
+      delData: []
     };
   },
   methods:{
@@ -154,7 +78,45 @@ export default {
     },
      handleCurrentChange(val) {
         // this.currentRow = val;
+      },
+      initChengJiao(){
+        if (!localStorage.getItem(this.$store.state.localStorageLogin)) { //判断是否为登录状态
+          // console.log('未登录状态');
+        
+        } else {
+          // console.log('登录状态',JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId);
+          let nowTime = new Date().getFullYear()+'-'+new Date().getMonth()+'-'+new Date().getDate()
+          let msg = JSON.stringify({
+            userID: JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId,
+            pageIndex: 1,
+            pageSize: 1000,
+            startTime: this.changeValue[0]+' 00:00:00',
+            endTime: this.changeValue[1]+' 23:59:59'
+          });
+          this.$pro.post('get_history_order_new', msg).then((res) => {
+            if(res.result == 1){
+              this.delData = res.msg.data
+            }else{
+              console.log("错误:",res.msg)
+            }
+              this.delData = res.msg.data
+
+          })
+        }
       }
+  },
+  created(){
+    this.initChengJiao()
+  },
+  computed:{
+    changeValue(){
+      if(this.value){
+        return  [new Date(this.value[0]).getFullYear()+'-'+new Date(this.value[0]).getMonth()+'-'+new Date(this.value[0]).getDate(),new Date(this.value[1]).getFullYear()+'-'+new Date(this.value[1]).getMonth()+'-'+new Date(this.value[1]).getDate()]
+      }else{
+        return  [new Date().getFullYear()+'-'+(new Date().getMonth()+1)+'-'+new Date().getDate(),new Date().getFullYear()+'-'+(new Date().getMonth()+1)+'-'+new Date().getDate()]
+      }
+      
+    }
   },
   watch: {
     //  当窗口发生变化或页面加载时，获父级传递过来的高度，动态修改自身相关元素的高度
@@ -162,6 +124,10 @@ export default {
       handler: function(Val, oldVal) {
         document.getElementById("chengjiao").style.height = +Val + "px";
       }
+    },
+    changeValue:function(val){
+      console.log(val)
+      this.initChengJiao()
     }
   },
 };

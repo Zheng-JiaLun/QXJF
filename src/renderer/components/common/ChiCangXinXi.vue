@@ -1,7 +1,6 @@
 <template>
   <div class="chicang">
     <div id="chicangTable">
-     
       <el-table :data="tableData" class="table01" highlight-current-row>
         <el-table-column width="45px">
           <template slot-scope>
@@ -62,6 +61,7 @@ export default {
       dialogVisible: false,
       zuixinjia: "暂无数据",
       equity:null,
+      count:0,
       tableData: [
         {
           number: "MHI1905",
@@ -187,16 +187,21 @@ export default {
       let _this = this
      
        if (!localStorage.getItem(this.$store.state.localStorageLogin)) { //判断是否为登录状态
-        console.log('未登录状态');
+        // console.log('未登录状态');
        
       } else {
-        console.log('登录状态');
+        // console.log('登录状态');
        let msg = JSON.stringify({
         userID:JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId
         })
         this.$pro.post('get_position_list_new', msg).then((res) => {
           _this.tableData = res.msg.data
-          console.log("进入init持仓函数")
+          // _this.tableData = []
+          // for(let i=0;i<res.msg.data.length;i++){
+          //   _this.tableData.push(res.msg.data[i])
+          // }
+          // _this.tableData.reverse()
+         
           let hqMsg = JSON.parse(localStorage.getItem(_this.$store.state.localStorageHq))[0].item,
               arr   = [];
           for(let i=0;i<_this.tableData.length;i++){
@@ -302,9 +307,9 @@ export default {
     },
     //监听持仓变化,初始化持仓列表
     changeInitChicang:function(val,oldVal){
-      let _this = this
-        _this.axiosChiCang();
-        console.log('初始化持仓成功!')
+  
+        this.axiosChiCang();
+       
     }
 
     

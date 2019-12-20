@@ -108,7 +108,7 @@
                 default-value="2019-09-01"
               ></el-date-picker>
             </div>
-            <div class="flex" v-show="showorhide2">
+            <!-- <div class="flex" v-show="showorhide2">
               <p>起止日期：</p>
               <el-date-picker
                 v-model="value9"
@@ -117,7 +117,7 @@
                 end-placeholder="结束日期"
                 default-value="2019-09-01"
               ></el-date-picker>
-            </div>
+            </div> -->
           </div>
           <div class="action flex">
             <div class="new flex" @click="showBox()">
@@ -144,7 +144,7 @@
           <!-- 合约清单展示区域 -->
           <div class="centerLBR">
             <div id="List">
-              <List @listenTabindex="showBoxindex()" :listSize="listSize"></List>
+              <List @listenTabindex="showBoxindex()" :listSize="listSize" :value="value1"></List>
             </div>
             <!-- <div class="listbottom">
               <span>上证指数：</span>
@@ -198,7 +198,7 @@ export default {
         money:false
       },
       showorhide1: false,
-      showorhide2: false,
+      
       height: "300px",
       tabindex: 0,
       isactive: 0,
@@ -488,16 +488,13 @@ export default {
     // 此函数用于控制时间选择器的隐藏或显示
     showBoxindex(data) {
       if (localStorage.getItem("tabindex") == 2) {
-        this.showorhide2 = false;
+        // this.showorhide2 = false;
         this.showorhide1 = true;
-      } else if (
-        localStorage.getItem("tabindex") == 3 ||
-        localStorage.getItem("tabindex") == 4
-      ) {
-        this.showorhide2 = true;
-        this.showorhide1 = false;
+      } else if (localStorage.getItem("tabindex") == 3 || localStorage.getItem("tabindex") == 4) {
+        // this.showorhide2 = true;
+        this.showorhide1 = true;
       } else {
-        this.showorhide2 = false;
+        // this.showorhide2 = false;
         this.showorhide1 = false;
       }
     },

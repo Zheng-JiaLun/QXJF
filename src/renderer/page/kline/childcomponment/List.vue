@@ -56,10 +56,10 @@
       </el-tab-pane>
       <!-- 在此区域引入成交查询的组件 -->
       <el-tab-pane label="成交查询" name="chengjiao" class="pane" id="chengjiao">
-        <Chengjiao></Chengjiao>
+        <Chengjiao :value="value"></Chengjiao>
       </el-tab-pane>
       <el-tab-pane label="出入金查询" name="churujin" class="pane" id="churujin">
-        <ChuRuJin></ChuRuJin>
+        <ChuRuJin :value="value"></ChuRuJin>
       </el-tab-pane>
       <el-tab-pane label="交割查询" name="jiaoge" class="pane" id="jiaoge">
         <JiaoGe></JiaoGe>
@@ -80,7 +80,7 @@ import JiaoGe from "../../../components/common/JiaoGeChaXun.vue";
 
 export default {
   name: "List",
-  props:['listSize'],
+  props:['listSize','value'],
   data() {
     return {
       Listheight:'',

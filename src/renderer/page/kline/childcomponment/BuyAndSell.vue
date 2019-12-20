@@ -140,12 +140,13 @@ export default {
                 tradePrice: _this.gen,
                 futuresCode: _this.heyue.heyueCode,
                 updown: 1,
-                priceType: 2,
+                priceType: 1,
                 stopLoss: Number(_this.stopLoss),
                 stopProfit: Number(_this.stopProfit)
               })
               _this.$pro.post('buy_sale_order', msg).then((res) => {
                 // _this.guadanState1 = false;
+                console.log(res)
                 if (res.result == 1) {
                   // _this.active = 0;
                   // console.log(res)
@@ -162,7 +163,7 @@ export default {
             }else{
                this.$message({
                   type: 'warning',
-                  message:'失败,未开盘~'
+                  message:'失败~'
                 });
             }
             
@@ -179,10 +180,39 @@ export default {
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            this.$message({
-              type: 'success',
-              message: '卖出成功!'
-            });
+             if(this.isTransaction){
+              var msg = JSON.stringify({
+                userID: JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId,
+                tradeNum: _this.num,
+                tradePrice: _this.gen,
+                futuresCode: _this.heyue.heyueCode,
+                updown: 2,
+                priceType: 1,
+                stopLoss: Number(_this.stopLoss),
+                stopProfit: Number(_this.stopProfit)
+              })
+              _this.$pro.post('buy_sale_order', msg).then((res) => {
+                // _this.guadanState1 = false;
+                console.log(res)
+                if (res.result == 1) {
+                  // _this.active = 0;
+                  // console.log(res)
+                  _this.$store.state.market.initChicang++
+                  _this.$message({
+                    type: 'success',
+                    message:'卖出成功'
+                  });
+                }else{
+                  this.$message.error(res.message);
+                  // alert(res.message)
+                }
+              })
+            }else{
+               this.$message({
+                  type: 'warning',
+                  message:'失败~'
+                });
+            }
           }).catch(() => {
             this.$message({
               type: 'info',

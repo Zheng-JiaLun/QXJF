@@ -8,25 +8,25 @@
       max-height="250"
       highlight-current-row
     >
-      <el-table-column prop="userid" label="用户账号" show-overflow-tooltip ></el-table-column>
-      <el-table-column prop="money" label="金额" show-overflow-tooltip ></el-table-column>
+      <el-table-column prop="user_name" label="用户账号" show-overflow-tooltip ></el-table-column>
+      <el-table-column prop="tvalue" label="金额" show-overflow-tooltip ></el-table-column>
       <el-table-column label="出入" show-overflow-tooltip >
         <template slot-scope="scope">
-          <span style="color: #DCDC0A;">{{scope.row.outorin}}</span>
+          <span style="color: #DCDC0A;">{{scope.row.type==0?"入":"出"}}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="date" label="申请日期" show-overflow-tooltip ></el-table-column>
-      <el-table-column prop="status" label="处理状态" show-overflow-tooltip ></el-table-column>
-      <el-table-column prop="chulidate" label="处理日期" show-overflow-tooltip ></el-table-column>
-      <el-table-column prop="paymode" label="支付方式" show-overflow-tooltip ></el-table-column>
-      <el-table-column prop="serial_number" label="流水号" show-overflow-tooltip ></el-table-column>
+      <el-table-column prop="addtime" label="申请日期" show-overflow-tooltip ></el-table-column>
+      <el-table-column prop="state_name" label="处理状态" show-overflow-tooltip ></el-table-column>
+      <el-table-column prop="checktime" label="处理日期" show-overflow-tooltip ></el-table-column>
+      <el-table-column prop="pay_type" label="支付方式" show-overflow-tooltip ></el-table-column>
+      <el-table-column prop="sn" label="流水号" show-overflow-tooltip ></el-table-column>
     </el-table>
   </div>
 </template>
 <script>
 export default {
   name: "churujin",
-  props: ["Listheight"],
+  props: ["Listheight","value"],
   data() {
     return {
       ChuRuJinData: [
@@ -79,6 +79,50 @@ export default {
       handler: function(Val, oldVal) {
         document.getElementById("churujin").style.height = +Val + "px";
       }
+    },
+     changeValue:function(val){
+      this.initChurujin()
+    }
+  },
+  methods:{
+    initChurujin(){
+      if (!localStorage.getItem(this.$store.state.localStorageLogin)) { //判断是否为登录状态
+          // console.log('未登录状态');
+        
+      } else {
+        // console.log('登录状态',JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId);
+        let nowTime = new Date().getFullYear()+'-'+new Date().getMonth()+'-'+new Date().getDate()
+        let msg = JSON.stringify({
+          user_id: JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId,
+          pageIndex: 1,
+          pageSize: 1000,
+          startTime: this.changeValue[0]+' 00:00:00',
+          endTime: this.changeValue[1]+' 23:59:59'
+        });
+        this.$pro.post('get_inout_money_new', msg).then((res) => {
+          console.log(res)
+          if(res.result == 1){
+            this.ChuRuJinData = res.msg.data
+          }else{
+            console.log("错误:",res.msg)
+          }
+          
+
+        })
+      }
+    }
+  },
+  created(){
+    this.initChurujin()
+  },
+  computed:{
+    changeValue(){
+      if(this.value){
+        return  [new Date(this.value[0]).getFullYear()+'-'+new Date(this.value[0]).getMonth()+'-'+new Date(this.value[0]).getDate(),new Date(this.value[1]).getFullYear()+'-'+new Date(this.value[1]).getMonth()+'-'+new Date(this.value[1]).getDate()]
+      }else{
+        return  [new Date().getFullYear()+'-'+(new Date().getMonth()+1)+'-'+new Date().getDate(),new Date().getFullYear()+'-'+(new Date().getMonth()+1)+'-'+new Date().getDate()]
+      }
+      
     }
   },
 };
