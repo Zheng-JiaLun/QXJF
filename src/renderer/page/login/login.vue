@@ -158,7 +158,7 @@ export default {
                         // this.resetSetItem(_this.$store.state.localStorageLogin,true)
                         //提交状态EVNT_COMM_SHOW_STATIUS就是固定的id
                         // this.$store.dispatch('loginStatus')
-                        console.log(this.$store)
+                        // console.log(this.$store)
                         // _this.$initChicang();
                         // _this.$store.commit('setQuoteStatus', false);
                         // _this.$initHangqing();

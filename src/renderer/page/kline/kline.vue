@@ -119,15 +119,15 @@
               ></el-date-picker>
             </div> -->
           </div>
-          <div class="action flex">
-            <div class="new flex" @click="showBox()">
+          <div class="action flex" :v-show="islogin">
+            <div class="new flex" @click="isplaceOrder = !isplaceOrder">
               <i class="el-icon-sort"></i>
             </div>
             <div class="ping flex">
               <!-- <i class="el-icon-bottom-left"></i> -->
               <button>
                 <i class="el-icon-bottom-left"></i>
-                <span>全部平仓</span>
+                <span @click="allClose()">全部平仓</span>
               </button>
               <!-- <input type="button" value="全部平仓"> -->
               <!-- <span>全部平仓</span> -->
@@ -152,6 +152,10 @@
               <span class="spanszzs">2909.46</span>
               <span class="spanszzs">2909.46</span>
             </div>-->
+          </div>
+          <!-- 买卖下单操作窗口(默认隐藏) -->
+          <div id="placeOrder" v-show="isplaceOrder">
+            <PlaceOrder></PlaceOrder>
           </div>
         </div>
       </div>
@@ -179,6 +183,7 @@ import Win from "electron-vue-windows";
 import CandleStick from "../kline/childcomponment/CandleStick/CandleStick.vue";
 // import Hello from "../kline/childcomponment/HelloWorld.vue";
 import MinuteBox from "../kline/childcomponment/timeSLine.vue";
+import PlaceOrder from "../kline/childcomponment/placeOrder";
 export default {
   name: "kline",
   data() {
@@ -193,6 +198,9 @@ export default {
         Low:this.$store.state.klineTopMsg.Low,
         YClose:this.$store.state.klineTopMsg.YClose
       } ,
+      isplaceOrder:false,//另一种下单界面
+      pingcang:null,
+      islogin:false,
       userMsg:{
         name:false,
         money:false
@@ -459,11 +467,14 @@ export default {
     });
   },
   created(){
+    //判断是否登录
     if(JSON.parse(localStorage.getItem(this.$store.state.localStorageLogin))){
       this.userMsg = JSON.parse(localStorage.getItem(this.$store.state.localStorageUid))
+      this.islogin = true
     }else{
       this.userMsg.money = false
       this.userMsg.name = false
+      this.islogin = false
     }
   },
   methods: {
@@ -524,7 +535,40 @@ export default {
         this.candleHeight = (Hight - 115) / 2; //将高度传给K线组件
       }
     },
-
+    //全部平仓
+    allClose(){
+      console.log(this.$store.state.serialnum)
+      this.$confirm('确定全部平仓?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        center: true
+      }).then(() => {
+        var msg = JSON.stringify({
+            userID:JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId,
+            serialNum:this.$store.state.serialnum.toString()
+          })
+         console.log(msg)
+          _this.$post('select_close',msg).then(function(res){
+            if(res.results == 1){
+               _this.$store.state.market.initChicang++
+              this.$message({
+                type: 'success',
+                message: '全部平仓成功!'
+              });
+            }else{
+              
+              alert('错误:'+res.msg.Message)
+            }
+          })
+       
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消全部平仓'
+        });
+      });
+    },
     // 点击选中时背景发生改变
     dianji(index) {
       this.isactive = index;
@@ -556,23 +600,23 @@ export default {
     showDatePicker() {
       return false;
     },
-    async showBox() {
-      let data = await this.$Win.openWin({
-        // browserwindow原生属性
-        width: 1400, // 窗口宽
-        height: 516, // 窗口高
+    // async showBox() {
+    //   let data = await this.$Win.openWin({
+    //     // browserwindow原生属性
+    //     width: 1400, // 窗口宽
+    //     height: 516, // 窗口高
 
-        // electron-vue-windows自定义的属性
-        windowConfig: {
-          router: "/moni", // 路由 *必填
-          data: {
-            id: 1
-          }, // 传送数据
-          name: "yidemoni", // 窗口名称
-          animation: "fromLeft"
-        }
-      });
-    },
+    //     // electron-vue-windows自定义的属性
+    //     windowConfig: {
+    //       router: "/moni", // 路由 *必填
+    //       data: {
+    //         id: 1
+    //       }, // 传送数据
+    //       name: "yidemoni", // 窗口名称
+    //       animation: "fromLeft"
+    //     }
+    //   });
+    // },
     //父组件中接受来自子组件的信息
 
     toFatherMinute(e){
@@ -588,6 +632,9 @@ export default {
    },
    changeEquityData:function(){
      return this.$store.state.equityData
+   },
+   changeIsplaceOrder(){
+     return this.$store.state.isplaceOrder
    }
   },
   watch:{
@@ -596,9 +643,18 @@ export default {
         // console.log(JSON.parse(localStorage.getItem('ycxUserInfo_QXJF'))) 
         let msg =  JSON.parse(localStorage.getItem(this.$store.state.localStorageUid))
         this.userMsg = msg
+        this.islogin = true
       }else{
         this.userMsg.money = false
         this.userMsg.name = false
+        this.islogin = false
+      }
+    },
+    changeIsplaceOrder:function(val){
+      if(val){
+        this.isplaceOrder = true
+      }else{
+        this.isplaceOrder = false
       }
     }
   },
@@ -610,6 +666,7 @@ export default {
     zbEchart,
     // Hello,
     MinuteBox,
+    PlaceOrder,
   }
 };
 </script>
@@ -763,6 +820,8 @@ export default {
             }
           }
           button {
+            cursor: pointer;
+            outline: none;
             height: 30px;
             color: #d6d6d6;
             background: rgba(34, 39, 46, 1);
@@ -774,9 +833,20 @@ export default {
         }
       }
       .centerLB {
+        position: relative;
         overflow: hidden;
         width: 100%;
         display: flex;
+        #placeOrder{
+          width: 100%;
+          height: 100%;
+          background: #2e71b4;
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          z-index: 3;
+
+        }
         .centerLBL {
           background: #191B1F;
           width: 30%;

@@ -101,7 +101,9 @@ export default new Vuex.Store({
       Low:"",
       YClose:"",
       Close:""
-    }//K线插件顶部数据信息栏
+    },//K线插件顶部数据信息栏
+    serialnum:[],
+    isplaceOrder:false,
   
   },
   mutations,

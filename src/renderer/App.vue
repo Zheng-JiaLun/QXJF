@@ -40,10 +40,10 @@
          <el-menu-item class="fr" style="float:right" @click="minimize">
           <i class="el-icon-minus"></i>
         </el-menu-item>      
-        <!-- <el-menu-item class="fr" style="float:right">
+        <el-menu-item class="fr" style="float:right" @click="reloadX()">
           <i class="el-icon-refresh"></i>
           <span slot="title">刷新</span>
-        </el-menu-item>   -->
+        </el-menu-item>  
         <el-menu-item class="fr" style="float:right" @click="showBox('/zhuanzhang2')">
           <i class="el-icon-s-finance" ></i>
           <span slot="title" >银期转账</span>
@@ -88,44 +88,8 @@
       <button @click="logout()">退出登录</button>
     </div>
     <!-- <div class="line"></div> -->
-    <router-view ></router-view>
-    <!-- <div id="login">
-        <div class="content">
-            <h1><span></span>欢迎登录<i class="el-icon-close" @click="closeWinC()"></i></h1>
-            <div class="user">
-                <p>账号</p>
-                <el-input v-model="loginInput.user" type="number" :placeholder="userPla" @blur="userOutput()"></el-input>
-            </div>
-            <div class="pwd">
-                <p>密码</p>
-                <el-input v-model="loginInput.pwd" :placeholder="pwdPla" show-password @blur="pwdOutput()"></el-input>
-            </div>
-            <el-button type="primary" @click="login()">登录</el-button>
-            <div class="zidong">
-                <div class="left">
-                <el-radio v-model="radio" label="1">下次自动登录</el-radio>
-                </div>
-                <div class="right">
-                    <a @click="setPrLoss()">忘记密码？</a>
-                    <span style="padding: 0 10px;"> | </span>
-                    <router-link to="/register">注册</router-link>
-                    
-                </div>
-            </div>
-        </div>
-       
-        <div class="footer">
-                <img src="./assets/二维码.png">
-                <div class="middle">
-                    <p>易得量化APP</p>
-                    <p>随时随地 快捷方便</p>
-                    <p style="color:rgba(115,134,181,1);">扫码下载易得量化APP</p>
-                    
-                </div>
-                <img src="./assets/work.png">
-        </div>
-    </div>
-    <div id="register"></div> -->
+    <router-view v-if="isRouterAlive"></router-view>
+   
   </div>
 </template>
 
@@ -151,8 +115,15 @@ export default {
   computed:
     mapState(['accountState','main'])
   ,
+  provide(){
+    return {
+      reload:this.reload
+    }
+  },
   data() {
       return {
+        isRouterAlive:true,
+       
         windowsIndex:'',
         activeIndex: '/',
         //state.loginStatus:null,
@@ -171,7 +142,15 @@ export default {
       };
     },
   methods: {
-    
+    reloadX(){
+      this.reload()
+    },
+      reload(){
+        this.isRouterAlive = false
+        this.$nextTick(function(){
+          this.isRouterAlive = true
+        })
+      },
       handleSelect(index,indexPath) {
         
         // console.log(index, indexPath,'22222222222222222222222222222222222222222222222222222222');
@@ -279,21 +258,27 @@ export default {
      
       
       async showBoxxiadan() {
-      let data = await this.$Win.openWin({
-        // browserwindow原生属性
-        width: 1400, // 窗口宽
-        height: 516, // 窗口高
+        // console.log()
+        if(this.$route.path == '/kline'){
+           this.$store.state.isplaceOrder = !this.$store.state.isplaceOrder
+        }else{
+          let data = await this.$Win.openWin({
+            // browserwindow原生属性
+            width: 1400, // 窗口宽
+            height: 516, // 窗口高
 
-        // electron-vue-windows自定义的属性
-        windowConfig: {
-          router: "/moni", // 路由 *必填
-          data: {
-            id: 1
-          }, // 传送数据
-          name: "yidemoni", // 窗口名称
-          animation: "fromBottom"
+            // electron-vue-windows自定义的属性
+            windowConfig: {
+              router: "/moni", // 路由 *必填
+              data: {
+                id: 1
+              }, // 传送数据
+              name: "yidemoni", // 窗口名称
+              animation: "fromBottom"
+            }
+          });
         }
-      });
+      
     }
   },
   created(){
@@ -324,6 +309,12 @@ export default {
   
   watch:{
     loginStatus: function(){},
+    // 监听路由
+    // $route(to,from){
+    //   if(from.path == '/kline'){
+       
+    //   }
+    // }
   },
  
   mounted(){
@@ -404,6 +395,7 @@ function generateUUID() {
         background: #2e71b4;
       }
   }
+
 .el-menu{
     width: 100%;
     height: 60px;

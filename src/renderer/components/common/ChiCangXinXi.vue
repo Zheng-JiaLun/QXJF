@@ -3,8 +3,8 @@
     <div id="chicangTable">
       <el-table :data="tableData" class="table01" highlight-current-row>
         <el-table-column width="45px">
-          <template slot-scope>
-            <i class="el-icon-remove" style="font-size: 18px;color: #4176D8;cursor: pointer;"></i>
+          <template slot-scope="scope">
+            <i class="el-icon-remove" @click="setPingchang(scope.row)" style="font-size: 18px;color: #4176D8;cursor: pointer;"></i>
           </template>
         </el-table-column>
         <el-table-column prop="futures_code" label="编号" show-overflow-tooltip></el-table-column>
@@ -203,9 +203,10 @@ export default {
           // _this.tableData.reverse()
          
           let hqMsg = JSON.parse(localStorage.getItem(_this.$store.state.localStorageHq))[0].item,
-              arr   = [];
+              arr   = [],
+              serialNum = [];
           for(let i=0;i<_this.tableData.length;i++){
-
+            serialNum.push(_this.tableData[i].serialnum)
             for(let j=0;j<hqMsg.length;j++){
               if(_this.tableData[i].futures_code == hqMsg[j].code ){
                 _this.tableData[i].buyPoint = hqMsg[j].buyPoint
@@ -213,14 +214,75 @@ export default {
               }
             }
           }
+
             _this.equity = eval(arr.join("+"))
-           
+           _this.$store.state.serialnum = serialNum
             _this.$store.state.equityData = _this.equity
         })
        
       }
      
       
+    },
+    //平仓
+    setPingchang(msg){
+      console.log(msg)
+      const h = this.$createElement;
+      this.$msgbox({
+        title: '提示',
+        message: h('p', {style:'text-align:center;'}, [
+         
+          h('p', null, msg.futures_name+' '+msg.futures_code),
+          h('p', {style:'color:red'},msg.updown==1?'买'+msg.futures_num:'卖'+msg.futures_num),
+         
+          h('span', null, '确定平仓 '),
+          h('i', { style: 'color: teal' }, '?')
+        ]),
+        center: true,
+        showCancelButton: true,
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        // beforeClose: (action, instance, done) => {
+        //   if (action === 'confirm') {
+        //     instance.confirmButtonLoading = true;
+        //     instance.confirmButtonText = '执行中...';
+        //     setTimeout(() => {
+        //       done();
+        //       setTimeout(() => {
+        //         instance.confirmButtonLoading = false;
+        //       }, 300);
+        //     }, 3000);
+        //   } else {
+        //     done();
+        //   }
+        // }
+      }).then(action => {
+        // let userId = JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId
+        let msgs = JSON.stringify({
+            userID:JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId,
+            tradeNum: msg.futures_num,
+            tradePrice: msg.futures_price,
+            futuresCode: msg.futures_code,
+            updown: msg.updown,
+            priceType: msg.orderTradeType,
+            serialNum: msg.serialnum,
+            stopLoss: msg.stoploss,
+            stopProfit:msg.stopprofit
+          })
+          // console.log(msg);
+          this.$pro.post('close_position', msgs).then((res) => {
+            console.log(res)
+            if(res.result == 1){
+              this.axiosChiCang()
+               this.$message({
+                type: 'success',
+                message: '成功'
+              });
+            }
+           
+          })
+        
+      });
     },
     c(row) {
       this.zuixinjia = row.myPrice;
