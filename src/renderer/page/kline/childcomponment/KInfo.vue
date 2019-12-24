@@ -56,7 +56,7 @@
           </li>
           <li class="flex flex-align-items-center flex-justify-content-sb">
             <span>涨幅</span>
-            <span style="color: #00BD00;">{{proInfo.upF}}</span>
+            <span style="color: #00BD00;">{{proInfo.upF}}%</span>
           </li>
           <li class="flex flex-align-items-center flex-justify-content-sb">
             <span>开盘</span>
@@ -232,6 +232,9 @@ export default {
     },
     changChanpinInfo(){
       return this.$store.state.chanpinInfo
+    },
+    changekDataSocket(){
+      return this.$store.getters.kDataSocket
     }
   },
   watch:{
@@ -248,10 +251,10 @@ export default {
       let tradeTime = this.proInfo.tradeTime
       
         for(let i=0;i<tradeTime.length;i++){
-          if(tradeTime[i].end.slice(0,1) == '0'){//判断是否结束时间是第二天得情况
+          if(tradeTime[i].end.slice(0,1) == '0' && tradeTime[i].end.slice(0,2) < tradeTime[i].open.slice(0,2)){//判断是否结束时间是第二天得情况
             let _newdate1 = (new Date().getYear()+1900)+'-'+(new Date().getMonth()+1)+'-'+(new Date().getDate()+1)+' '//当前天数加一天
             let _newdate2 = (new Date().getYear()+1900)+'-'+(new Date().getMonth()+1)+'-'+(new Date().getDate()-1)+' '//当前天数减一天
-            if(new Date().getHours() < 10){  //是否是凌晨得情况
+            if(new Date().getHours() < tradeTime[i].end.slice(0,2)){  //是否是凌晨得情况
               if(new Date(_newdate2+tradeTime[i].open+':00') <= new Date(dateVal) && new Date(dateVal) <= new Date(nowdata+tradeTime[i].end+':00')){
                 // console.log("当前为交易时段0")
                 flag = true
@@ -283,6 +286,22 @@ export default {
        
       
     },
+     changekDataSocket:function(val){
+      // console.log(val)
+      if(val.code == this.changChanpinInfo){
+        this.proInfo.buyF = val.buyNum
+        this.proInfo.soleF = val.sellNum
+        this.proInfo.higePoint = val.higePoint
+        this.proInfo.openPoint = val.openPoint
+        this.proInfo.lowPoint = val.lowPoint
+        this.proInfo.allNum = val.totalNum
+        this.proInfo.upDown = Number(val.changePoint).toFixed(2)
+        this.proInfo.upF = val.changeRate
+        this.proInfo.print = val.point
+        this.proInfo.chicang = val.positionNum
+
+      }
+    }
   },
   mounted(){
     // this.$store.state.klineMsg

@@ -33,7 +33,7 @@
       </el-dropdown>
     </div>
     <!-- 第二条横向菜单栏 -->
-    <div class="top02 flex">
+    <!-- <div class="top02 flex">
       <ul>
         <li>
           <span>开 :</span>
@@ -52,7 +52,7 @@
           <span style="color: #D5D5D5;">{{this.$store.state.klineTopMsg.YClose?this.$store.state.klineTopMsg.YClose:this.$store.state.klineTopMsg.Close}}</span>
         </li>
       </ul>
-    </div>
+    </div> -->
     <!-- K线、买卖、相关详情展示区域，该区域主题分为左右两个板块 -->
     <div class="center flex" id="center">
       <!-- 主体区域左边部分，此区域有分为上、中、下三大板块，
@@ -192,12 +192,6 @@ export default {
       klineSize: "",
       candleHeight: 0,
       candleWidth:0,
-      klineTooltipData:{
-        High:this.$store.state.klineTopMsg.High,
-        Open:this.$store.state.klineTopMsg.Open,
-        Low:this.$store.state.klineTopMsg.Low,
-        YClose:this.$store.state.klineTopMsg.YClose
-      } ,
       isplaceOrder:false,//另一种下单界面
       pingcang:null,
       islogin:false,
@@ -365,7 +359,7 @@ export default {
               Left: 0, //左边间距
               Right: 0, //右边间距
               Top:20,
-              Bottom: 20
+              Bottom: 0
           },
 
           KLineTitle: //标题设置
@@ -430,10 +424,10 @@ export default {
         this.klineSize == "2" ? (this.klineSize = "1") : (this.klineSize = "2");
         var Hight = document.documentElement.clientHeight;
         document.getElementById("kline").style.height = Hight - 60 + "px";
-        document.getElementById("center").style.height = Hight - 145 + "px";
+        document.getElementById("center").style.height = Hight - 118 + "px";
         if (this.viewSize == "max") {
-          document.getElementById("centerLT").style.height = Hight - 145 + "px";
-          this.candleHeight = Hight - 145;
+          document.getElementById("centerLT").style.height = Hight - 118 + "px";
+          this.candleHeight = Hight - 118;
           document.getElementById("centerLM").style.height = "0px";
           document.getElementById("centerLB").style.height = "0px";
         } else if (this.viewSize == "min") {
@@ -484,7 +478,7 @@ export default {
       
       var Hight = document.documentElement.clientHeight; //获取视图的高度
       document.getElementById("kline").style.height = Hight - 60 + "px"; //K线页面展示的高度
-      document.getElementById("center").style.height = Hight - 145 + "px"; //减去两个固定高度的导航栏
+      document.getElementById("center").style.height = Hight - 118 + "px"; //减去两个固定高度的导航栏
       document.getElementById("centerLT").style.height = //K线展示区域的高度
         (Hight - 115) / 2 + "px";
       document.getElementById("centerLM").style.height = "30px";
@@ -635,7 +629,8 @@ export default {
    },
    changeIsplaceOrder(){
      return this.$store.state.isplaceOrder
-   }
+   },
+  
   },
   watch:{
     changeLoginStatus:function(val){
@@ -656,7 +651,8 @@ export default {
       }else{
         this.isplaceOrder = false
       }
-    }
+    },
+   
   },
   components: {
     BuyAndSell,

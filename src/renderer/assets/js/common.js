@@ -287,7 +287,7 @@ pro = {
 					let nowdata		=	(new Date().getYear()+1900)+'-'+(new Date().getMonth()+1)+'-'+(new Date().getDate())+' '//当前天数
 					let flag		= 	false
 				for(let i=0;i<timeArr.length;i++){
-					if(timeArr[i].end.slice(0,1) == '0'){//判断是否结束时间是第二天得情况
+					if(timeArr[i].end.slice(0,1) == '0' && timeArr[i].end.slice(0,2) < timeArr[i].open.slice(0,2)){//判断是否结束时间是第二天得情况
 						if(new Date().getHours() < timeArr[i].end.slice(0,2)){  //是否是凌晨得情况
 						  if(new Date(_newdate2+timeArr[i].open) <= new Date() && new Date() <= new Date(nowdata+timeArr[i].end)){
 							flag = true

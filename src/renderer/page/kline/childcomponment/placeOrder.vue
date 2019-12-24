@@ -47,7 +47,7 @@
                   </p>
                   <p>买多</p>
                 </div>
-                <p>&lt;=28</p>
+                <!-- <p>&lt;=28</p> -->
               </li>
               <li>
                 <div class="cl sell">
@@ -57,7 +57,7 @@
                   </p>
                   <p>卖空</p>
                 </div>
-                <p>&lt;=28</p>
+                <!-- <p>&lt;=28</p> -->
               </li>
               <li>
                 <div class="cl ping">
@@ -84,8 +84,6 @@
         <p class="p">美原油，每手5吨,保证金18371元，纽约交易所，内盘</p>
         <div class="list" style="color: #999999;">
           <ul class="ul04">
-            <li>14:20:00(本机时间)：委托 开仓 2899 卖出</li>
-            <li>14:20:00(本机时间)：委托 开仓 2899 卖出</li>
             <li>14:20:00(本机时间)：委托 开仓 2899 卖出</li>
             <li>14:20:00(本机时间)：委托 开仓 2899 卖出</li>
             <li>14:20:00(本机时间)：委托 开仓 2899 卖出</li>
@@ -140,15 +138,19 @@ export default {
 }
 </script>
 
-<style lang="scss" scopend>
+<style lang="scss" scoped>
     .moni {
   width: 100%;
   height: 100%;
   background-color: #2f343b;
-
+  position: relative;
   // 内容展示区域样式
   .container {
-    padding: 24px 40px;
+    padding: 0 40px;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100%;
     box-sizing: border-box;
     color: #cccccc;
     display: flex;
@@ -175,15 +177,15 @@ export default {
       box-sizing: border-box;
       .cont {
         width: 100%;
-        height: 250px;
+        // height: 250px;
         border: 1px solid black;
-         min-width: 462px;
+         min-width: 400px;
          box-sizing: border-box;
         .input {
           padding: 5px 10px;
           height: 70px;
           margin-bottom: 10px;
-          display: flex;
+          // display: flex;
          
           input {
             width: 60px;
@@ -196,22 +198,24 @@ export default {
             list-style: none;
             margin: 0px;
             padding: 0px;
-            flex: 4;
-            display: flex;
+            // flex: 4;
+            display: inline-block;
             li {
               margin: 0px 16px 0px 5px;
+              float: left;
               p {
                 margin: 10px 0px;
               }
             }
           }
           .ul02 {
-            flex: 1.5;
+            // flex: 1.5;
             list-style: none;
             font-size: 14px;
             margin-top: 30px;
             padding: 0px;
             text-align: right;
+            float: right;
             li {
               margin: 0px 16px;
               p {
@@ -221,37 +225,37 @@ export default {
           }
         }
         .center {
-          padding: 5px 7px;
-          height: 106px;
+          padding: 0 7px;
+          height: 61px;
           .ul03 {
             list-style: none;
             margin: 0px;
             padding: 0px;
             float: left;
             li {
-              width: 95px;
+              width: 70px;
               float: left;
               margin: 0px 12px 0px 5px;
               text-align: center;
               p {
-                margin: 5px 0px;
+                // margin: 5px 0px;
               }
               p:last-child{
-                font-size: 18px;
+                font-size: 15px;
               }
               div {
                 padding: 2px 0px;
                 box-sizing: border-box;
                 color: #ffffff;
-                width: 95px;
-                height: 59px;
+                width: 100%;
+                height: 47px;
                 font-size: 14px;
                 border-radius: 4px;
                 p:first-child {
                   border-bottom: #fdfdfd 1px solid;
                 }
                 p {
-                  margin: 5px 0px;
+                  margin: 0 0px;
                 }
               }
               .buy {
@@ -268,12 +272,15 @@ export default {
         }
         .fast {
           width: 100%;
+          margin-bottom: 10px;
           :first-child {
             margin-left: 25px;
           }
           span {
             font-size: 14px;
             padding: 5px;
+            display: inline-block;
+            box-sizing: border-box;
             background-color: #545b64;
             border-radius: 2px;
             cursor: pointer;
@@ -301,10 +308,10 @@ export default {
         background-color: #22272e;
         padding: 5px;
         margin: 10px 0 5px 0;
-        min-width: 462px;
+        min-width: 400px;
       }
       .list{
-        min-width: 462px;
+        min-width: 400px;
         .ul04 {
         list-style: none;
         padding: 0px;

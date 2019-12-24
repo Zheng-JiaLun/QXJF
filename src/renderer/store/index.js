@@ -95,13 +95,6 @@ export default new Vuex.Store({
     equityData:null,
     klineMsg:null,//K线页面右侧详情信息
     klineMsgs:null,//K线页面右侧详情信息
-    klineTopMsg:{
-      High:"",
-      Open:"",
-      Low:"",
-      YClose:"",
-      Close:""
-    },//K线插件顶部数据信息栏
     serialnum:[],
     isplaceOrder:false,
   

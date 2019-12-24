@@ -4,24 +4,75 @@
             <!-- <div class="top">易得量化</div> -->
             <div class="content">
                 <h1><span>欢迎注册</span><i class="el-icon-close" @click="closeWinC()"></i></h1>
-                <div class="user">
+                <div class="jindutiao">
+                    <p><span><b>1</b></span><span><b>2</b></span><span><b>3</b></span></p>
+                    <p><span>填写基础信息</span><span>填写银行资料</span><span style="color:#A7A7A7;">上传身份凭证</span></p>
+                    <div class="jindu"><el-progress :text-inside="false" :stroke-width="4" :percentage="percentage" :show-text="false"></el-progress></div>
+                </div>
+                <div class="user" v-show="isone">
                     <p>手机号码</p>
                     <el-input v-model="registerData.phone" type="number" :placeholder="userPla" @blur="userOutput()"></el-input>
                 </div>
-                <div class="yanzhengma">
+                <!-- <div class="yanzhengma">
                     <p>手机验证码</p>
                     <el-input v-model="registerData.verCode" type="number" :placeholder="usercode" @blur="userOutput()"></el-input>
                     <el-button id="fasong">发送验证码</el-button>
-                </div>                
-                <div class="pwd">
+                </div>                 -->
+                <div class="pwd" v-show="isone">
                     <p>登录密码</p>
                     <el-input v-model="registerData.pwd" :placeholder="pwdPla" show-password @blur="pwdOutput()"></el-input>
                 </div>
-                <div class="pwd">
+                <div class="pwd" v-show="isone">
+                    <p>姓名</p>
+                    <el-input v-model="registerData.name" placeholder="请输入真实姓名"></el-input>
+                </div>
+                <div class="pwd" v-show="isone">
+                    <p>身份证号</p>
+                    <el-input v-model="registerData.idNumber" placeholder="请输入有效身份证号"></el-input>
+                </div>
+                <div class="pwd two" v-show="istwo">
+                    <p>资金密码</p>
+                    <el-input v-model="registerData.moneyPass" placeholder="请输入资金密码"></el-input>
+                </div>
+                <div class="pwd two" v-show="istwo">
+                    <p>银行名称</p>
+                    <el-input v-model="registerData.bank" placeholder="请输入银行名称"></el-input>
+                </div>
+                <div class="pwd two" v-show="istwo">
+                    <p>银行卡号</p>
+                    <el-input v-model="registerData.bankNumber" placeholder="请输入银行卡号"></el-input>
+                </div>
+                <div class="pwd two" v-show="istwo">
+                    <p>开户行地址</p>
+                    <el-input v-model="registerData.bankAddress" placeholder="请输入开户行地址"></el-input>
+                </div>
+                <div class="pwd two" v-show="istwo">
+                    <p>机构代码</p>
+                    <el-input v-model="registerData.organizationCode" placeholder="请输入机构代码"></el-input>
+                </div>
+                <div v-show="isthree">
+                    <p>请上传身份证正面</p>
+                   <el-upload
+                    class="avatar-uploader"
+                    action="https://jsonplaceholder.typicode.com/posts/"
+                    :show-file-list="false"
+                    :on-success="handleAvatarSuccess"
+                   >
+                    <img v-if="imageUrl" :src="imageUrl" class="avatar">
+                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                    </el-upload>
+                </div>
+                <div v-show="isthree">
+                    <p>请上传身份证反面</p>
+                </div>
+                <div v-show="isthree">
+                    <p>请上传银行卡正面</p>
+                </div>
+                <!-- <div class="pwd">
                     <p>确认密码</p>
                     <el-input v-model="registerData.pwdCopy" :placeholder="pwdPla" show-password @blur="pwdOutput()"></el-input>
-                </div>                
-                <el-button type="primary" @click="register">确认注册</el-button>
+                </div>                 -->
+                <el-button type="primary" @click="register">{{btnMsg}}</el-button>
                 <div class="zidong">
                     <!-- <div class="left">
                     <el-radio v-model="radio" label="1">下次自动登录</el-radio>
@@ -37,7 +88,7 @@
                 </div>
             </div>
             <!-- content结束 尾部开始 -->
-            <div class="footer">
+            <div class="footer" v-show="isone">
                     <img src="../../assets/二维码.png">
                     <div class="middle">
                         <p>易得量化APP</p>
@@ -59,19 +110,37 @@ export default {
                     phone: '',
                     verCode:'',
                     pwd: '',
-                    pwdCopy:''
-				},
+                    pwdCopy:'',
+                    idNumber:'',
+                    name:'',
+                    moneyPass:'',
+                    bank:'',
+                    bankNumber:'',
+                    bankAddress:'',
+                    organizationCode:''
+                },
+
+            imageUrl: '',
+
+            percentage:20,
+            btnMsg:'下一步',
             isLogin: false,
             radio: null,
-            userPla: '0086~',
+            userPla: '请输入你的手机号~',
             usercode:'请输入验证码',
             pwdPla: '8-20位数字和字母组合',
+            isone:true,
+            istwo:false,
+            isthree:false,
             // isuserNull: false,
             // ispwdNull: false
 			
         }
     },
     methods:{
+        handleAvatarSuccess(res, file) {
+            this.imageUrl = URL.createObjectURL(file.raw);
+        },
         userOutput() {
             if (this.user == '') {
                 this.userPla = '账号不能为空'
@@ -100,14 +169,33 @@ export default {
                 code: this.registerData.verCode,
                 password: this.registerData.pwd,
             })
-            if(this.registerData.phone ==''||this.registerData.verCode==''||this.registerData.pwd==''||this.registerData.pwdCopy==''){
-                alert('请补全信息')
-            }else if(this.registerData.pwd !=this.registerData.pwdCopy){
-                alert('2次输入密码不一致')
-            }else if(this.registerData.pwd.length<6 || this.registerData.pwdCopy.length<6){
-                alert('密码长度不能少于6位')
+            // if(this.registerData.phone ==''||this.registerData.verCode==''||this.registerData.pwd==''||this.registerData.pwdCopy==''){
+            //     alert('请补全信息')
+            // }else if(this.registerData.pwd !=this.registerData.pwdCopy){
+            //     alert('2次输入密码不一致')
+            // }else if(this.registerData.pwd.length<6 || this.registerData.pwdCopy.length<6){
+            //     alert('密码长度不能少于6位')
+            // }else{
+            //     this.$router.push('/login')
+            // }
+            if(this.registerData.phone ==''||this.registerData.name==''||this.registerData.pwd==''||this.registerData.idNumber==''){
+                this.$message.error('请完善相关信息');
             }else{
-                this.$router.push('/login')
+                this.isone = false
+                this.istwo = true
+                this.percentage = 50
+                if(this.registerData.moneyPass ==''||this.registerData.bank==''||this.registerData.bankNumber==''||this.registerData.bankAddress==''||this.registerData.organizationCode==''){
+                    this.$message.error('请完善相关信息');
+                }else{
+                    this.isone = false
+                    this.istwo = false
+                    this.isthree = true
+                    this.percentage = 100
+                    this.btnMsg = "立即注册"
+                    // if(){
+
+                    // }
+                }
             }
             
             
@@ -130,7 +218,7 @@ export default {
 .wrapper{
     margin: auto;
     align-self: center;
-    // width: 484px;
+    width: 100%;
     // height: 653px;
     
   
@@ -147,7 +235,7 @@ export default {
 // }
 .content{
     
-    margin:10px auto 10px auto;
+    margin:0px auto 0 auto;
     background:rgba(255,255,255,1);
     border-radius:4px;
     height: 550px;
@@ -178,7 +266,73 @@ export default {
         }        
         
     }
-
+     .jindutiao{
+        width: 80%;
+        margin: 5px auto 0 auto;
+        position: relative;
+        .jindu{
+            width: 77.9%;
+            position:absolute;
+            top:-14px;
+            left: 44px;
+            .el-progress{
+                .el-progress-bar__inner{
+                    background-color: rgba(65,118,216,1) !important;
+                }
+            }
+        }
+        p:first-child{
+            margin: 0;
+            width: 96%;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            span{
+                display:inline-block;
+                width:29px;
+                line-height: 29px;
+                height:29px;
+                background:rgba(65,118,216,1);
+                border-radius:50%;
+                font-family:Microsoft YaHei;
+                font-weight:400;
+                color:#FFFFFF;
+                z-index: 2;
+                b{
+                    padding-left: 9px;
+                }
+            }
+            span:first-child{
+                // margin-right: 83%;
+            }
+        }
+        p:nth-child(2){
+            margin:5px 0;
+            // width: 90%;
+            display: flex;
+            justify-content: space-between;
+            span{
+                display:inline-block;
+                font-family:Microsoft YaHei;
+                font-weight:300;
+                color:rgba(65,118,216,1);
+            }
+            span:first-child{
+                
+            }
+        }
+    }
+    div:not(:nth-child(2))>.el-input{
+        width: 80%;
+    }
+    div:not(:nth-child(2))>p{
+        margin: 5px 0;
+        display: inline-block;
+        width: 17.9%;
+    }
+    div:not(:nth-child(2)){
+        margin: 14px auto;
+    }
     .user,.pwd{
         width: 80%;
         margin: 0 auto;
@@ -205,7 +359,7 @@ export default {
     }
     .el-button{
         width: 80%;
-        margin: 20px 10% 10px 10%;
+        margin: 10px 10% 0 10%;
         height:52px;
         background:rgba(65,118,216,1);
         font-size:20px;
@@ -217,7 +371,7 @@ export default {
     .zidong{
         
         width: 80%;
-        margin:0px auto;
+        margin:0px auto !important;
         font-size:12px;
         font-family:Microsoft YaHei;
         font-weight:400;
@@ -230,13 +384,15 @@ export default {
     
 }
 .footer{
-        width: 484px;
+        width: 100%;
         height:100px;
         background:rgba(51,65,100,1);
         display: flex;
         border-radius:4px;
         margin: 20px auto 0 auto;
-        
+        position: fixed;
+        bottom: 0;
+        left: 0;
 
         img{
             
@@ -256,5 +412,30 @@ export default {
                 color:rgba(255,255,255,1);
             }
         }
+    }
+
+
+    .avatar-uploader .el-upload {
+        border: 1px dashed #d9d9d9;
+        border-radius: 6px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+    .avatar-uploader .el-upload:hover {
+        border-color: #409EFF;
+    }
+    .avatar-uploader-icon {
+        font-size: 28px;
+        color: #8c939d;
+        width: 178px;
+        height: 178px;
+        line-height: 178px;
+        text-align: center;
+    }
+    .avatar {
+        width: 178px;
+        height: 178px;
+        display: block;
     }
 </style>
