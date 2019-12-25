@@ -87,6 +87,9 @@ export default {
   height: 100%;
    overflow-y: scroll;
   overflow-x: scroll;
+  .el-table{
+    background-color: transparent;
+  }
 }
 #jiaoge::-webkit-scrollbar {
   // display: none;

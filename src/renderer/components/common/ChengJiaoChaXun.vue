@@ -137,7 +137,9 @@ export default {
   width: 100%;
   height: 100%;
   overflow: scroll;
-  
+  .el-table{
+    background-color: transparent;
+  }
 }
 
 #chengjiao::-webkit-scrollbar {

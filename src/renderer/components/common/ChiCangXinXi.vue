@@ -383,6 +383,9 @@ export default {
   // background: red;
   overflow-y: scroll;
   overflow-x: scroll;
+  .el-table{
+    background-color: transparent;
+  }
 }
 #chicangTable::-webkit-scrollbar {
   // display: none;

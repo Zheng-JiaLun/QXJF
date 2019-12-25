@@ -105,7 +105,7 @@
                 type="daterange"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
-                default-value="2019-09-01"
+                default-value="2019-12-01"
               ></el-date-picker>
             </div>
             <!-- <div class="flex" v-show="showorhide2">
@@ -123,15 +123,12 @@
             <div class="new flex" @click="isplaceOrder = !isplaceOrder">
               <i class="el-icon-sort"></i>
             </div>
-            <div class="ping flex">
-              <!-- <i class="el-icon-bottom-left"></i> -->
+            <!-- <div class="ping flex">
               <button>
                 <i class="el-icon-bottom-left"></i>
                 <span @click="allClose()">全部平仓</span>
               </button>
-              <!-- <input type="button" value="全部平仓"> -->
-              <!-- <span>全部平仓</span> -->
-            </div>
+            </div> -->
           </div>
         </div>
         <!-- 此区域为买卖及合约清单展示，主要分为左右两部分，
@@ -155,7 +152,7 @@
           </div>
           <!-- 买卖下单操作窗口(默认隐藏) -->
           <div id="placeOrder" v-show="isplaceOrder">
-            <PlaceOrder></PlaceOrder>
+            <PlaceOrder @listenTabindex="showBoxindex()" :listSize="listSize" :value="value1"></PlaceOrder>
           </div>
         </div>
       </div>
@@ -530,39 +527,39 @@ export default {
       }
     },
     //全部平仓
-    allClose(){
-      console.log(this.$store.state.serialnum)
-      this.$confirm('确定全部平仓?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning',
-        center: true
-      }).then(() => {
-        var msg = JSON.stringify({
-            userID:JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId,
-            serialNum:this.$store.state.serialnum.toString()
-          })
-         console.log(msg)
-          _this.$post('select_close',msg).then(function(res){
-            if(res.results == 1){
-               _this.$store.state.market.initChicang++
-              this.$message({
-                type: 'success',
-                message: '全部平仓成功!'
-              });
-            }else{
+    // allClose(){
+    //   console.log(this.$store.state.serialnum)
+    //   this.$confirm('确定全部平仓?', '提示', {
+    //     confirmButtonText: '确定',
+    //     cancelButtonText: '取消',
+    //     type: 'warning',
+    //     center: true
+    //   }).then(() => {
+    //     var msg = JSON.stringify({
+    //         userID:JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId,
+    //         serialNum:this.$store.state.serialnum.toString()
+    //       })
+    //      console.log(msg)
+    //       _this.$post('select_close',msg).then(function(res){
+    //         if(res.results == 1){
+    //            _this.$store.state.market.initChicang++
+    //           this.$message({
+    //             type: 'success',
+    //             message: '全部平仓成功!'
+    //           });
+    //         }else{
               
-              alert('错误:'+res.msg.Message)
-            }
-          })
+    //           alert('错误:'+res.msg.Message)
+    //         }
+    //       })
        
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消全部平仓'
-        });
-      });
-    },
+    //   }).catch(() => {
+    //     this.$message({
+    //       type: 'info',
+    //       message: '已取消全部平仓'
+    //     });
+    //   });
+    // },
     // 点击选中时背景发生改变
     dianji(index) {
       this.isactive = index;

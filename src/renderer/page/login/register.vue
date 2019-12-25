@@ -51,22 +51,25 @@
                     <el-input v-model="registerData.organizationCode" placeholder="请输入机构代码"></el-input>
                 </div>
                 <div v-show="isthree">
-                    <p>请上传身份证正面</p>
+                    <span>请上传身份证正面</span>
                    <el-upload
                     class="avatar-uploader"
-                    action="https://jsonplaceholder.typicode.com/posts/"
+                    action="http://39.100.151.138:8082/appapi/app/get"
                     :show-file-list="false"
                     :on-success="handleAvatarSuccess"
+                    :on-error="handleAvatarError"
+                    :data="myData"
                    >
                     <img v-if="imageUrl" :src="imageUrl" class="avatar">
                     <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                     </el-upload>
                 </div>
                 <div v-show="isthree">
-                    <p>请上传身份证反面</p>
+                    <span>请上传身份证反面</span>
+                    <input type="file" name="" :v-model="img" id="">
                 </div>
                 <div v-show="isthree">
-                    <p>请上传银行卡正面</p>
+                    <span>请上传银行卡正面</span>
                 </div>
                 <!-- <div class="pwd">
                     <p>确认密码</p>
@@ -121,7 +124,7 @@ export default {
                 },
 
             imageUrl: '',
-
+            img:'',
             percentage:20,
             btnMsg:'下一步',
             isLogin: false,
@@ -140,6 +143,10 @@ export default {
     methods:{
         handleAvatarSuccess(res, file) {
             this.imageUrl = URL.createObjectURL(file.raw);
+            console.log(res)
+        },
+        handleAvatarError(err, file, fileList){
+            console.log(err)
         },
         userOutput() {
             if (this.user == '') {
@@ -193,14 +200,27 @@ export default {
                     this.percentage = 100
                     this.btnMsg = "立即注册"
                     // if(){
-
+                        console.log(this.imageUrl)
+                        console.log(this.img)
                     // }
                 }
             }
             
             
         }  
-    }
+    },
+    computed:{
+        myData(){
+            return {
+                'cmd':'upload_base64_img_register'
+            }
+        }
+    },
+    watch:{
+        'img':function(){
+            console.log(this.img)
+        }
+    },
 }
 </script>
 

@@ -133,6 +133,9 @@ export default {
   height: 100%;
   overflow-x: scroll;
   overflow-y: scroll;
+  .el-table{
+    background-color: transparent;
+  }
 }
 #churujin::-webkit-scrollbar {
   // display: none;

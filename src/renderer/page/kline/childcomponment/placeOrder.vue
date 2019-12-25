@@ -92,34 +92,27 @@
       </div>
       <!-- 展示板块的右边部分，主要展示合约列表 -->
       <div class="right">
-        <el-tabs v-model="activeName" type="card" >
+        <el-tabs v-model="activeName"
+        @tab-click="handleClick"
+        
+         type="card" >
           <!-- 引入持仓组件 -->
-          <el-tab-pane label="持仓" name="chicang">
-            <!-- <MoNiChiCang></MoNiChiCang> -->
+          <el-tab-pane label="持仓" name="chicang" id="chicang">
+            <ChiCang></ChiCang>
           </el-tab-pane>
           <!-- 引入委托组件 -->
-          <el-tab-pane label="委托" name="weituo">
+          <el-tab-pane label="委托" name="weituo" id="weituo">
             <!-- <MoNiWeiTuo :msg="tableData"></MoNiWeiTuo> -->
           </el-tab-pane>
           <!-- 引入成交组件 -->
-          <el-tab-pane label="成交" name="chengjiao">
-            <!-- <MoNiChengJiao></MoNiChengJiao> -->
+          <el-tab-pane label="成交" name="chengjiao" id="chengjiao">
+            <ChengJiao :value='value'></ChengJiao>
           </el-tab-pane>
-          <!-- 引入预备单组件 -->
-          <el-tab-pane label="预备单" name="yu">
-            <!-- <MoNiYuBeiDan></MoNiYuBeiDan> -->
+          <el-tab-pane label="出入金" name="churujin" class="pane" id="churujin">
+            <ChuRuJin :value="value"></ChuRuJin>
           </el-tab-pane>
-          <!-- 引入条件单组件 -->
-          <el-tab-pane label="条件单" name="tiao">
-            <!-- <MoNiTiaoJianDan></MoNiTiaoJianDan> -->
-          </el-tab-pane>
-          <!-- 引入损盈单组件 -->
-          <el-tab-pane label="损盈单" name="ying">
-            <!-- <MoNiSunYingDan></MoNiSunYingDan> -->
-          </el-tab-pane>
-          <!-- 引入资金组件 -->
-          <el-tab-pane label="资金" name="money">
-            <!-- <MoNiZiJin></MoNiZiJin> -->
+          <el-tab-pane label="交割查询" name="jiaoge" class="pane" id="jiaoge">
+            <!-- <JiaoGe></JiaoGe> -->
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -128,12 +121,43 @@
 </template>
 
 <script>
+import ChiCang from "../../../components/common/ChiCangXinXi";
+import ChengJiao from "../../../components/common/ChengJiaoChaXun";
+import ChuRuJin from "../../../components/common/ChuRuJinChaXun";
 export default {
     name:"placeOrder",
+    props:['listSize','value'],
     data(){
         return {
              activeName :"chicang",
+             TabIndex: "",
         }
+    },
+    methods:{
+      handleClick(tab, event) {
+        this.TabIndex = tab.index;
+        localStorage.setItem("tabindex",tab.index)
+        // 向父元素传值的自定义监听函数
+        this.$emit("listenTabindex",1);
+      }
+    },
+    watch:{
+       //  当窗口发生变化或页面加载时，获父级传递过来的高度，动态修改自身的高度
+      listSize: {
+        handler: function(Val, oldVal) {
+          this.Listheight= +Val;
+          document.getElementById("chicang").style.height = this.Listheight-28 + "px";
+          document.getElementById("weituo").style.height = this.Listheight-28 + "px";
+          document.getElementById("chengjiao").style.height = this.Listheight-28 + "px";
+          document.getElementById("churujin").style.height = this.Listheight-28 + "px";
+          document.getElementById("jiaoge").style.height = this.Listheight-28 + "px";
+        }
+      },
+    },
+    components:{
+      ChiCang,
+      ChengJiao,
+      ChuRuJin
     }
 }
 </script>
@@ -154,6 +178,7 @@ export default {
     box-sizing: border-box;
     color: #cccccc;
     display: flex;
+    height: 92%;
     /*滚动条样式*/
     .left::-webkit-scrollbar {/*滚动条整体样式*/
         width: 4px;     /*高宽分别对应横竖滚动条的尺寸*/
@@ -329,6 +354,11 @@ export default {
       width: 60%;
       border: 1px solid black;
       color: #ffffff;
+      .el-tabs{
+        height: 100%;
+        
+      }
+      
     }
   }
 }

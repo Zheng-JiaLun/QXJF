@@ -27,6 +27,14 @@
               <input
                 :class="changecsspingcang=='true'?'change':''"
                 type="button"
+                value="全部平仓"
+                @click="quanbupingcang()"
+              />
+            </div>
+            <div>
+              <input
+                :class="changecsspingcang=='true'?'change':''"
+                type="button"
                 value="部分平仓"
                 @click="bufenpingcang()"
               />
@@ -194,6 +202,39 @@ export default {
       this.changecssfanshou = 'true';
       this.changecsspingcang = 'false';
        this.changecsskuaijie = 'false';
+    },
+     quanbupingcang(){
+      console.log(this.$store.state.serialnum)
+      this.$confirm('确定全部平仓?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        center: true
+      }).then(() => {
+        var msg = JSON.stringify({
+            userID:JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId,
+            serialNum:this.$store.state.serialnum.toString()
+          })
+         console.log(msg)
+          _this.$post('select_close',msg).then(function(res){
+            if(res.results == 1){
+               _this.$store.state.market.initChicang++
+              this.$message({
+                type: 'success',
+                message: '全部平仓成功!'
+              });
+            }else{
+              
+              alert('错误:'+res.msg.Message)
+            }
+          })
+       
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消全部平仓'
+        });
+      });
     },
     handleClick(tab, event) {
       this.TabIndex = tab.index;

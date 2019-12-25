@@ -193,6 +193,14 @@ body{
         background: rgb(39,44,50);
     }
 }
+#placeOrder{
+	.el-tabs__content{
+		height: calc(100% - 24px);
+		.el-tab-pane{
+			height: 100%;
+		}
+	}
+}
 // 买卖页面的下拉选择框的样式设置
 .transaction{
 	.cont{

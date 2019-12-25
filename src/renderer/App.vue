@@ -44,7 +44,7 @@
           <i class="el-icon-refresh"></i>
           <span slot="title">刷新</span>
         </el-menu-item>  
-        <el-menu-item class="fr" style="float:right" @click="showBox('/zhuanzhang2')">
+        <el-menu-item class="fr" style="float:right" v-show="isLogin" @click="showBox('/zhuanzhang2')">
           <i class="el-icon-s-finance" ></i>
           <span slot="title" >银期转账</span>
         </el-menu-item>         

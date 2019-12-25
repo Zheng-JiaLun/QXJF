@@ -269,6 +269,9 @@ export default {
   height: 100%;
   overflow-y: scroll;
   overflow-x: scroll;
+  .el-table{
+    background-color: transparent;
+  }
   .chedan {
     color: white;
     line-height: 22px;

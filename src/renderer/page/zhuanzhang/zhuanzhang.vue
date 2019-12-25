@@ -24,7 +24,7 @@
                     </p>   
                 </div>
         
-                <el-button>确认转入</el-button>                 
+                <el-button @click="yToQ()">确认转入</el-button>                 
             </el-tab-pane>
             
             <el-tab-pane label="期货转银行卡">
@@ -34,23 +34,29 @@
                     </div>
                 <div class="content">
                     <P class="kahao">
-                        <span>银行卡号</span><el-input placeholder="请输入银行卡号" v-model="kahao"></el-input>
+                        <span>银行卡号</span><el-input placeholder="请输入银行卡号" v-model="account.bankCardNumber"></el-input>
                     </P>
                     <P class="huming">
-                        <span>开户名</span><el-input placeholder="请输入开户名" v-model="huming"></el-input>
+                        <span>开户名</span><el-input placeholder="请输入开户名" v-model="account.accountName"></el-input>
+                    </P> 
+                    <P class="dangqian">
+                        <span>开户银行</span><el-input v-model="account.depositBank"></el-input>
+                    </P> 
+                    <P class="dangqian">
+                        <span>开户网点</span><el-input v-model="account.accountOpen"></el-input>
                     </P> 
                     <P class="dangqian">
                         <span>当前余额</span><el-input v-model="dangqian"></el-input>
                     </P> 
                     <P class="fukuan">
-                        <span>付款金额</span><el-input placeholder="请输入金额（元）" v-model="fukuan"></el-input>
+                        <span>付款金额</span><el-input placeholder="请输入金额（最低100元）" v-model="account.money"></el-input>
                     </P>   
                     <p><span>系统将在一个工作日内处理</span></p>   
                     
 
                 </div>
         
-                <el-button>确认转出</el-button> 
+                <el-button @click="qToY()">确认转出</el-button> 
             </el-tab-pane>
            
         </el-tabs>
@@ -77,7 +83,24 @@ export default {
             huming:'',
             dangqian:'992848 (元)',
             fukuan:'',
+            account:{
+                accountName:'',
+                bankCardNumber:'',
+                depositBank:'',
+                accountOpen:'',
+                money:''
+            },
+            uInfo:{}
+
         }
+    },
+    mounted(){
+        this.uInfo = JSON.parse(localStorage.getItem(this.$store.state.localStorageUid));
+        console.log(this.uInfo)
+        this.account.accountName = this.uInfo.bankusername;
+        this.account.bankCardNumber = this.uInfo.bankcard;
+        this.account.depositBank = this.uInfo.bankName;
+        this.account.accountOpen = this.uInfo.bankAddress;
     },
     methods:{
 			closeWin() {
