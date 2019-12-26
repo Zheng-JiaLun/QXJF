@@ -43,16 +43,16 @@
                 <p>
                   <i class="el-icon-lock"></i>
                 </p>
-                <input type="text" placeholder="CY001" />
+                <input type="text" placeholder="合约代码"  v-model="inputVal"/>
                 <i class="el-icon-search"></i>
               </li>
               <li>
                 <p>手数</p>
-                <input type="number" placeholder="1" />
+                <input type="number" placeholder="数量" v-model="inputNum"/>
               </li>
               <li>
                 <p>价格</p>
-                <input type="number" placeholder="对手价" />
+                <input type="number" placeholder="对手价"  v-model="codePrice" />
               </li>
             </ul>
             <ul class="ul02 flex" style="line-height: 20px;">
@@ -71,27 +71,27 @@
           <div class="center">
             <ul class="ul03">
               <li>
-                <div class="cl buy">
+                <div class="cl buy" @click="buy(1)">
                   <p>
-                    <span>23747</span>
+                    <span>{{codePrice}}</span>
                     <i class="el-icon-caret-top"></i>
                   </p>
                   <p>买多</p>
                 </div>
-                <p>&lt;=28</p>
+                <!-- <p>&lt;=28</p> -->
               </li>
               <li>
-                <div class="cl sell">
+                <div class="cl sell" @click="buy(2)">
                   <p>
-                    <span>23747</span>
+                    <span>{{codePrice}}</span>
                     <i class="el-icon-caret-top"></i>
                   </p>
                   <p>卖空</p>
                 </div>
-                <p>&lt;=28</p>
+                <!-- <p>&lt;=28</p> -->
               </li>
               <li>
-                <div class="cl ping">
+                <div class="cl ping" @click="ping()">
                   <p>
                     <span>先开先平</span>
                   </p>
@@ -101,11 +101,11 @@
             </ul>
           </div>
           <!-- 快捷按键区域 -->
-          <div class="fast">
-            <span>快捷反手</span>
-            <span>快捷平仓</span>
-            <span>部分平仓</span>
-            <span>全部平仓</span>
+          <div class="fast" v-show="ischichang">
+            <span @click="quickFS">快捷反手</span>
+            <span @click="quickPC">快捷平仓</span>
+            <span @click="onePC">部分平仓</span>
+            <span @click="allPC">全部平仓</span>
             <!-- <input type="button" value="快捷反手"/>
             <input type="button" value="快捷平仓"/>
             <input type="button" value="部分平仓"/>
@@ -125,10 +125,12 @@
       </div>
       <!-- 展示板块的右边部分，主要展示合约列表 -->
       <div class="right">
-        <el-tabs v-model="activeName" type="card" >
+        <el-tabs v-model="activeName"
+        @tab-click="handleClick"
+         type="card" >
           <!-- 引入持仓组件 -->
           <el-tab-pane label="持仓" name="chicang">
-            <MoNiChiCang></MoNiChiCang>
+            <ChiCang :pinChang='pinChang' :selector="selector"></ChiCang>
           </el-tab-pane>
           <!-- 引入委托组件 -->
           <el-tab-pane label="委托" name="weituo">
@@ -160,7 +162,7 @@
   </div>
 </template>
 <script>
-import MoNiChiCang from '../common/monichildren/monichicang.vue';
+import ChiCang from '../common/ChiCangXinXi';
 import MoNiChengJiao from '../common/monichildren/monichengjiao.vue';
 import MoNiSunYingDan from '../common/monichildren/monisunyingdan.vue';
 import MoNiTiaoJianDan from '../common/monichildren/monitiaojiandan.vue';
@@ -170,10 +172,21 @@ import MoNiYuBeiDan from '../common/monichildren/moniyubeidan.vue';
 import MoNiZiJin from '../common/monichildren/monizijin.vue';
 export default {
   name: "moni",
+  inject:['reload'],
   data() {
     return {
-     activeName :"chicang",
-     text:"父组件传入的值",
+      activeName :"chicang",
+      text:"父组件传入的值",
+      TabIndex: "",
+      pinChang:false,
+      inputVal:'',
+      codePrice:'',
+      inputNum:'1',
+      stopLoss:'0',
+      stopPrint:'0',
+      ischichang:true,
+      selector:false,
+      codePrice:'',
       tableData: [
         {
           number: "MHI1905",
@@ -338,10 +351,41 @@ export default {
     close() {
       let win = this.$Win.getWinByName("yidemoni");
       this.$Win.closeWin(win);
+    },
+    handleClick(tab, event) {
+      this.TabIndex = tab.index;
+      localStorage.setItem("tabindex",tab.index)
+    },
+    quickFS(){
+      this.selector = !this.selector;
+    },
+    quickPC(){},
+    onePC(){
+      this.pinChang = !this.pinChang
+    },
+    allPC(){},
+  },
+  computed:{
+     updataSocketData() {
+      return this.$store.getters.updataSocketData;
+    },
+    changeSocketData(){
+      return this.$store.getters.quoteDataAC
     }
   },
+  watch:{
+    updataSocketData:function(){
+      this.reload()
+      console.log("222")
+    },
+    changeSocketData:function(val){
+      // console.log(val)
+    }
+
+  },
+
   components:{
-    MoNiChiCang,
+    ChiCang,
     MoNiChengJiao,
     MoNiSunYingDan,
     MoNiTiaoJianDan,

@@ -1,9 +1,13 @@
 <template>
   <div class="chicang">
     <div id="chicangTable">
-      <el-table :data="tableData" class="table01" highlight-current-row>
-        <el-table-column width="45px">
-          <template slot-scope="scope">
+      <el-table :data="tableData" class="table01" highlight-current-row @selection-change="handleSelectionChange">
+        <el-table-column
+          type="selection"
+          width="45" v-if="selector">
+        </el-table-column>
+        <el-table-column width="45px" v-if="pinChang">
+          <template slot-scope="scope" >
             <i class="el-icon-remove" @click="setPingchang(scope.row)" style="font-size: 18px;color: #4176D8;cursor: pointer;"></i>
           </template>
         </el-table-column>
@@ -18,11 +22,11 @@
         </el-table-column>
         <el-table-column label="总持仓" show-overflow-tooltip>
           <template slot-scope="scope">
-            <span style="color: #DCDC0A;">{{scope.row.position}}</span>
+            <span style="color: #DCDC0A;">{{scope.row.futures_num}}</span>
           </template>
         </el-table-column>
         <el-table-column prop="futures_price" label="持仓价格" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="futures_num" label="变动单位" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="price_unit" label="变动单位" show-overflow-tooltip></el-table-column>
         <el-table-column label="最新价格" show-overflow-tooltip>
            <template slot-scope="scope">
             <span :style="scope.row.buyPoint >scope.row.futures_price?'color:#FF3322;':'color:#00BD00;'">{{scope.row.buyPoint}}</span>
@@ -48,20 +52,23 @@
         <el-table-column prop="orderType" label="类型" show-overflow-tooltip></el-table-column>
       </el-table>
     </div>
-    
+    <div class="determineBtn" v-show="selector">
+      <button @click="determineBtn()">确定反手</button>
+    </div>
   </div>
 </template>
 <script>
 import { setInterval } from 'timers';
 export default {
   name: "chicang",
-  props: ["Listheight"],
+  props: ["Listheight","pinChang","selector"],
   data() {
     return {
       dialogVisible: false,
       zuixinjia: "暂无数据",
       equity:null,
       count:0,
+      multipleSelection:[],
       tableData: [
         {
           number: "MHI1905",
@@ -166,6 +173,13 @@ export default {
     };
   },
   methods: {
+    handleSelectionChange(val) {
+      this.multipleSelection = val;
+      console.log(this.multipleSelection)
+    },
+    determineBtn(){
+
+    },
     async setPrLoss() {
       let data = await this.$Win.openWin({
         // browserwindow原生属性
@@ -195,12 +209,8 @@ export default {
         userID:JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId
         })
         this.$pro.post('get_position_list_new', msg).then((res) => {
+          // console.log(res)
           _this.tableData = res.msg.data
-          // _this.tableData = []
-          // for(let i=0;i<res.msg.data.length;i++){
-          //   _this.tableData.push(res.msg.data[i])
-          // }
-          // _this.tableData.reverse()
          
           let hqMsg = JSON.parse(localStorage.getItem(_this.$store.state.localStorageHq))[0].item,
               arr   = [],
@@ -226,7 +236,7 @@ export default {
     },
     //平仓
     setPingchang(msg){
-      console.log(msg)
+      // console.log(msg)
       const h = this.$createElement;
       this.$msgbox({
         title: '提示',
@@ -271,9 +281,9 @@ export default {
           })
           // console.log(msg);
           this.$pro.post('close_position', msgs).then((res) => {
-            console.log(res)
+            // console.log(res)
             if(res.result == 1){
-              this.axiosChiCang()
+              // this.axiosChiCang()
                this.$message({
                 type: 'success',
                 message: '成功'
@@ -313,7 +323,8 @@ export default {
     },
     changeInitChicang(){
       return this.$store.state.market.initChicang
-    }
+    },
+    
     // changeTableData(){
     //   let _this = this
     //     for(let i=0;i<_this.tableData.length;i++){
@@ -346,6 +357,7 @@ export default {
       let _this =this
       let nullObj     = {}
       let arr = [],a;
+      // console.log(val)
       for(let i=0;i<this.tableData.length;i++){
         if(val.code == this.tableData[i].futures_code){
           this.tableData[i].buyPoint = val.buyPoint
@@ -368,11 +380,11 @@ export default {
       
     },
     //监听持仓变化,初始化持仓列表
-    changeInitChicang:function(val,oldVal){
+    // changeInitChicang:function(val,oldVal){
   
-        this.axiosChiCang();
+    //     this.axiosChiCang();
        
-    }
+    // }
 
     
   }
@@ -386,7 +398,27 @@ export default {
   .el-table{
     background-color: transparent;
   }
+  
 }
+.determineBtn{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    button{
+      border: none;
+      border-radius: 5px;
+      width: 70px;
+      height: 25px;
+      background: #4176d8;
+      color: white;
+      line-height: 25px;
+      margin-left: 5px;
+      cursor: pointer;
+      :hover{
+        background: #224586;
+      }
+    }
+  }
 #chicangTable::-webkit-scrollbar {
   // display: none;
   width: 10px; // 横向滚动条

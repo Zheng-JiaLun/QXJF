@@ -255,7 +255,24 @@ export default {
           
         }, 1000)
       },
-     
+     getUserinfo(msg, userInfo) {
+				// console.log(userInfo)
+				var _this = this;
+				this.$post('get_user_asset', msg).then(function(res) {
+					console.log(res);
+					userInfo.name = res.msg.name;
+					userInfo.realname = res.msg.realname;
+					userInfo.tel = res.msg.phone;
+          userInfo.type = res.msg.type;
+          userInfo.usermoney = res.msg.user_money
+					userInfo.headImg = res.msg.headImg;
+					userInfo.bankName = res.msg.bankName ? res.msg.bankName : null;
+					userInfo.bankAddress = res.msg.bankAddress ? res.msg.bankAddress : null;
+					userInfo.bankusername = res.msg.bankusername ? res.msg.bankusername : null;
+					userInfo.bankcard = res.msg.bankcard ? res.msg.bankcard : null;
+					localStorage.setItem(_this.$store.state.localStorageUid, JSON.stringify(userInfo));
+				})
+			},
       
       async showBoxxiadan() {
         // console.log()
@@ -300,7 +317,7 @@ export default {
   created(){
     this.postHangqing()
     this.timer()
-    
+    localStorage.setItem("tabindex",'0')
   //  window.addEventListener('setItem', ()=> {
   //     this.name = localStorage.getItem('ycxUserLoginState_QXJF');
   //      this.isLogin = true
@@ -320,11 +337,23 @@ export default {
   
     _activeIndex(){
       return this.$store.state.activeIndex
-    }
+    },
+     updataSocketData() {
+      return this.$store.getters.updataSocketData;
+    },
   },
   
   watch:{
     loginStatus: function(){},
+    updataSocketData:function(){
+      var userInfo = JSON.parse(localStorage.getItem(this.$store.state.localStorageUid));
+					// console.log(userInfo);
+      var msg = JSON.stringify({
+        userID: userInfo.userId
+      });
+      this.getUserinfo(msg, userInfo)
+      // this.reload()
+    }
     // 监听路由
     // $route(to,from){
     //   if(from.path == '/kline'){

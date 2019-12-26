@@ -38,8 +38,8 @@
       <!-- 相关操作展示区域 -->
       <div class="input flex">
         <div class="cl flex">
-          <span>跟盘:</span>
-          <el-input class="inner" placeholder v-model="gen" clearable></el-input>
+          <span @click="setPrice()">{{setPriceName}}<i class="el-icon-d-caret"></i></span>
+          <el-input class="inner" placeholder v-model="gen" clearable type="number"></el-input>
         </div>
         <div class="cl flex">
           <span>数量:</span>
@@ -76,6 +76,8 @@ export default {
       num: 1,
       stopPrint: 0,
       stopLoss: 0,
+      setPriceName:'跟盘',
+      genTemporary:"",//跟盘最新暂存数据 
       isTransaction:false,
       heyue: {
         heyueClass: "",
@@ -122,6 +124,15 @@ export default {
     };
   },
   methods: {
+    setPrice(){
+      if(this.setPriceName == '跟盘'){
+        this.setPriceName = '限价'
+      }else if(this.setPriceName == '限价'){
+        this.setPriceName = '跟盘'
+        this.gen = this.genTemporary
+      }
+      
+    },
     shijia(type){
       let _this = this
       // console.log(this.isTransaction,"````",this.$store.state.isTransaction)
@@ -142,7 +153,7 @@ export default {
                 updown: 1,
                 priceType: 1,
                 stopLoss: Number(_this.stopLoss),
-                stopProfit: Number(_this.stopProfit)
+                stopProfit: Number(_this.stopPrint)
               })
               _this.$pro.post('buy_sale_order', msg).then((res) => {
                 // _this.guadanState1 = false;
@@ -150,7 +161,7 @@ export default {
                 if (res.result == 1) {
                   // _this.active = 0;
                   // console.log(res)
-                  _this.$store.state.market.initChicang++
+                  // _this.$store.state.market.initChicang++
                   _this.$message({
                     type: 'success',
                     message:'买入成功'
@@ -197,7 +208,7 @@ export default {
                 if (res.result == 1) {
                   // _this.active = 0;
                   // console.log(res)
-                  _this.$store.state.market.initChicang++
+                  // _this.$store.state.market.initChicang++
                   _this.$message({
                     type: 'success',
                     message:'卖出成功'
@@ -272,6 +283,7 @@ export default {
         if(hqMsg[i].code == val){
           let time = eval(hqMsg[i].tradeTime)
           this.gen = hqMsg[i].buyPoint
+          
           if(this.$pro.dateTime_range(time)){
             this.isTransaction = true
           }else{
@@ -286,7 +298,13 @@ export default {
     changeQuoteData:function(val){
       // console.log(val)
       if(val.code == this.heyue.heyueCode){
-        this.gen = val.buyPoint
+        
+        if(this.setPriceName == '跟盘'){
+            this.gen = val.buyPoint
+            this.genTemporary = val.buyPoint
+        }else{
+          
+        }
       }
     },
     
@@ -357,6 +375,11 @@ export default {
       .cl {
         width: 45%;
         padding: 5% 0;
+        :first-child:hover{
+          background-color: rgba(80, 80, 80, 0.788);
+          cursor: pointer;
+          border-radius: 5px;
+        }
         span {
           font-size: 12px;
           line-height: 40px;

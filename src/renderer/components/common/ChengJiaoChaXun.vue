@@ -36,7 +36,7 @@
         </template>
       </el-table-column>
        <el-table-column prop="sx" label="手续费" show-overflow-tooltip ></el-table-column>
-      <el-table-column label="成交订单号" show-overflow-tooltip >
+      <el-table-column label="订单号" show-overflow-tooltip >
         <template slot-scope="scope">
           <span style="color: #DCDC0A;">{{scope.row.serialnum}}</span>
         </template>
@@ -139,6 +139,7 @@ export default {
   overflow: scroll;
   .el-table{
     background-color: transparent;
+  
   }
 }
 

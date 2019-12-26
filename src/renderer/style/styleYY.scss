@@ -198,8 +198,24 @@ body{
 		height: calc(100% - 24px);
 		.el-tab-pane{
 			height: 100%;
+			tr{
+				background-color: transparent;
+			  }
 		}
 	}
+	.el-input{
+		height: 100%;
+		.el-input__inner{
+			height: 25px;
+			vertical-align: top;
+			background: transparent;
+			border: 1px solid #595959;
+		  }
+		.el-input__suffix{
+
+		}
+	}
+	
 }
 // 买卖页面的下拉选择框的样式设置
 .transaction{

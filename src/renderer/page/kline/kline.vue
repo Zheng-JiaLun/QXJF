@@ -88,7 +88,7 @@
             </p>
             <p class="flex" @click="click01()">
               <span>可用资金:</span>
-              <span>{{userMsg.money?userMsg.money:"暂无信息"}}</span>
+              <span>{{userMsg.usermoney?userMsg.usermoney:"暂无信息"}}</span>
             </p>
             <p class="flex">
               <span>资金使用率:</span>
@@ -120,7 +120,7 @@
             </div> -->
           </div>
           <div class="action flex" :v-show="islogin">
-            <div class="new flex" @click="isplaceOrder = !isplaceOrder">
+            <div class="new flex" @click="placeOrders()">
               <i class="el-icon-sort"></i>
             </div>
             <!-- <div class="ping flex">
@@ -183,6 +183,7 @@ import MinuteBox from "../kline/childcomponment/timeSLine.vue";
 import PlaceOrder from "../kline/childcomponment/placeOrder";
 export default {
   name: "kline",
+  inject:['reload'],
   data() {
     return {
       viewSize: "",
@@ -194,7 +195,7 @@ export default {
       islogin:false,
       userMsg:{
         name:false,
-        money:false
+        usermoney:false
       },
       showorhide1: false,
       
@@ -458,18 +459,40 @@ export default {
     });
   },
   created(){
+    let _this = this
+    // localStorage.setItem('placeOrderIndex',"0")
     //判断是否登录
     if(JSON.parse(localStorage.getItem(this.$store.state.localStorageLogin))){
-      this.userMsg = JSON.parse(localStorage.getItem(this.$store.state.localStorageUid))
+      // this.userMsg = JSON.parse(localStorage.getItem(this.$store.state.localStorageUid))
+      // console.log(this.userMsg)
       this.islogin = true
+      var msg = JSON.stringify({
+        userID: JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId
+      });
+      	this.$post('get_user_asset', msg).then(function(res) {
+          // console.log(res)
+          _this.userMsg.usermoney = res.msg.user_money
+          _this.userMsg.name = res.msg.user_name
+        })
     }else{
-      this.userMsg.money = false
+      this.userMsg.usermoney = false
       this.userMsg.name = false
       this.islogin = false
     }
+    if(localStorage.getItem('placeOrderIndex') == '1'){
+      this.isplaceOrder = true
+    }
   },
   methods: {
-    
+    placeOrders(){
+      this.isplaceOrder = !this.isplaceOrder
+      if(this.isplaceOrder){
+        localStorage.setItem('placeOrderIndex',"1")
+      }else{
+        localStorage.setItem('placeOrderIndex',"2")
+      }
+      
+    },
     // 此函数获取窗口大小，并动态修改相关板块的高度
     reboxSize() {
       
@@ -526,40 +549,7 @@ export default {
         this.candleHeight = (Hight - 115) / 2; //将高度传给K线组件
       }
     },
-    //全部平仓
-    // allClose(){
-    //   console.log(this.$store.state.serialnum)
-    //   this.$confirm('确定全部平仓?', '提示', {
-    //     confirmButtonText: '确定',
-    //     cancelButtonText: '取消',
-    //     type: 'warning',
-    //     center: true
-    //   }).then(() => {
-    //     var msg = JSON.stringify({
-    //         userID:JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId,
-    //         serialNum:this.$store.state.serialnum.toString()
-    //       })
-    //      console.log(msg)
-    //       _this.$post('select_close',msg).then(function(res){
-    //         if(res.results == 1){
-    //            _this.$store.state.market.initChicang++
-    //           this.$message({
-    //             type: 'success',
-    //             message: '全部平仓成功!'
-    //           });
-    //         }else{
-              
-    //           alert('错误:'+res.msg.Message)
-    //         }
-    //       })
-       
-    //   }).catch(() => {
-    //     this.$message({
-    //       type: 'info',
-    //       message: '已取消全部平仓'
-    //     });
-    //   });
-    // },
+   
     // 点击选中时背景发生改变
     dianji(index) {
       this.isactive = index;
@@ -627,7 +617,9 @@ export default {
    changeIsplaceOrder(){
      return this.$store.state.isplaceOrder
    },
-  
+   updataSocketData() {
+      return this.$store.getters.updataSocketData;
+    },
   },
   watch:{
     changeLoginStatus:function(val){
@@ -637,7 +629,7 @@ export default {
         this.userMsg = msg
         this.islogin = true
       }else{
-        this.userMsg.money = false
+        this.userMsg.usermoney = false
         this.userMsg.name = false
         this.islogin = false
       }
@@ -649,6 +641,9 @@ export default {
         this.isplaceOrder = false
       }
     },
+     updataSocketData:function(val){
+      this.reload()
+    }
    
   },
   components: {

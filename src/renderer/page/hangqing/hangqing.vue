@@ -4,8 +4,8 @@
         <div class="tianchuang" v-if="istanchuang"></div>
         <div class="right">
             <div class="nav">
-               <router-link to="/hangqing/neipan" name="hangqingbg">内盘</router-link>
-                <router-link to="/hangqing/waipan" name="hangqingbg">外盘</router-link>
+               <a name="hangqingbg">内盘</a>
+                <a name="hangqingbg">外盘</a>
             </div>
             <div class="zujian">
                 <!-- <router-view></router-view> -->
@@ -162,6 +162,7 @@ export default {
             // 'token': uuid,
             }).then((res) =>{
                 this.msg = res.data.msg
+                // console.log(res,"````````````````````")
                 // this.$store.commit('setklineMsg',res.data.msg[0].item)
                 // console.log(this.msg)
             }).catch(function (error) {

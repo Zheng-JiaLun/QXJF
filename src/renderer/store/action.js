@@ -57,6 +57,7 @@ export default{
 		state.connSignalr.received((message) => {
 		//    console.log(message);
 		  let data = JSON.parse(message);
+		//   console.log(data);
 		  if (data.messageType == 1) {
 			// console.log(data);
 			let dataObject = JSON.parse(data.content);
@@ -68,7 +69,9 @@ export default{
 			//   dispatch('computedFdyk')
 			// }
 		  } else if (data.messageType == 2) {
+			  console.log(data)
 			let newData = data.content + "-" + new Date().getTime() + Math.random();
+			console.log(newData)
             // commit('setUpdataSocketData', newData);
             state.market.updataSocketData = newData
 		  }

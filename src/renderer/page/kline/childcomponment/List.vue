@@ -12,7 +12,7 @@
     >
       <!-- 在此区域引入持仓信息的组件 -->
       <el-tab-pane label="持仓信息" name="chicang" id="chicang">
-        <Chicang :Listheight='Listheight'></Chicang>
+        <Chicang :Listheight='Listheight' :pinChang='pinChang' :selector="selector"></Chicang>
         <div class="chichangbottom">
           <div class="jincangxinxi">
             <span>进仓时间：</span>
@@ -25,7 +25,6 @@
           <div class="pingcangcaozuo">
             <div>
               <input
-                :class="changecsspingcang=='true'?'change':''"
                 type="button"
                 value="全部平仓"
                 @click="quanbupingcang()"
@@ -33,7 +32,6 @@
             </div>
             <div>
               <input
-                :class="changecsspingcang=='true'?'change':''"
                 type="button"
                 value="部分平仓"
                 @click="bufenpingcang()"
@@ -41,7 +39,6 @@
             </div>
             <div>
               <input
-                :class="changecsskuaijie=='true'?'change':''"
                 type="button"
                 value="快捷平仓"
                 @click="kuaijiepingcang()"
@@ -49,7 +46,6 @@
             </div>
             <div>
               <input
-                :class="changecssfanshou=='true'?'change':''"
                 type="button"
                 value="部分反手"
                 @click="bufenfanshou()"
@@ -89,6 +85,7 @@ import JiaoGe from "../../../components/common/JiaoGeChaXun.vue";
 export default {
   name: "List",
   props:['listSize','value'],
+  inject:['reload'],
   data() {
     return {
       Listheight:'',
@@ -100,8 +97,10 @@ export default {
       changecsskuaijie: 'false',
       TabIndex: "",
       activeName: "chicang",
+      selector:false,
       islogin:false,
       dialogVisible: false,
+      pinChang:false,//部分平仓
       ChuRuJinData: [
         {
           userid: "8A89UA89976",
@@ -162,7 +161,8 @@ export default {
    computed:{
      changeLoginStatus(){
        return this.$store.state.account.loginStatus
-     }
+     },
+    
    },
    watch: {
     //  当窗口发生变化或页面加载时，获父级传递过来的高度，动态修改自身的高度
@@ -182,26 +182,22 @@ export default {
       }else{
         this.islogin = false
       }
-    }
+    },
+   
   },
   methods: {
     setPrLoss() {
       this.dialogVisible = true;
     },
     bufenpingcang() {
-      this.changecsspingcang = 'true';
-       this.changecsskuaijie = 'false';
-       this.changecssfanshou = 'false';
+      this.pinChang = !this.pinChang;
+     
     },
     kuaijiepingcang() {
-      this.changecsskuaijie = 'true';
-      this.changecsspingcang = 'false';
-      this.changecssfanshou = 'false';
+      
     },
     bufenfanshou() {
-      this.changecssfanshou = 'true';
-      this.changecsspingcang = 'false';
-       this.changecsskuaijie = 'false';
+      this.selector = !this.selector
     },
      quanbupingcang(){
       console.log(this.$store.state.serialnum)
@@ -218,7 +214,7 @@ export default {
          console.log(msg)
           _this.$post('select_close',msg).then(function(res){
             if(res.results == 1){
-               _this.$store.state.market.initChicang++
+              //  _this.$store.state.market.initChicang++
               this.$message({
                 type: 'success',
                 message: '全部平仓成功!'
