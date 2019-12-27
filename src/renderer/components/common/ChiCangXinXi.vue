@@ -1,7 +1,7 @@
 <template>
   <div class="chicang">
     <div id="chicangTable">
-      <el-table :data="tableData" class="table01" highlight-current-row @selection-change="handleSelectionChange">
+      <el-table :data="tableData" class="table01" highlight-current-row @current-change="handleSelectionChange">
         <el-table-column
           type="selection"
           width="45" v-if="selector">
@@ -46,7 +46,7 @@
         </el-table-column>
         <el-table-column label="止盈止亏" show-overflow-tooltip>
           <template slot-scope="scope">
-            <span style="cursor: pointer;color:#fff;" @click="setPrLoss()">{{'点击设置'}}</span>
+            <span style="cursor: pointer;color:#fff;" @click="setPrLoss(scope.row)">{{'点击设置'}}</span>
           </template>
         </el-table-column>
         <el-table-column prop="orderType" label="类型" show-overflow-tooltip></el-table-column>
@@ -174,13 +174,15 @@ export default {
   },
   methods: {
     handleSelectionChange(val) {
-      this.multipleSelection = val;
-      console.log(this.multipleSelection)
+      // this.multipleSelection = val;
+      // console.log(val)
+      this.$emit('childFn',val);
     },
     determineBtn(){
 
     },
-    async setPrLoss() {
+    async setPrLoss(a) {
+      console.log(a)
       let data = await this.$Win.openWin({
         // browserwindow原生属性
         width: 900, // 窗口宽
@@ -190,7 +192,8 @@ export default {
         windowConfig: {
           router: "/zyzsTanchuang", // 路由 *必填
           data: {
-            id: 1
+            id: a,
+            // msg:a
           }, // 传送数据
           name: "zhiyingzhisun", // 窗口名称
           animation: "none"
@@ -209,7 +212,13 @@ export default {
         userID:JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId
         })
         this.$pro.post('get_position_list_new', msg).then((res) => {
-          // console.log(res)
+          console.log(res)
+          res.msg.djbzj//冻结保证金
+          res.msg.dtqy//动态权益
+          res.msg.lcyk//
+          res.msg.pcyk//平仓盈亏
+          res.msg.zybzj//自用保证金
+          // this.$emit('childFn',val);
           _this.tableData = res.msg.data
          
           let hqMsg = JSON.parse(localStorage.getItem(_this.$store.state.localStorageHq))[0].item,

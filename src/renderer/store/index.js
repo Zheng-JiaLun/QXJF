@@ -22,6 +22,7 @@ const market = {
 	state: {
 		computedFdyk: false, //是否计算浮动盈亏
 		quoteData: [],
+		allQuoteData: [],
 		initHangqingList: [], //初始化行情列表
     initChicangList: {}, //初始化持仓列表
     initChicang:0,//初始化持仓

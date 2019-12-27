@@ -4,8 +4,8 @@
         <div class="tianchuang" v-if="istanchuang"></div>
         <div class="right">
             <div class="nav">
-               <a name="hangqingbg">内盘</a>
-                <a name="hangqingbg">外盘</a>
+               <a name="hangqingbg" :class="panShow?'panShow':' '" @click="isPanShow()">内盘</a>
+                <a name="hangqingbg" :class="!panShow?'panShow':' '" @click="isPanShow()">外盘</a>
             </div>
             <div class="zujian">
                 <!-- <router-view></router-view> -->
@@ -16,7 +16,9 @@
                     value="自选"
                     tab-position="bottom"
                     id="tabs"
+                    ref="tabs"
                  >
+                        <!-- v-show="item.item[0].plate_type == 1?panShow:!panShow" -->
                     <el-tab-pane v-for="(item,index) in msg" :key="index" :label = item.name :name="item.name" >
                         <HangqingCP :msg="item.item"></HangqingCP>
                     </el-tab-pane>
@@ -41,8 +43,8 @@
                         <span style="color:rgba(255,255,255,1);">上证指数：</span><span>2909.46</span><span>-1345.46</span><span>-2.90%</span>
                     </div>
                     <div class="foot2-right">
-                        <span style="background:rgba(64,70,79,1);border:1px solid rgba(128,128,128,1);">内盘</span>
-                        <span style="background:rgba(34,39,46,1);border:1px solid rgba(102,102,102,1);">外盘</span>
+                        <span :class="panShow?'footerPanShow':' '" @click="isPanShow()">内盘</span>
+                        <span :class="!panShow?'footerPanShow':' '" @click="isPanShow()">外盘</span>
                         <span >
                         <!-- <img src="../../assets/img/hangqing/实时行情拷贝副本.png" > -->
                         <i class="el-icon-search"></i>
@@ -71,6 +73,7 @@ export default {
             istanchuang:false,
             activeName:"自选",
             msg:null,
+            panShow:true,
             newMsg:null,
             websock: null,
             active: 0,
@@ -111,6 +114,10 @@ export default {
         tabChange(index,title){
             this.nowHeyue = title
             this.nowIndex = index
+        },
+        //内外盘切换
+        isPanShow(){
+            this.panShow = !this.panShow
         },
         hangqingbgChange(){
             var navs = document.getElementsByName('hangqingbg')
@@ -174,12 +181,15 @@ export default {
     },
    
 
-    // mounted(){
-        
-    // },
+    mounted(){
+        // console.log(this.$refs.tabs.$children[0].$refs.tabs)
+        // this.$refs.tabs.$children[0].$refs.tabs[2].style.display = "none"
+    },
     created(){
         this.axiosPost();
+        
     },
+    
     // computed:{
     //     ...mapGetters([
     //         'quoteDataAC'
@@ -200,7 +210,12 @@ export default {
     width: 100%;
     // display: flex;
     position: relative;
-
+    .right{
+        .panShow{
+            background: linear-gradient(-45deg, transparent 15px, rgb(87, 89, 92) 0);
+            // border: 1px solid #A4A4A4;
+        }
+    }
     
 }
 
@@ -257,6 +272,7 @@ export default {
             height: 40px;
             padding: 40px 2px; 
             z-index: 999;
+            cursor: pointer;
         }
         a{
             border-radius: 0 4px 0px 0;
@@ -347,6 +363,10 @@ export default {
             height: 27px;
             // display:inline-block;
             background:rgba(42,47,56,1);
+            .footerPanShow{
+                background:rgba(64,70,79,1);
+                border:1px solid rgba(128,128,128,1);
+            }
             span{
                 line-height: 23px;   
                 font-size:14px;
@@ -355,6 +375,7 @@ export default {
                 color:rgba(144,147,153,1);
                 padding: 0 22.5px;
                 margin-top: 2px;
+                border:1px solid rgba(128,128,128,1);
                 background:rgba(42,47,56,1);
                 display: inline-block;
                 height: 23px;

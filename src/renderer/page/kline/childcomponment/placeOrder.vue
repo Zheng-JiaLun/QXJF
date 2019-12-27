@@ -14,7 +14,7 @@
                 </p>
                 <!-- <input type="text" placeholder="合约代码" v-model="inputVal"/> -->
                 <el-cascader :options="options" :show-all-levels="false" v-model="inputVal"></el-cascader>
-                <i class="el-icon-search"></i>
+                <!-- <i class="el-icon-search"></i> -->
               </li>
               <li>
                 <p>手数</p>
@@ -27,12 +27,12 @@
             </ul>
             <ul class="ul02 flex" style="line-height: 20px;">
               <li>
-                <span>56239</span>
+                <span>{{updown.limitUp}}</span>
                 <span style="color: #FF3322;">涨板</span>
               </li>
 
               <li>
-                <span>56239</span>
+                <span>{{updown.limitDown}}</span>
                 <span style="color: #00BD00;">跌板</span>
               </li>
             </ul>
@@ -103,7 +103,7 @@
           </el-tab-pane>
           <!-- 引入委托组件 -->
           <el-tab-pane label="委托" name="weituo" id="weituo">
-            <!-- <MoNiWeiTuo :msg="tableData"></MoNiWeiTuo> -->
+            <WeiTuo></WeiTuo>
           </el-tab-pane>
           <!-- 引入成交组件 -->
           <el-tab-pane label="成交" name="chengjiao" id="chengjiao">
@@ -123,6 +123,7 @@
 
 <script>
 import ChiCang from "../../../components/common/ChiCangXinXi";
+import WeiTuo from "../../../components/common/WeiTuoXinXi";
 import ChengJiao from "../../../components/common/ChengJiaoChaXun";
 import ChuRuJin from "../../../components/common/ChuRuJinChaXun";
 export default {
@@ -142,7 +143,11 @@ export default {
             selector:false,
             options: [
              
-            ]
+            ],
+            updown:{
+              limitDown:'0',
+              limitUp:'0'
+            }
         }
     },
     methods:{
@@ -173,7 +178,7 @@ export default {
                 userID: JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId,
                 tradeNum: _this.inputNum,
                 tradePrice: _this.codePrice,
-                futuresCode: _this.inputVal.toUpperCase(),
+                futuresCode: _this.inputVal[1],
                 updown: 1,
                 priceType: 1,
                 stopLoss: Number(_this.stopLoss),
@@ -208,12 +213,18 @@ export default {
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-             if(this.isTransaction){
+            if(_this.inputNum == ''||_this.codePrice == ''||_this.inputVal == ''){
+              this.$message({
+                type: 'warning',
+                message: '请输入正确参数'
+              });  
+              return ""
+            }
               var msg = JSON.stringify({
                 userID: JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId,
                 tradeNum: _this.inputNum,
                 tradePrice: _this.codePrice,
-                futuresCode: _this.inputVal.toUpperCase(),
+                futuresCode: _this.inputVal[1],
                 updown: 2,
                 priceType: 1,
                 stopLoss: Number(_this.stopLoss),
@@ -235,12 +246,7 @@ export default {
                   // alert(res.message)
                 }
               })
-            }else{
-               this.$message({
-                  type: 'warning',
-                  message:'失败~'
-                });
-            }
+            
           }).catch(() => {
             this.$message({
               type: 'info',
@@ -302,25 +308,13 @@ export default {
             "children":item.item.map(function(e){
               return{
                 "value":e.code,
-                "label":e.name,
+                "label":e.name+" "+e.code,
               }
             }),
             
           }
         })
-        // for(let i = 0;i<hq.length;i++){
-        //   this.options[i].label = hq[i].name
-        //   this.options[i].value = hq[i].name
-        //   this.options[i].children = hq[i].item
-        //   for(let j=0;j<hq[i].item.length;j++){
-        //     this.options[i].children[j].value = hq[i].item[j].code
-        //     this.options[i].children[j].label = hq[i].item[j].name
-        //   }
-        // }
-        
         this.options = hq
-        console.log(hq)
-        
       },
     },
     created(){
@@ -348,8 +342,10 @@ export default {
         
       },
       changequoteDataAC:function(Val){
-        if(Val.code == this.inputVal.toUpperCase()){
+        if(Val.code == this.inputVal[1]){
           this.codePrice = Val.point
+          this.updown.limitDown = Val.limitDown
+          this.updown.limitUp = Val.limitUp
         }
       },
       activeName(Val){
@@ -363,7 +359,8 @@ export default {
     components:{
       ChiCang,
       ChengJiao,
-      ChuRuJin
+      ChuRuJin,
+      WeiTuo
     }
 }
 </script>
@@ -414,7 +411,7 @@ export default {
          box-sizing: border-box;
          position: relative;
         .input {
-          padding: 5px 10px;
+          padding: 0 10px;
           // height: 70px;
           // margin-bottom: 10px;
           // display: flex;
@@ -439,7 +436,7 @@ export default {
               margin: 0px 16px 0px 5px;
               float: left;
               .el-cascader{
-                width: 100px;
+                width: 118px;
                 height: 25px;
                 background: #22272e;
                 border: 1px solid #595959;

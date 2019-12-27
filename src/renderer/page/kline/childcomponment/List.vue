@@ -12,15 +12,15 @@
     >
       <!-- 在此区域引入持仓信息的组件 -->
       <el-tab-pane label="持仓信息" name="chicang" id="chicang">
-        <Chicang :Listheight='Listheight' :pinChang='pinChang' :selector="selector"></Chicang>
+        <Chicang :Listheight='Listheight' :pinChang='pinChang' :selector="selector" @childFn="parentFn"></Chicang>
         <div class="chichangbottom">
           <div class="jincangxinxi">
             <span>进仓时间：</span>
-            <span class="spandata">{{jincangTime}}</span>
+            <span class="spandata">{{childMsg.addtime}}</span>
             <span>止盈：</span>
-            <span class="spandata">{{zhiyingzhishu}}</span>
+            <span class="spandata">{{childMsg.stopprofit}}</span>
             <span>止损：</span>
-            <span class="spandata">{{zhisunzhishu}}</span>
+            <span class="spandata">{{childMsg.stoploss}}</span>
           </div>
           <div class="pingcangcaozuo">
             <div>
@@ -56,7 +56,7 @@
       </el-tab-pane>
       <!-- 在此区域引入委托信息的组件 -->
       <el-tab-pane label="委托信息" name="weituo" class="pane" id="weituo">
-        <Weituo></Weituo>
+        <Weituo ></Weituo>
       </el-tab-pane>
       <!-- 在此区域引入成交查询的组件 -->
       <el-tab-pane label="成交查询" name="chengjiao" class="pane" id="chengjiao">
@@ -66,7 +66,7 @@
         <ChuRuJin :value="value"></ChuRuJin>
       </el-tab-pane>
       <el-tab-pane label="交割查询" name="jiaoge" class="pane" id="jiaoge">
-        <JiaoGe></JiaoGe>
+        <JiaoGe :value="value"></JiaoGe>
       </el-tab-pane>
     </el-tabs>
     <div v-show="!islogin">
@@ -89,9 +89,11 @@ export default {
   data() {
     return {
       Listheight:'',
-      jincangTime:'2019-08-12 12:31',
-      zhiyingzhishu:'0.98',
-      zhisunzhishu:'4.68',
+      childMsg:{
+        addtime:"",
+        stoploss:"",
+        stopprofit:""
+      },
       changecssfanshou: 'false',
       changecsspingcang: 'false',
       changecsskuaijie: 'false',
@@ -192,6 +194,11 @@ export default {
     bufenpingcang() {
       this.pinChang = !this.pinChang;
      
+    },
+    parentFn(val){
+      console.log(val)
+      val.addtime = val.addtime.replace('T',' ')
+      this.childMsg = val
     },
     kuaijiepingcang() {
       

@@ -39,7 +39,7 @@
       <div class="input flex">
         <div class="cl flex">
           <span @click="setPrice()">{{setPriceName}}<i class="el-icon-d-caret"></i></span>
-          <el-input class="inner" placeholder v-model="gen" clearable type="number"></el-input>
+          <el-input class="inner" placeholder v-model="gen" clearable :disabled="setPriceName == '跟盘'?true:false" type="number"></el-input>
         </div>
         <div class="cl flex">
           <span>数量:</span>
@@ -151,10 +151,11 @@ export default {
                 tradePrice: _this.gen,
                 futuresCode: _this.heyue.heyueCode,
                 updown: 1,
-                priceType: 1,
+                priceType: this.setPriceName == '跟盘'?1:2,
                 stopLoss: Number(_this.stopLoss),
                 stopProfit: Number(_this.stopPrint)
               })
+              console.log(msg)
               _this.$pro.post('buy_sale_order', msg).then((res) => {
                 // _this.guadanState1 = false;
                 console.log(res)
@@ -198,7 +199,7 @@ export default {
                 tradePrice: _this.gen,
                 futuresCode: _this.heyue.heyueCode,
                 updown: 2,
-                priceType: 1,
+                priceType: this.setPriceName == '跟盘'?1:2,
                 stopLoss: Number(_this.stopLoss),
                 stopProfit: Number(_this.stopProfit)
               })
@@ -264,7 +265,7 @@ export default {
   },
   created(){
     this.heyueClassOptions = JSON.parse(localStorage.getItem(this.$store.state.localStorageHq))
-    console.log(this.heyueClassOptions) 
+    // console.log(this.heyueClassOptions) 
   },
   computed:{
     changeQuoteData(){

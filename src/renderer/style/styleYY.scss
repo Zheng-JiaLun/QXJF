@@ -1,6 +1,18 @@
 
 body{
 	margin: 0px;
+	.el-message-box{
+		background: #2a2f38;
+		border: 1px solid rgb(51, 51, 51);
+		.el-button{
+			background: #cacaca;
+		}
+		.el-button--primary {
+			
+			background-color: #409EFF;
+			
+		}
+    }
 }
 .kline{
 	canvas{
@@ -193,6 +205,25 @@ body{
         background: rgb(39,44,50);
     }
 }
+.moni{
+	.el-input{
+		height: 100%;
+		.el-input__inner{
+			height: 25px;
+			vertical-align: top;
+			background: transparent;
+			border: 1px solid #595959;
+			padding-left: 0;
+		  }
+		.el-input__suffix{
+			.el-input__icon{
+				position: absolute;
+				top: -1px;
+				right: 0;
+			}
+		}
+	}
+}
 #placeOrder{
 	.el-tabs__content{
 		height: calc(100% - 24px);
@@ -210,9 +241,14 @@ body{
 			vertical-align: top;
 			background: transparent;
 			border: 1px solid #595959;
+			padding-left: 0;
 		  }
 		.el-input__suffix{
-
+			.el-input__icon{
+				position: absolute;
+				top: -1px;
+				right: 0;
+			}
 		}
 	}
 	
@@ -223,8 +259,18 @@ body{
 		.el-input__inner{
 			color:rgba(183,183,183,1);
 			border:1px solid rgba(67,67,67,1);
-			background: #191B1F;
+			background-color: #191B1F;
 		}
+	}
+	.cont{
+		.input{
+			.el-input__inner{
+			color:rgba(183,183,183,1);
+			border:1px solid rgba(67,67,67,1);
+			background-color: #191B1F;
+		}
+		}
+		
 	}
 }
 //修改密码

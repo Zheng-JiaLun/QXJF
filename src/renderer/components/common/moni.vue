@@ -3,14 +3,14 @@
     <!-- 横向信息展示区域 -->
     <div class="top">
       <ul class="flex firstul">
-        <li>易得模拟_71376613</li>
+        <li>{{userMsg.name}}</li>
         <li>
           <span>权益:</span>
-          <span>900.00</span>
+          <span>{{this.$store.state.equityData}}</span>
         </li>
         <li>
           <span>可用资金:</span>
-          <span>900.00</span>
+          <span>{{userMsg.usermoney}}</span>
         </li>
         <li>
           <span>资金使用率:</span>
@@ -37,13 +37,14 @@
       <div class="left">
         <div class="cont">
           <!-- 上方input表格表单区域 -->
-          <div class="input flex">
+          <div class="input">
             <ul class="ul01 flex">
               <li>
                 <p>
                   <i class="el-icon-lock"></i>
                 </p>
-                <input type="text" placeholder="合约代码"  v-model="inputVal"/>
+                <!-- <input type="text" placeholder="合约代码"  v-model="inputVal"/> -->
+                <el-cascader :options="options" :show-all-levels="false" v-model="inputVal"></el-cascader>
                 <i class="el-icon-search"></i>
               </li>
               <li>
@@ -55,7 +56,7 @@
                 <input type="number" placeholder="对手价"  v-model="codePrice" />
               </li>
             </ul>
-            <ul class="ul02 flex" style="line-height: 20px;">
+            <ul class="ul02" style="line-height: 20px;">
               <li>
                 <span>56239</span>
                 <span style="color: #FF3322;">涨板</span>
@@ -112,7 +113,7 @@
             <input type="button" value="全部平仓"/> -->
           </div>
         </div>
-        <p class="p">美原油，每手5吨,保证金18371元，纽约交易所，内盘</p>
+        <!-- <p class="p">美原油，每手5吨,保证金18371元，纽约交易所，内盘</p>
         <div class="list" style="color: #999999;">
           <ul class="ul04">
             <li>14:20:00(本机时间)：委托 开仓 2899 卖出</li>
@@ -121,7 +122,7 @@
             <li>14:20:00(本机时间)：委托 开仓 2899 卖出</li>
             <li>14:20:00(本机时间)：委托 开仓 2899 卖出</li>
           </ul>
-        </div>
+        </div> -->
       </div>
       <!-- 展示板块的右边部分，主要展示合约列表 -->
       <div class="right">
@@ -345,6 +346,13 @@ export default {
           type: "市价成交"
         }
       ],
+       options: [
+          
+        ],
+        userMsg:{
+          usermoney:'',
+          name:''
+        }
     };
   },
   methods: {
@@ -356,14 +364,146 @@ export default {
       this.TabIndex = tab.index;
       localStorage.setItem("tabindex",tab.index)
     },
+     buy(e){
+      let _this = this
+      if(e == 1){
+        //买
+        this.$confirm('确定买入?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          if(_this.inputNum == ''||_this.codePrice == ''||_this.inputVal == ''){
+            this.$message({
+              type: 'warning',
+              message: '请输入正确参数'
+            });  
+            return ""
+          }
+            var msg = JSON.stringify({
+              userID: JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId,
+              tradeNum: _this.inputNum,
+              tradePrice: _this.codePrice,
+              futuresCode: _this.inputVal[1],
+              updown: 1,
+              priceType: 1,
+              stopLoss: Number(_this.stopLoss),
+              stopProfit: Number(_this.stopPrint)
+            })
+            _this.$pro.post('buy_sale_order', msg).then((res) => {
+              // _this.guadanState1 = false;
+              console.log(res)
+              if (res.result == 1) {
+                // _this.active = 0;
+                // console.log(res)
+                // _this.$store.state.market.initChicang++
+                _this.$message({
+                  type: 'success',
+                  message:'买入成功'
+                });
+              }else{
+                this.$message.error(res.message);
+                // alert(res.message)
+              }
+            })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消买入'
+          });          
+        });
+      }else{
+        //卖
+        this.$confirm('确定卖出?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+           if(_this.inputNum == ''||_this.codePrice == ''||_this.inputVal == ''){
+              this.$message({
+                type: 'warning',
+                message: '请输入正确参数'
+              });  
+              return ""
+            }
+            var msg = JSON.stringify({
+              userID: JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId,
+              tradeNum: _this.inputNum,
+              tradePrice: _this.codePrice,
+              futuresCode: _this.inputVal[1],
+              updown: 2,
+              priceType: 1,
+              stopLoss: Number(_this.stopLoss),
+              stopProfit: Number(_this.stopPrint)
+            })
+            _this.$pro.post('buy_sale_order', msg).then((res) => {
+              // _this.guadanState1 = false;
+              console.log(res)
+              if (res.result == 1) {
+                // _this.active = 0;
+                // console.log(res)
+                // _this.$store.state.market.initChicang++
+                _this.$message({
+                  type: 'success',
+                  message:'卖出成功'
+                });
+              }else{
+                this.$message.error(res.message);
+                // alert(res.message)
+              }
+            })
+         
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消卖出'
+          });          
+        });
+      }
+    },
     quickFS(){
       this.selector = !this.selector;
     },
-    quickPC(){},
+    quickPC(){
+      this.reload()
+    },
     onePC(){
       this.pinChang = !this.pinChang
     },
     allPC(){},
+    // 行情数据存储进options
+    hqOptions(){
+      let hq = JSON.parse(localStorage.getItem(this.$store.state.localStorageHq)).map(function(item){
+        return{
+          "value":item.name,
+          "label":item.name,
+          "children":item.item.map(function(e){
+            return{
+              "value":e.code,
+              "label":e.name+" "+e.code,
+            }
+          }),
+          
+        }
+      })
+      this.options = hq
+        
+    },
+    postUserMsg(){
+      let _this = this
+      var msg = JSON.stringify({
+      userID: JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId
+      });
+      this.$post('get_user_asset', msg).then(function(res) {
+        console.log(res)
+        _this.userMsg.usermoney = res.msg.user_money
+        _this.userMsg.name = res.msg.user_name
+      })
+    }
+  },
+  created(){
+    this.hqOptions()
+    this.postUserMsg()
   },
   computed:{
      updataSocketData() {
@@ -374,13 +514,24 @@ export default {
     }
   },
   watch:{
-    updataSocketData:function(){
+    updataSocketData:function(val){
+     
+      console.log("222",val) 
       this.reload()
-      console.log("222")
     },
-    changeSocketData:function(val){
-      // console.log(val)
-    }
+    changeSocketData:function(Val){
+      console.log( this.$store.state.equityData)
+      if(Val.code == this.inputVal[1]){
+          this.codePrice = Val.point
+        }
+    },
+    activeName(Val){
+      if(Val == 'chicang'){
+        this.ischichang = true
+      }else{
+          this.ischichang = false
+      }
+    },
 
   },
 
@@ -447,7 +598,7 @@ export default {
   }
   // 内容展示区域样式
   .container {
-    padding: 24px 40px;
+    padding: 32px 40px;
     color: #cccccc;
     display: flex;
     /*滚动条样式*/
@@ -481,7 +632,7 @@ export default {
           padding: 5px 10px;
           height: 70px;
           margin-bottom: 10px;
-          display: flex;
+          // display: flex;
          
           input {
             width: 60px;
@@ -496,8 +647,16 @@ export default {
             padding: 0px;
             flex: 4;
             display: flex;
+            justify-content: center;
             li {
               margin: 0px 16px 0px 5px;
+              .el-cascader{
+                width: 118px;
+                height: 25px;
+                background: #22272e;
+                border: 1px solid #595959;
+                
+              }
               p {
                 margin: 10px 0px;
               }
@@ -507,9 +666,11 @@ export default {
             flex: 1.5;
             list-style: none;
             font-size: 14px;
-            margin-top: 30px;
+            margin:0px;
             padding: 0px;
             text-align: right;
+            display: flex;
+            justify-content: center;
             li {
               margin: 0px 16px;
               p {
@@ -523,12 +684,13 @@ export default {
           height: 106px;
           .ul03 {
             list-style: none;
-            margin: 0px;
+            margin: 10px 0;
             padding: 0px;
-            float: left;
+            display: flex;
+            justify-content: center;
             li {
               width: 95px;
-              float: left;
+              // float: left;
               margin: 0px 12px 0px 5px;
               text-align: center;
               p {
@@ -565,15 +727,18 @@ export default {
           }
         }
         .fast {
+          display: flex;
+            justify-content: center;
           width: 100%;
           :first-child {
-            margin-left: 25px;
+            // margin-left: 25px;
           }
           span {
             font-size: 14px;
             padding: 5px;
             background-color: #545b64;
             border-radius: 2px;
+            margin: 0 5px;
             cursor: pointer;
             // border: 1px #545b64 solid ;
             // outline: none;

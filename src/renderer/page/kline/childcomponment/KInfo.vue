@@ -87,10 +87,10 @@
         </thead>
         <tbody>
           <tr v-for="(item, index) in list" :key="index">
-            <td>{{item.time}}</td>
-            <td :style="item.type == '多平' ? 'color:#00BD00;' : 'color:#FF3322;'">{{item.price}}</td>
-            <td>{{item.nowNum}}</td>
-            <td :style="item.type == '多平' ? 'color:#00BD00;' : 'color:#FF3322;'">{{item.type}}</td>
+            <td>{{item.createTime}}</td>
+            <td :style="item.changePoint <= 0? 'color:#00BD00;' : 'color:#FF3322;'">{{item.point}}</td>
+            <td>{{item.buyNum}}</td>
+            <td :style="item.changePoint <= 0? 'color:#00BD00;' : 'color:#FF3322;'">{{item.changePoint >= 0?'多开':'多平'}}</td>
           </tr>
         </tbody>
       </table>
@@ -124,84 +124,7 @@ export default {
         old: 1333.4
       },
       list: [
-        {
-          time: "13:13:45",
-          price: 13334,
-          nowNum: 25,
-          type: "多平"
-        },
-        {
-          time: "13:13:45",
-          price: 13334,
-          nowNum: 25,
-          type: "多平"
-        },
-        {
-          time: "13:13:45",
-          price: 13334,
-          nowNum: 25,
-          type: "多平"
-        },
-        {
-          time: "13:13:45",
-          price: 13334,
-          nowNum: 25,
-          type: "多平"
-        },
-        {
-          time: "13:13:45",
-          price: 13334,
-          nowNum: 25,
-          type: "多平"
-        },
-        {
-          time: "13:13:45",
-          price: 13334,
-          nowNum: 25,
-          type: "多平"
-        },
-        {
-          time: "13:13:45",
-          price: 13334,
-          nowNum: 25,
-          type: "多平"
-        },
-        {
-          time: "13:13:45",
-          price: 13334,
-          nowNum: 25,
-          type: "多平"
-        },
-        {
-          time: "13:13:45",
-          price: 13334,
-          nowNum: 25,
-          type: "多平"
-        },
-        {
-          time: "13:13:45",
-          price: 13334,
-          nowNum: 25,
-          type: "多平"
-        },
-        {
-          time: "13:13:45",
-          price: 13334,
-          nowNum: 25,
-          type: "多平"
-        },
-        {
-          time: "13:13:45",
-          price: 13334,
-          nowNum: 25,
-          type: "多平"
-        },
-        {
-          time: "13:13:45",
-          price: 13334,
-          nowNum: 25,
-          type: "多平"
-        },
+       
       ],
       // proInfos:this.$store.state.klineMsgs
     };
@@ -299,8 +222,16 @@ export default {
         this.proInfo.upF = val.changeRate
         this.proInfo.print = val.point
         this.proInfo.chicang = val.positionNum
-
+        this.proInfo.nowNum = val.buyNum
+        this.proInfo.upClose = val.limitUp
+        this.proInfo.downClose = val.limitDown
+        val.createTime = val.createTime.slice(val.createTime.indexOf(' '),val.createTime.lastIndexOf('.'))
+        // console.log(val.createTime)
+        // val.point
+        this.list.push(val)
+        // val.
       }
+
     }
   },
   mounted(){

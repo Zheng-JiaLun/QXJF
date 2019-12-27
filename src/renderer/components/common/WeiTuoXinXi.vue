@@ -1,24 +1,24 @@
 <template>
   <div class="weituo" id="weituo">
     <el-table :data="weiData" tooltip-effect="light" highlight-current-row>
-      <el-table-column prop="order" label="订单号" show-overflow-tooltip></el-table-column>
-      <el-table-column prop="name" label="合约" show-overflow-tooltip></el-table-column>
+      <el-table-column prop="serialnum" label="订单号" show-overflow-tooltip></el-table-column>
+      <el-table-column prop="futures_name" label="合约" show-overflow-tooltip></el-table-column>
       <el-table-column label="买卖" show-overflow-tooltip>
         <template slot-scope="scope">
           <span
-            :style="scope.row.business == '买' ? 'color:#FF3322;' : 'color:#00BD00;'"
-          >{{scope.row.business}}</span>
+            :style="scope.row.updown == '1' ? 'color:#FF3322;' : 'color:#00BD00;'"
+          >{{scope.row.updown}}</span>
         </template>
       </el-table-column>
       <el-table-column prop="type" label="开平" show-overflow-tooltip></el-table-column>
-      <el-table-column prop="weiPrice" label="委托价格" show-overflow-tooltip></el-table-column>
-      <el-table-column prop="num" label="委托手数" show-overflow-tooltip></el-table-column>
+      <el-table-column prop="futures_price" label="委托价格" show-overflow-tooltip></el-table-column>
+      <el-table-column prop="futures_num" label="委托手数" show-overflow-tooltip></el-table-column>
       <el-table-column prop="delnum" label="成交手数" show-overflow-tooltip></el-table-column>
-      <el-table-column prop="orderType" label="下单类型" show-overflow-tooltip></el-table-column>
-      <el-table-column prop="time" label="委托时间" show-overflow-tooltip></el-table-column>
+      <el-table-column prop="type" label="下单类型" show-overflow-tooltip></el-table-column>
+      <el-table-column prop="addtime" label="委托时间" show-overflow-tooltip></el-table-column>
       <el-table-column label="止盈止亏" show-overflow-tooltip>
         <template slot-scope="scope">
-          <span style="cursor: pointer;color:#fff;" @click="setPrLoss()">{{scope.row.stop_pro_loss}}</span>
+          <span style="cursor: pointer;color:#fff;" @click="setPrLoss(scope.row.stoploss,scope.row.stopprofit)">点击设置</span>
         </template>
       </el-table-column>
       <el-table-column label="撤单" show-overflow-tooltip>
@@ -37,104 +37,7 @@ export default {
     return {
       dialogVisible: false,
       zuixinjia: "暂无数据",
-      weiData: [
-        {
-          order: "8A89UA",
-          name: "小恒生1905",
-          business: "卖",
-          type: 1,
-          weiPrice: 1566,
-          num: 5,
-          delnum: 10,
-          orderType: "指定",
-          time: "09-03 12:34:13",
-          stop_pro_loss: "0/4"
-        },
-        {
-          order: "8A89UA",
-          name: "小恒生1905",
-          business: "卖",
-          type: 1,
-          weiPrice: 1566,
-          num: 5,
-          delnum: 10,
-          orderType: "指定",
-          time: "09-03 12:34:13",
-          stop_pro_loss: "0/4"
-        },
-        {
-          order: "8A89UA",
-          name: "小恒生1905",
-          business: "卖",
-          type: 1,
-          weiPrice: 1566,
-          num: 5,
-          delnum: 10,
-          orderType: "指定",
-          time: "09-03 12:34:13",
-          stop_pro_loss: "0/4"
-        },
-        {
-          order: "8A89UA",
-          name: "小恒生1905",
-          business: "卖",
-          type: 1,
-          weiPrice: 1566,
-          num: 5,
-          delnum: 10,
-          orderType: "指定",
-          time: "09-03 12:34:13",
-          stop_pro_loss: "0/4"
-        },
-        {
-          order: "8A89UA",
-          name: "小恒生1905",
-          business: "卖",
-          type: 1,
-          weiPrice: 1566,
-          num: 5,
-          delnum: 10,
-          orderType: "指定",
-          time: "09-03 12:34:13",
-          stop_pro_loss: "0/4"
-        },
-        {
-          order: "8A89UA",
-          name: "小恒生1905",
-          business: "卖",
-          type: 1,
-          weiPrice: 1566,
-          num: 5,
-          delnum: 10,
-          orderType: "指定",
-          time: "09-03 12:34:13",
-          stop_pro_loss: "0/4"
-        },
-        {
-          order: "8A89UA",
-          name: "小恒生1905",
-          business: "卖",
-          type: 1,
-          weiPrice: 1566,
-          num: 5,
-          delnum: 10,
-          orderType: "指定",
-          time: "09-03 12:34:13",
-          stop_pro_loss: "0/4"
-        },
-        {
-          order: "8A89UA",
-          name: "小恒生1905",
-          business: "买",
-          type: 1,
-          weiPrice: 1566,
-          num: 5,
-          delnum: 10,
-          orderType: "指定",
-          time: "09-03 12:34:13",
-          stop_pro_loss: "0/4"
-        }
-      ],
+      weiData: [],
       stopProLoss: [
         {
           time: "2019-05-10 09:22:55",
@@ -172,7 +75,7 @@ export default {
     };
   },
   methods: {
-    async setPrLoss() {
+    async setPrLoss(a,b) {
       let data = await this.$Win.openWin({
         // browserwindow原生属性
         width: 900, // 窗口宽
@@ -182,7 +85,9 @@ export default {
         windowConfig: {
           router: "/zyzsTanchuang", // 路由 *必填
           data: {
-            id: 1
+            id: 1,
+            stoploss:a,
+            stopprofit:b
           }, // 传送数据
           name: "zhiyingzhisun", // 窗口名称
           animation: "none"
@@ -190,7 +95,7 @@ export default {
       });
     },
     axiosWeiTuo(){
-
+      let _this = this
        if (!localStorage.getItem('ycxUserLoginState_QXJF')) { //判断是否为登录状态
         console.log('未登录状态');
       } else {
@@ -198,9 +103,9 @@ export default {
        let msg = JSON.stringify({
         userID:JSON.parse(localStorage.getItem('ycxUserInfo_QXJF')).userId
         })
-        this.$pro.post('get_position_list_new', msg).then((res) => {
-            console.log(res.msg.data)
-          
+        this.$pro.post('get_stay_order_new', msg).then((res) => {
+            console.log(res)
+            _this.weiData = res.msg.data
           })
       }
 
@@ -250,13 +155,14 @@ export default {
       }
     },
     changeLoginStatus:function(val){
+      let _this = this
       if(val == true){
         let msg = JSON.stringify({
         userID:JSON.parse(localStorage.getItem('ycxUserInfo_QXJF')).userId
         })
         this.$pro.post('get_position_list_new', msg).then((res) => {
             console.log(res.msg.data)
-          
+            _this.weiData = res.msg.data
           })
       }
     }
