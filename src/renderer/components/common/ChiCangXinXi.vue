@@ -212,13 +212,13 @@ export default {
         userID:JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId
         })
         this.$pro.post('get_position_list_new', msg).then((res) => {
-          console.log(res)
-          res.msg.djbzj//冻结保证金
-          res.msg.dtqy//动态权益
-          res.msg.lcyk//
-          res.msg.pcyk//平仓盈亏
-          res.msg.zybzj//自用保证金
-          // this.$emit('childFn',val);
+          // console.log(res)
+          // res.msg.djbzj//冻结保证金
+          // res.msg.dtqy//动态权益
+          // res.msg.lcyk//
+          // res.msg.pcyk//平仓盈亏
+          // res.msg.zybzj//自用保证金
+          this.$emit('childTopFn',res.msg);
           _this.tableData = res.msg.data
          
           let hqMsg = JSON.parse(localStorage.getItem(_this.$store.state.localStorageHq))[0].item,

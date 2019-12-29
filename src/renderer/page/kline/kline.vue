@@ -82,17 +82,33 @@
         <div class="centerLM" id="centerLM">
           <div class="data flex">
             <p>{{userMsg.name?userMsg.name:"未登录"}}</p>
-            <p class="flex">
+            <p class="flex" v-show="islogin">
               <span>权益:</span>
               <span>{{changeLoginStatus?changeEquityData+'元':'暂无信息'}}</span>
             </p>
-            <p class="flex" @click="click01()">
+            <p class="flex"  v-show="islogin" @click="click01()">
               <span>可用资金:</span>
               <span>{{userMsg.usermoney?userMsg.usermoney:"暂无信息"}}</span>
             </p>
-            <p class="flex">
+            <!-- <p class="flex"  v-show="islogin">
               <span>资金使用率:</span>
               <span>2.7%</span>
+            </p> -->
+            <p class="flex"  v-show="islogin">
+              <span>自用保证金:</span>
+              <span>{{topData.zybzj}}</span>
+            </p>
+            <p class="flex"  v-show="islogin">
+              <span>冻结保证金:</span>
+              <span>{{topData.djbzj}}</span>
+            </p>
+            <p class="flex"  v-show="islogin">
+              <span>动态权益:</span>
+              <span>{{topData.dtqy}}</span>
+            </p>
+            <p class="flex"  v-show="islogin">
+              <span>平仓盈亏:</span>
+              <span>{{topData.pcyk}}</span>
             </p>
             <!-- <div class="flex" v-show="showorhide1">
               <p>成交查询：</p>
@@ -141,7 +157,7 @@
           <!-- 合约清单展示区域 -->
           <div class="centerLBR">
             <div id="List">
-              <List @listenTabindex="showBoxindex()" :listSize="listSize" :value="value1"></List>
+              <List @listenTabindex="showBoxindex()" :listSize="listSize" :value="value1" @listenData="listenDataFn"></List>
             </div>
             <!-- <div class="listbottom">
               <span>上证指数：</span>
@@ -198,7 +214,7 @@ export default {
         usermoney:false
       },
       showorhide1: false,
-      
+      topData:{},
       height: "300px",
       tabindex: 0,
       isactive: 0,
@@ -492,6 +508,11 @@ export default {
         localStorage.setItem('placeOrderIndex',"2")
       }
       
+    },
+    //监听子组件传递过来的数据展示到信息栏
+    listenDataFn(val){
+      this.topData = val
+      console.log(val)
     },
     // 此函数获取窗口大小，并动态修改相关板块的高度
     reboxSize() {

@@ -12,7 +12,7 @@
     >
       <!-- 在此区域引入持仓信息的组件 -->
       <el-tab-pane label="持仓信息" name="chicang" id="chicang">
-        <Chicang :Listheight='Listheight' :pinChang='pinChang' :selector="selector" @childFn="parentFn"></Chicang>
+        <Chicang :Listheight='Listheight' :pinChang='pinChang' :selector="selector" @childFn="parentFn" @childTopFn="parentTopFn"></Chicang>
         <div class="chichangbottom">
           <div class="jincangxinxi">
             <span>进仓时间：</span>
@@ -144,7 +144,8 @@ export default {
           paymode: "银行卡支付",
           serial_number: "928287721749294"
         }
-      ]
+      ],
+      topData:{}
     };
   },
    mounted: function() {
@@ -199,6 +200,10 @@ export default {
       console.log(val)
       val.addtime = val.addtime.replace('T',' ')
       this.childMsg = val
+    },
+    parentTopFn(val){
+      
+      this.$emit('listenData',val)
     },
     kuaijiepingcang() {
       

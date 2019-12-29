@@ -17,6 +17,16 @@
           <span>900.00</span>
         </li>
       </ul>
+      <div class="flex" v-show="showorhide1">
+        <p>起止日期：</p>
+        <el-date-picker
+          v-model="value1"
+          type="daterange"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          default-value="2019-12-01"
+        ></el-date-picker>
+      </div>
       <!-- <div></div> -->
       <ul class="flex secondul">
         <li>
@@ -25,7 +35,7 @@
           </p>
         </li>
         <li>
-          <p class="change" @click="close()">
+          <p class="change" @click="changeClose()">
             <i class="el-icon-sort"></i>
           </p>
         </li>
@@ -160,6 +170,19 @@
         </el-tabs>
       </div>
     </div>
+    <!--左边为买卖操作窗口，右边为合约清单-->
+    <div class="centerLB" id="centerLB" v-show="isbuy">
+      <!-- 合约买卖操作窗口 -->
+      <div class="centerLBL">
+        <BuyAndSell></BuyAndSell>
+      </div>
+      <!-- 合约清单展示区域 -->
+      <div class="centerLBR">
+        <div id="List">
+          <List @listenTabindex="showBoxindex()" :listSize="listSize" :value="value1" @listenData="listenDataFn"></List>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 <script>
@@ -171,6 +194,8 @@ import MoNiTiaoJianDan from '../common/monichildren/monitiaojiandan.vue';
 import MoNiWeiTuo from '../table/table.vue';
 import MoNiYuBeiDan from '../common/monichildren/moniyubeidan.vue';
 import MoNiZiJin from '../common/monichildren/monizijin.vue';
+import BuyAndSell from '../../page/kline/childcomponment/BuyAndSell';
+import List from '../../page/kline/childcomponment/List';
 export default {
   name: "moni",
   inject:['reload'],
@@ -187,6 +212,10 @@ export default {
       stopPrint:'0',
       ischichang:true,
       selector:false,
+      showorhide1: false,
+      value1: "",
+      listSize:"500px",
+      isbuy:false,
       codePrice:'',
       tableData: [
         {
@@ -360,9 +389,30 @@ export default {
       let win = this.$Win.getWinByName("yidemoni");
       this.$Win.closeWin(win);
     },
+    changeClose(){
+      this.isbuy = !this.isbuy
+    },
+     //监听子组件传递过来的数据展示到信息栏
+    listenDataFn(val){
+      // this.topData = val
+      console.log(val)
+    },
     handleClick(tab, event) {
       this.TabIndex = tab.index;
       localStorage.setItem("tabindex",tab.index)
+    },
+    // 此函数用于控制时间选择器的隐藏或显示
+    showBoxindex(data) {
+      if (localStorage.getItem("tabindex") == 2) {
+        // this.showorhide2 = false;
+        this.showorhide1 = true;
+      } else if (localStorage.getItem("tabindex") == 3 || localStorage.getItem("tabindex") == 4) {
+        // this.showorhide2 = true;
+        this.showorhide1 = true;
+      } else {
+        // this.showorhide2 = false;
+        this.showorhide1 = false;
+      }
     },
      buy(e){
       let _this = this
@@ -542,7 +592,9 @@ export default {
     MoNiTiaoJianDan,
     MoNiWeiTuo,
     MoNiYuBeiDan,
-    MoNiZiJin
+    MoNiZiJin,
+    BuyAndSell,
+    List
   }
 };
 </script>
@@ -785,6 +837,46 @@ export default {
       width: 60%;
       border: 1px solid black;
       color: #ffffff;
+    }
+  }
+  .centerLB {
+    position: absolute;
+    left: 0;
+    top: 50px;
+    overflow: hidden;
+    width: 100%;
+    display: flex;
+    z-index: 3;
+   background: #191B1F;
+    .centerLBL {
+      background: #191B1F;
+      width: 30%;
+      border-bottom: #2a2d32 1px solid;
+      border-top: black 1px solid;
+      overflow-y: scroll;
+    }
+    .centerLBL::-webkit-scrollbar {
+      display: none;
+    }
+    .centerLBR {
+      width: 70%;
+      background: #191B1F;
+      #List {
+        overflow-y: scroll;
+      }
+      .listbottom {
+        font-size: 14px;
+        height: 16px;
+        background: rgba(34, 39, 46, 1);
+        color: #a7a7a7;
+        .spanszzs {
+          color: green;
+          margin: 10px;
+        }
+      }
+    }
+    #List::-webkit-scrollbar {
+      display: none;
     }
   }
 }

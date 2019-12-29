@@ -219,6 +219,9 @@ export default {
     watch:{
         'img':function(){
             console.log(this.img)
+        },
+        imageUrl:function(val){
+            console.log(val)
         }
     },
 }

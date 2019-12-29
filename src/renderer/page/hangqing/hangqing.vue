@@ -182,7 +182,7 @@ export default {
    
 
     mounted(){
-        // console.log(this.$refs.tabs.$children[0].$refs.tabs)
+        // console.log(this.$refs.tabs.$children[0].$refs.nav.children[0])
         // this.$refs.tabs.$children[0].$refs.tabs[2].style.display = "none"
     },
     created(){
