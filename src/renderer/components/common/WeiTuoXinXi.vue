@@ -7,18 +7,23 @@
         <template slot-scope="scope">
           <span
             :style="scope.row.updown == '1' ? 'color:#FF3322;' : 'color:#00BD00;'"
-          >{{scope.row.updown}}</span>
+          >{{scope.row.updown =='1'?'买':'卖'}}</span>
         </template>
       </el-table-column>
       <el-table-column prop="type" label="开平" show-overflow-tooltip></el-table-column>
       <el-table-column prop="futures_price" label="委托价格" show-overflow-tooltip></el-table-column>
       <el-table-column prop="futures_num" label="委托手数" show-overflow-tooltip></el-table-column>
-      <el-table-column prop="delnum" label="成交手数" show-overflow-tooltip></el-table-column>
-      <el-table-column prop="type" label="下单类型" show-overflow-tooltip></el-table-column>
+      <el-table-column prop="trade_num" label="成交手数" show-overflow-tooltip></el-table-column>
+      <el-table-column label="下单类型" show-overflow-tooltip>
+        <template slot-scope="scope">
+          <span
+          >{{scope.row.type==1?'限价':'市价'}}</span>
+        </template>
+      </el-table-column>
       <el-table-column prop="addtime" label="委托时间" show-overflow-tooltip></el-table-column>
       <el-table-column label="止盈止亏" show-overflow-tooltip>
         <template slot-scope="scope">
-          <span style="cursor: pointer;color:#fff;" @click="setPrLoss(scope.row.stoploss,scope.row.stopprofit)">点击设置</span>
+          <span style="cursor: pointer;color:#fff;" @click="setPrLoss(scope.row)">点击设置</span>
         </template>
       </el-table-column>
       <el-table-column label="撤单" show-overflow-tooltip>
@@ -75,7 +80,7 @@ export default {
     };
   },
   methods: {
-    async setPrLoss(a,b) {
+    async setPrLoss(a) {
       let data = await this.$Win.openWin({
         // browserwindow原生属性
         width: 900, // 窗口宽
@@ -85,9 +90,7 @@ export default {
         windowConfig: {
           router: "/zyzsTanchuang", // 路由 *必填
           data: {
-            id: 1,
-            stoploss:a,
-            stopprofit:b
+            id: a,
           }, // 传送数据
           name: "zhiyingzhisun", // 窗口名称
           animation: "none"

@@ -5,7 +5,7 @@
       class="table01"
       tooltip-effect="light"
       style="width: 100%;"
-      max-height="250"
+      
       highlight-current-row
     >
       <el-table-column prop="user_name" label="用户账号" show-overflow-tooltip ></el-table-column>

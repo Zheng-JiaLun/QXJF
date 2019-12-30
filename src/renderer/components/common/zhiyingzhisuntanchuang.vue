@@ -86,23 +86,24 @@ export default {
       this.nowstopProLoss.stopprofit = data.id.stopprofit
       this.nowstopProLoss.stoploss = data.id.stoploss
       
-      this.msgStop.stoploss = Number(data.id.buyPoint) - 5
+      this.msgStop.stoploss = (Number(data.id.buyPoint?data.id.buyPoint:data.id.lastprice)*1000 - 5*1000)/1000
 
-      this.msgStop.stopprofit = Number(data.id.buyPoint) + 5
+      this.msgStop.stopprofit = (Number(data.id.buyPoint?data.id.buyPoint:data.id.lastprice)*1000 + 5*1000)/1000
       this.zuixinjia = data.id.buyPoint
-      console.log(this.msgStop)
+      console.log(data)
+      console.log(data.id)
     },
     //减
     stopReduce(e){
       //止盈
       if(e == 1){
         
-         this.msgStop.stopprofit = (this.msgStop.stopprofit*100 - this.stopProLoss.price_unit*100)/100
+         this.msgStop.stopprofit = (this.msgStop.stopprofit*1000 - this.stopProLoss.price_unit*1000)/1000
         
         this.$set(this.msgStop,this.msgStop.stopprofit,this.msgStop.stopprofit)
       //止损
       }else{
-        this.msgStop.stoploss = (this.msgStop.stoploss*100 - this.stopProLoss.price_unit*100)/100
+        this.msgStop.stoploss = (this.msgStop.stoploss*1000 - this.stopProLoss.price_unit*1000)/1000
         this.$set(this.msgStop,this.msgStop.stoploss,this.msgStop.stoploss)
       }
     },
@@ -110,11 +111,11 @@ export default {
     stopPlus(e){
       //止盈
       if(e == 1){
-        this.msgStop.stopprofit = (this.msgStop.stopprofit*100 + this.stopProLoss.price_unit*100)/100
+        this.msgStop.stopprofit = (this.msgStop.stopprofit*1000 + this.stopProLoss.price_unit*1000)/1000
         this.$set(this.msgStop,this.msgStop.stopprofit,this.msgStop.stopprofit)
       //止损
       }else{
-        this.msgStop.stoploss = (this.msgStop.stoploss*100 + this.stopProLoss.price_unit*100)/100
+        this.msgStop.stoploss = (this.msgStop.stoploss*1000 + this.stopProLoss.price_unit*1000)/1000
         this.$set(this.msgStop,this.msgStop.stoploss,this.msgStop.stoploss)
       }
     },
@@ -133,7 +134,10 @@ export default {
             message: '设置成功',
             type: 'success'
           });
-          _this.close()
+          setTimeout(function(){
+            _this.close()
+          },1500)
+          
         }else{
           _this.$message.error('错误:'+res.message);
         }

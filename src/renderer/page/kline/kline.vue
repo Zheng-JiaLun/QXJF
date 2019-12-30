@@ -11,13 +11,17 @@
           @click="dianji(index);klineFlag = item.key"
         >{{item.title}}</li>
       </ul>
-      <el-dropdown class="dropdown" trigger="click" style="height: 100%;">
+      <el-dropdown class="dropdown" trigger="click" @command="handleCommand" style="height: 100%;">
         <span class="el-dropdown-link dropdownSpan">更多</span>
         <el-dropdown-menu
           slot="dropdown"
           style="background-color:rgba(30,35,41,1);border-radius:2px;border:none"
         >
-          <el-dropdown-item v-for="(item, index) in MoreList" :key="index" style="display:flex;">
+          <el-dropdown-item v-for="(item, index) in MoreList" 
+          :key="index" 
+           :command="index"
+           
+            style="display:flex;">
             <img
               src="../../assets/fenshi.png"
               v-if="item.key <1"
@@ -83,7 +87,7 @@
           <div class="data flex">
             <p>{{userMsg.name?userMsg.name:"未登录"}}</p>
             <p class="flex" v-show="islogin">
-              <span>权益:</span>
+              <span>动态盈亏:</span>
               <span>{{changeLoginStatus?changeEquityData+'元':'暂无信息'}}</span>
             </p>
             <p class="flex"  v-show="islogin" @click="click01()">
@@ -135,7 +139,7 @@
               ></el-date-picker>
             </div> -->
           </div>
-          <div class="action flex" :v-show="islogin">
+          <div class="action flex" v-show="islogin">
             <div class="new flex" @click="placeOrders()">
               <i class="el-icon-sort"></i>
             </div>
@@ -250,48 +254,44 @@ export default {
           key: "30"
         },
         {
-          title: "MA"
+          title: "60分",
+          key: "60"
         },
-        {
-          title: "BOLL"
-        },
-        {
-          title: "增加附图"
-        }
+       
       ],
       MoreList: [
-        {
-          title: "分时",
-          key: ""
-        },
-        {
-          title: "一分钟",
-          key: "1"
-        },
-        {
-          title: "三分钟",
-          key: "3"
-        },
-        {
-          title: "五分钟",
-          key: "5"
-        },
-        {
-          title: "十分钟",
-          key: "10"
-        },
-        {
-          title: "十五分钟",
-          key: "15"
-        },
-        {
-          title: "三十分钟",
-          key: "30"
-        },
-        {
-          title: "小时周数",
-          key: "时"
-        },
+        // {
+        //   title: "分时",
+        //   key: ""
+        // },
+        // {
+        //   title: "一分钟",
+        //   key: "1"
+        // },
+        // {
+        //   title: "三分钟",
+        //   key: "3"
+        // },
+        // {
+        //   title: "五分钟",
+        //   key: "5"
+        // },
+        // {
+        //   title: "十分钟",
+        //   key: "10"
+        // },
+        // {
+        //   title: "十五分钟",
+        //   key: "15"
+        // },
+        // {
+        //   title: "三十分钟",
+        //   key: "30"
+        // },
+        // {
+        //   title: "小时周数",
+        //   key: "时"
+        // },
         {
           title: "日线",
           key: "日"
@@ -313,9 +313,25 @@ export default {
           key: "年"
         },
         {
-          title: "秒周线",
-          key: "秒"
-        }
+          title: "MA5",
+          key: "MA5"
+        },
+        {
+          title: "MA10",
+          key: "MA10"
+        },
+        {
+          title: "MA20",
+          key: "MA20"
+        },
+        {
+          title: "BOLL",
+          key: "BOLL"
+        },
+        // {
+        //   title: "秒周线",
+        //   key: "秒"
+        // }
       ],
       minuteOption:{
        
@@ -509,6 +525,37 @@ export default {
       }
       
     },
+    handleCommand(command){
+      console.log(this.isactive)
+      console.log(command)
+      this.isactive = 7
+      switch (command) {
+          case 0:
+            this.klineOption.KLine.Period = 0
+            console.log("日线")
+            break;
+          case 1:
+            this.klineOption.KLine.Period = 1
+            console.log("周线")
+            break;
+          case 2:
+            this.klineOption.KLine.Period = 2 
+            console.log("月线")
+            break;
+          case 3:
+            this.klineOption.KLine.Period = 9
+            console.log("季线")
+            break;
+          case 4:
+            this.klineOption.KLine.Period = 3
+            console.log("年线")
+            break;
+        
+          default:
+            
+            break;
+        }
+    },
     //监听子组件传递过来的数据展示到信息栏
     listenDataFn(val){
       this.topData = val
@@ -589,6 +636,9 @@ export default {
             break;
           case '30':
             this.klineOption.KLine.Period = 7
+            break;
+          case '60':
+            this.klineOption.KLine.Period = 8
             break;
         
           default:
@@ -798,6 +848,7 @@ export default {
         background: rgba(34, 39, 46, 1);
         border: black 1px solid;
         border-bottom: none;
+        position: relative;
         .data {
           width: auto;
           float: left;
@@ -818,6 +869,10 @@ export default {
           width: auto;
           float: right;
           height: 30px;
+          position: absolute;
+          background: #22272e;
+          border-left: black 1px solid;
+          right: 0;
           div {
             display: inline;
           }

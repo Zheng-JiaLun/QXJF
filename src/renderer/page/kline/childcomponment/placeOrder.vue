@@ -10,7 +10,8 @@
             <ul class="ul01 flex">
               <li>
                 <p>
-                  <i class="el-icon-lock"></i>
+                  <i v-show="!islock" @click="islockBtn()" class="el-icon-lock"></i>
+                  <i v-show="islock" @click="islockBtn()" class="el-icon-unlock"></i>
                 </p>
                 <!-- <input type="text" placeholder="合约代码" v-model="inputVal"/> -->
                 <el-cascader :options="options" :show-all-levels="false" v-model="inputVal"></el-cascader>
@@ -21,8 +22,8 @@
                 <input type="number" placeholder="数量"  v-model="inputNum"/>
               </li>
               <li>
-                <p>价格</p>
-                <input type="number" placeholder="对手价" v-model="codePrice" />
+                <p class="priceMode" @click="priceModeBtn">{{priceMode}}<i class="el-icon-d-caret"></i></p>
+                <input type="number" placeholder="市价/限价" v-model="codePrice" />
               </li>
             </ul>
             <ul class="ul02 flex" style="line-height: 20px;">
@@ -113,7 +114,7 @@
             <ChuRuJin :value="value"></ChuRuJin>
           </el-tab-pane>
           <el-tab-pane label="交割查询" name="jiaoge" class="pane" id="jiaoge">
-            <!-- <JiaoGe></JiaoGe> -->
+            <JiaoGe :value="value"></JiaoGe>
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -126,6 +127,7 @@ import ChiCang from "../../../components/common/ChiCangXinXi";
 import WeiTuo from "../../../components/common/WeiTuoXinXi";
 import ChengJiao from "../../../components/common/ChengJiaoChaXun";
 import ChuRuJin from "../../../components/common/ChuRuJinChaXun";
+import JiaoGe from "../../../components/common/JiaoGeChaXun";
 export default {
     name:"placeOrder",
     props:['listSize','value'],
@@ -136,6 +138,7 @@ export default {
             pinChang:false,
             inputVal:'',
             codePrice:'',
+            priceMode:"市价",
             inputNum:'1',
             stopLoss:'0',
             stopPrint:'0',
@@ -144,6 +147,7 @@ export default {
             options: [
              
             ],
+            islock:true,
             updown:{
               limitDown:'0',
               limitUp:'0'
@@ -157,6 +161,16 @@ export default {
         console.log(event,this.activeName)
         // 向父元素传值的自定义监听函数
         this.$emit("listenTabindex",1);
+      },
+      islockBtn(){
+        this.islock = !this.islock
+        // console.log(this.inputVal)
+        // if(this.islock == false){
+        //   localStorage.setItem('islock',JSON.stringify({
+        //     islock:false,
+        //     val:this.inputVal[1]
+        //   }))
+        // }
       },
       buy(e){
         let _this = this
@@ -179,8 +193,8 @@ export default {
                 tradeNum: _this.inputNum,
                 tradePrice: _this.codePrice,
                 futuresCode: _this.inputVal[1],
-                updown: 1,
-                priceType: 1,
+                updown:1,
+                priceType:this.priceMode == '市价'?1:2,
                 stopLoss: Number(_this.stopLoss),
                 stopProfit: Number(_this.stopPrint)
               })
@@ -226,7 +240,7 @@ export default {
                 tradePrice: _this.codePrice,
                 futuresCode: _this.inputVal[1],
                 updown: 2,
-                priceType: 1,
+                priceType:this.priceMode == '市价'?1:2,
                 stopLoss: Number(_this.stopLoss),
                 stopProfit: Number(_this.stopPrint)
               })
@@ -259,6 +273,14 @@ export default {
       quickFS(){
         this.selector = !this.selector;
       },
+       //市价/限价切换按钮
+      priceModeBtn(){
+        if(this.priceMode == '市价'){
+          this.priceMode = '限价'
+        }else{
+          this.priceMode = '市价'
+        }
+      },
       // 快捷平仓
       quickPC(){},
       //单个平仓
@@ -267,7 +289,8 @@ export default {
       },
       //全部平仓
       allPC(){
-        console.log(this.$store.state.serialnum)
+        let _this = this
+        // console.log(this.$store.state.serialnum)
         this.$confirm('确定全部平仓?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -279,16 +302,20 @@ export default {
               serialNum:this.$store.state.serialnum.toString()
             })
           console.log(msg)
-            _this.$post('select_close',msg).then(function(res){
-              if(res.results == 1){
+            _this.$pro.post('select_close',msg).then(function(res){
+              console.log(res)
+              if(res.result == 1){
                 // _this.$store.state.market.initChicang++
-                this.$message({
+                _this.$message({
                   type: 'success',
                   message: '全部平仓成功!'
                 });
               }else{
-                
-                alert('错误:'+res.msg.Message)
+                 _this.$message({
+                  type: 'success',
+                  message: '错误:'+res.msg.Message
+                });
+               
               }
             })
         
@@ -360,7 +387,8 @@ export default {
       ChiCang,
       ChengJiao,
       ChuRuJin,
-      WeiTuo
+      WeiTuo,
+      JiaoGe
     }
 }
 </script>
@@ -435,6 +463,11 @@ export default {
             li {
               margin: 0px 16px 0px 5px;
               float: left;
+              .priceMode:hover{
+                background: rgb(92, 92, 92);
+                border-radius: 3px;
+                cursor: pointer;
+              }
               .el-cascader{
                 width: 118px;
                 height: 25px;

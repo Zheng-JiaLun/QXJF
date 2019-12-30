@@ -5,7 +5,7 @@
       <ul class="flex firstul">
         <li>{{userMsg.name}}</li>
         <li>
-          <span>权益:</span>
+          <span>动态盈亏:</span>
           <span>{{this.$store.state.equityData}}</span>
         </li>
         <li>
@@ -13,11 +13,23 @@
           <span>{{userMsg.usermoney}}</span>
         </li>
         <li>
-          <span>资金使用率:</span>
-          <span>900.00</span>
+          <span>动态权益:</span>
+          <span>{{topMsg.dtqy}}</span>
+        </li>
+        <li>
+          <span>冻结保证金:</span>
+          <span>{{topMsg.djbzj}}</span>
+        </li>
+        <li>
+          <span>自用保证金:</span>
+          <span>{{topMsg.zybzj}}</span>
+        </li>
+        <li>
+          <span>平仓盈亏:</span>
+          <span>{{topMsg.pcyk}}</span>
         </li>
       </ul>
-      <div class="flex" v-show="showorhide1">
+      <div class="flex start-time" v-show="showorhide1">
         <p>起止日期：</p>
         <el-date-picker
           v-model="value1"
@@ -62,18 +74,18 @@
                 <input type="number" placeholder="数量" v-model="inputNum"/>
               </li>
               <li>
-                <p>价格</p>
-                <input type="number" placeholder="对手价"  v-model="codePrice" />
+                <p class="priceMode" @click="priceModeBtn">{{priceMode}}<i class="el-icon-d-caret"></i></p>
+                <input type="number" placeholder="市价/限价"  v-model="codePrice" />
               </li>
             </ul>
             <ul class="ul02" style="line-height: 20px;">
               <li>
-                <span>56239</span>
+               <span>{{updown.limitUp}}</span>
                 <span style="color: #FF3322;">涨板</span>
               </li>
 
               <li>
-                <span>56239</span>
+                <span>{{updown.limitDown}}</span>
                 <span style="color: #00BD00;">跌板</span>
               </li>
             </ul>
@@ -140,33 +152,39 @@
         @tab-click="handleClick"
          type="card" >
           <!-- 引入持仓组件 -->
-          <el-tab-pane label="持仓" name="chicang">
+          <el-tab-pane label="持仓" name="chicang" id="chicang">
             <ChiCang :pinChang='pinChang' :selector="selector"></ChiCang>
           </el-tab-pane>
           <!-- 引入委托组件 -->
-          <el-tab-pane label="委托" name="weituo">
-            <MoNiWeiTuo :msg="tableData"></MoNiWeiTuo>
+          <el-tab-pane label="委托" name="weituo" id="weituo">
+            <WeiTuo></WeiTuo>
           </el-tab-pane>
           <!-- 引入成交组件 -->
-          <el-tab-pane label="成交" name="chengjiao">
-            <MoNiChengJiao></MoNiChengJiao>
+          <el-tab-pane label="成交" name="chengjiao" id="chengjiao">
+            <ChengJiao :value="value1"></ChengJiao>
+          </el-tab-pane>
+           <el-tab-pane label="出入金" name="churujin" class="pane" id="churujin">
+            <ChuRuJin :value="value1"></ChuRuJin>
+          </el-tab-pane>
+          <el-tab-pane label="交割查询" name="jiaoge" class="pane" id="jiaoge">
+            <JiaoGe :value="value1"></JiaoGe>
           </el-tab-pane>
           <!-- 引入预备单组件 -->
-          <el-tab-pane label="预备单" name="yu">
+          <!-- <el-tab-pane label="预备单" name="yu">
             <MoNiYuBeiDan></MoNiYuBeiDan>
-          </el-tab-pane>
+          </el-tab-pane> -->
           <!-- 引入条件单组件 -->
-          <el-tab-pane label="条件单" name="tiao">
+          <!-- <el-tab-pane label="条件单" name="tiao">
             <MoNiTiaoJianDan></MoNiTiaoJianDan>
-          </el-tab-pane>
+          </el-tab-pane> -->
           <!-- 引入损盈单组件 -->
-          <el-tab-pane label="损盈单" name="ying">
+          <!-- <el-tab-pane label="损盈单" name="ying">
             <MoNiSunYingDan></MoNiSunYingDan>
-          </el-tab-pane>
+          </el-tab-pane> -->
           <!-- 引入资金组件 -->
-          <el-tab-pane label="资金" name="money">
+          <!-- <el-tab-pane label="资金" name="money">
             <MoNiZiJin></MoNiZiJin>
-          </el-tab-pane>
+          </el-tab-pane> -->
         </el-tabs>
       </div>
     </div>
@@ -187,11 +205,11 @@
 </template>
 <script>
 import ChiCang from '../common/ChiCangXinXi';
-import MoNiChengJiao from '../common/monichildren/monichengjiao.vue';
-import MoNiSunYingDan from '../common/monichildren/monisunyingdan.vue';
-import MoNiTiaoJianDan from '../common/monichildren/monitiaojiandan.vue';
+import ChengJiao from '../common/ChengJiaoChaXun';
+import ChuRuJin from '../common/ChuRuJinChaXun';
+import JiaoGe from '../common/JiaoGeChaXun';
 // import MoNiWeiTuo from '../common/monichildren/moniweituo.vue';
-import MoNiWeiTuo from '../table/table.vue';
+import WeiTuo from '../common/WeiTuoXinXi';
 import MoNiYuBeiDan from '../common/monichildren/moniyubeidan.vue';
 import MoNiZiJin from '../common/monichildren/monizijin.vue';
 import BuyAndSell from '../../page/kline/childcomponment/BuyAndSell';
@@ -211,12 +229,14 @@ export default {
       stopLoss:'0',
       stopPrint:'0',
       ischichang:true,
+      priceMode:"市价",
       selector:false,
       showorhide1: false,
       value1: "",
       listSize:"500px",
       isbuy:false,
       codePrice:'',
+      topMsg:{},
       tableData: [
         {
           number: "MHI1905",
@@ -377,11 +397,15 @@ export default {
       ],
        options: [
           
-        ],
-        userMsg:{
-          usermoney:'',
-          name:''
-        }
+      ],
+      updown:{
+        limitDown:'0',
+        limitUp:'0'
+      },
+      userMsg:{
+        usermoney:'',
+        name:''
+      }
     };
   },
   methods: {
@@ -394,12 +418,23 @@ export default {
     },
      //监听子组件传递过来的数据展示到信息栏
     listenDataFn(val){
-      // this.topData = val
+      this.topMsg = val
       console.log(val)
     },
     handleClick(tab, event) {
       this.TabIndex = tab.index;
       localStorage.setItem("tabindex",tab.index)
+
+      if (localStorage.getItem("tabindex") == 2) {
+        // this.showorhide2 = false;
+        this.showorhide1 = true;
+      } else if (localStorage.getItem("tabindex") == 3 || localStorage.getItem("tabindex") == 4) {
+        // this.showorhide2 = true;
+        this.showorhide1 = true;
+      } else {
+        // this.showorhide2 = false;
+        this.showorhide1 = false;
+      }
     },
     // 此函数用于控制时间选择器的隐藏或显示
     showBoxindex(data) {
@@ -412,6 +447,15 @@ export default {
       } else {
         // this.showorhide2 = false;
         this.showorhide1 = false;
+      }
+    },
+   
+    //市价/限价切换按钮
+    priceModeBtn(){
+      if(this.priceMode == '市价'){
+        this.priceMode = '限价'
+      }else{
+        this.priceMode = '市价'
       }
     },
      buy(e){
@@ -435,8 +479,8 @@ export default {
               tradeNum: _this.inputNum,
               tradePrice: _this.codePrice,
               futuresCode: _this.inputVal[1],
-              updown: 1,
-              priceType: 1,
+              updown:1,
+              priceType:this.priceMode == '市价'?1:2,
               stopLoss: Number(_this.stopLoss),
               stopProfit: Number(_this.stopPrint)
             })
@@ -482,7 +526,7 @@ export default {
               tradePrice: _this.codePrice,
               futuresCode: _this.inputVal[1],
               updown: 2,
-              priceType: 1,
+              priceType: this.priceMode == '市价'?1:2,
               stopLoss: Number(_this.stopLoss),
               stopProfit: Number(_this.stopPrint)
             })
@@ -520,7 +564,44 @@ export default {
     onePC(){
       this.pinChang = !this.pinChang
     },
-    allPC(){},
+    allPC(){
+      let _this = this
+      // console.log(this.$store.state.serialnum)
+      this.$confirm('确定全部平仓?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        center: true
+      }).then(() => {
+        var msg = JSON.stringify({
+            userID:JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId,
+            serialNum:this.$store.state.serialnum.toString()
+          })
+         console.log(msg)
+          _this.$post('select_close',msg).then(function(res){
+            console.log(res)
+            if(res.result == 1){
+              //  _this.$store.state.market.initChicang++
+              _this.$message({
+                type: 'success',
+                message: '全部平仓成功!'
+              });
+            }else{
+               _this.$message({
+                type: 'info',
+                message: '错误:'+res.msg.Message
+              });
+              
+            }
+          })
+       
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消全部平仓'
+        });
+      });
+    },
     // 行情数据存储进options
     hqOptions(){
       let hq = JSON.parse(localStorage.getItem(this.$store.state.localStorageHq)).map(function(item){
@@ -545,7 +626,7 @@ export default {
       userID: JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId
       });
       this.$post('get_user_asset', msg).then(function(res) {
-        console.log(res)
+        // console.log(res)
         _this.userMsg.usermoney = res.msg.user_money
         _this.userMsg.name = res.msg.user_name
       })
@@ -554,7 +635,9 @@ export default {
   created(){
     this.hqOptions()
     this.postUserMsg()
+    
   },
+  
   computed:{
      updataSocketData() {
       return this.$store.getters.updataSocketData;
@@ -570,9 +653,14 @@ export default {
       this.reload()
     },
     changeSocketData:function(Val){
-      console.log( this.$store.state.equityData)
+      // console.log( this.$store.state.equityData)
       if(Val.code == this.inputVal[1]){
-          this.codePrice = Val.point
+          
+          if(this.priceMode == '市价'){
+            this.codePrice = Val.point
+          }
+          this.updown.limitDown = Val.limitDown
+          this.updown.limitUp = Val.limitUp
         }
     },
     activeName(Val){
@@ -587,12 +675,10 @@ export default {
 
   components:{
     ChiCang,
-    MoNiChengJiao,
-    MoNiSunYingDan,
-    MoNiTiaoJianDan,
-    MoNiWeiTuo,
-    MoNiYuBeiDan,
-    MoNiZiJin,
+    JiaoGe,
+    ChuRuJin,
+    ChengJiao,
+    WeiTuo,
     BuyAndSell,
     List
   }
@@ -616,6 +702,17 @@ export default {
       margin: 0px;
       padding: 0px;
     }
+    .start-time{
+      display: flex;
+    }
+    .el-input__inner{
+      height: 30px;
+      background: #2F343B;
+      border: #2F343B;
+      margin: 10px 0;
+      width: 290px;
+    }
+    
     .firstul {
       flex: 8;
       -webkit-app-region: drag;//让这个div变为可拖动模块
@@ -626,7 +723,7 @@ export default {
       }
     }
     .secondul {
-      flex: 2;
+      // flex: 2;
       li {
         float: right;
         margin: 0px 15px;
@@ -702,6 +799,11 @@ export default {
             justify-content: center;
             li {
               margin: 0px 16px 0px 5px;
+              .priceMode:hover{
+                background: rgb(92, 92, 92);
+                border-radius: 3px;
+                cursor: pointer;
+              }
               .el-cascader{
                 width: 118px;
                 height: 25px;
@@ -848,6 +950,7 @@ export default {
     display: flex;
     z-index: 3;
    background: #191B1F;
+    height: 464px;
     .centerLBL {
       background: #191B1F;
       width: 30%;

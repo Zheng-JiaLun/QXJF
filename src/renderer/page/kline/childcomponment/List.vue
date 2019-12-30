@@ -212,6 +212,7 @@ export default {
       this.selector = !this.selector
     },
      quanbupingcang(){
+       let _this = this
       console.log(this.$store.state.serialnum)
       this.$confirm('确定全部平仓?', '提示', {
         confirmButtonText: '确定',
@@ -225,15 +226,19 @@ export default {
           })
          console.log(msg)
           _this.$post('select_close',msg).then(function(res){
-            if(res.results == 1){
+            console.log(res)
+            if(res.result == 1){
               //  _this.$store.state.market.initChicang++
-              this.$message({
+              _this.$message({
                 type: 'success',
                 message: '全部平仓成功!'
               });
             }else{
+               _this.$message({
+                type: 'info',
+                message: '错误:'+res.msg.Message
+              });
               
-              alert('错误:'+res.msg.Message)
             }
           })
        

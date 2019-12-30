@@ -233,10 +233,14 @@ export default {
               }
             }
           }
-
+          if(res.msg.data.length == "0"){
+            _this.$store.state.equityData = 0
+          }else{
             _this.equity = eval(arr.join("+"))
            _this.$store.state.serialnum = serialNum
             _this.$store.state.equityData = _this.equity
+          }
+            
         })
        
       }

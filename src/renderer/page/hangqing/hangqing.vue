@@ -8,7 +8,17 @@
                 <a name="hangqingbg" :class="!panShow?'panShow':' '" @click="isPanShow()">外盘</a>
             </div>
             <div class="zujian">
-                <!-- <router-view></router-view> -->
+               <!-- <el-tabs
+               type="border-card"
+                tab-position="left">
+                   <el-tab-pane label="内盘" name="内盘">
+                       
+                   </el-tab-pane>
+                   <el-tab-pane label="外盘" name="外盘">
+                       
+                   </el-tab-pane>
+               </el-tabs> -->
+               
                  <el-tabs
                     v-model="activeName"
                     lazy
@@ -18,9 +28,33 @@
                     id="tabs"
                     ref="tabs"
                  >
-                        <!-- v-show="item.item[0].plate_type == 1?panShow:!panShow" -->
-                    <el-tab-pane v-for="(item,index) in msg" :key="index" :label = item.name :name="item.name" >
+                      
+                    <!-- <el-tab-pane v-for="(item,index) in msg" :key="index" :label = item.name :name="item.name">
                         <HangqingCP :msg="item.item"></HangqingCP>
+                    </el-tab-pane> -->
+                    <el-tab-pane  label = "自选" name="自选" >
+                        <HangqingCP :msg='msg[0].item' :panShow='panShow'></HangqingCP>
+                    </el-tab-pane>
+                    <el-tab-pane  label = "上海能源INE" name="上海能源INE" v-if="panShow">
+                        <HangqingCP :msg= msg[1].item></HangqingCP>
+                    </el-tab-pane>
+                    <el-tab-pane  label = "中金所" name="中金所"  v-if="panShow">
+                        <HangqingCP :msg= msg[2].item></HangqingCP>
+                    </el-tab-pane>
+                    <el-tab-pane  label = "大宗商品" name="大宗商品"  v-if="panShow">
+                        <HangqingCP :msg= msg[3].item ></HangqingCP>
+                    </el-tab-pane>
+                    <el-tab-pane  label = "瑞士EUREX" name="瑞士EUREX"  v-if="!panShow">
+                        <HangqingCP :msg= msg[4].item></HangqingCP>
+                    </el-tab-pane>
+                    <el-tab-pane  label = "纽约COMEX" name="纽约COMEX"  v-if="!panShow">
+                        <HangqingCP :msg= msg[5].item></HangqingCP>
+                    </el-tab-pane>
+                    <el-tab-pane  label = "纽约NYMEX" name="纽约NYMEX"  v-if="!panShow">
+                        <HangqingCP :msg= msg[6].item></HangqingCP>
+                    </el-tab-pane>
+                    <el-tab-pane  label = "香港HKEX" name="香港HKEX"  v-if="!panShow">
+                        <HangqingCP :msg= msg[7].item></HangqingCP>
                     </el-tab-pane>
                 </el-tabs>
             </div>
@@ -169,12 +203,13 @@ export default {
             // 'token': uuid,
             }).then((res) =>{
                 this.msg = res.data.msg
-                // console.log(res,"````````````````````")
+                // console.log(this.msg,"````````````````````")
                 // this.$store.commit('setklineMsg',res.data.msg[0].item)
                 // console.log(this.msg)
             }).catch(function (error) {
                 console.log(error);
             });
+            console.log(this.$refs) 
             // this.newMsg = this.$store.state.market.quoteData
         },
 
@@ -190,11 +225,14 @@ export default {
         
     },
     
-    // computed:{
+    computed:{
+        changeAC(){
+            return this.$store.getters.quoteDataAC
+        }
     //     ...mapGetters([
     //         'quoteDataAC'
     //     ])
-    // },
+    },
     // watch:{
    
     // },

@@ -50,26 +50,34 @@
                     <p>机构代码</p>
                     <el-input v-model="registerData.organizationCode" placeholder="请输入机构代码"></el-input>
                 </div>
-                <div v-show="isthree">
+                <div class="imgBox" v-show="isthree">
                     <span>请上传身份证正面</span>
-                   <el-upload
-                    class="avatar-uploader"
-                    action="http://39.100.151.138:8082/appapi/app/get"
-                    :show-file-list="false"
-                    :on-success="handleAvatarSuccess"
-                    :on-error="handleAvatarError"
-                    :data="myData"
-                   >
-                    <img v-if="imageUrl" :src="imageUrl" class="avatar">
-                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                    </el-upload>
+                    <div >
+                        <i class="el-icon-plus"></i>
+                        <input type="file" accept="image/*" @change="preImg" @click="upBoxIndex = 1" ref="inputer1">
+                        <img :src="'http://39.100.151.138:8082' + imgList.img1" alt="">
+                    </div>
+                   
+                   
+                    
                 </div>
-                <div v-show="isthree">
+                <div class="imgBox" v-show="isthree">
                     <span>请上传身份证反面</span>
-                    <input type="file" name="" :v-model="img" id="">
+                    <div >
+                        <i class="el-icon-plus"></i>
+                        <input type="file" accept="image/*" @change="preImg" @click="upBoxIndex = 2" ref="inputer2">
+                        <img :src="'http://39.100.151.138:8082' + imgList.img2" alt="">
+                    </div>
+                    <!-- <input type="file" name="" accept="image/*" @change="preImg" ref="inputer" id=""> -->
+                    
                 </div>
-                <div v-show="isthree">
+                <div  class="imgBox" v-show="isthree">
                     <span>请上传银行卡正面</span>
+                    <div >
+                        <i class="el-icon-plus"></i>
+                        <input type="file" accept="image/*" @change="preImg" @click="upBoxIndex = 3" ref="inputer3">
+                        <img :src="'http://39.100.151.138:8082' + imgList.img3" alt="">
+                    </div>
                 </div>
                 <!-- <div class="pwd">
                     <p>确认密码</p>
@@ -110,21 +118,24 @@ export default {
     data(){
         return{
             registerData: {
-                    phone: '',
-                    verCode:'',
-                    pwd: '',
-                    pwdCopy:'',
-                    idNumber:'',
-                    name:'',
-                    moneyPass:'',
-                    bank:'',
-                    bankNumber:'',
-                    bankAddress:'',
-                    organizationCode:''
-                },
-
-            imageUrl: '',
-            img:'',
+                phone: '',
+                verCode:'',
+                pwd: '',
+                pwdCopy:'',
+                idNumber:'',
+                name:'',
+                moneyPass:'',
+                bank:'',
+                bankNumber:'',
+                bankAddress:'',
+                organizationCode:''
+            },
+            imgList: {
+                img1: null,
+                img2: null,
+                img3: null
+            },
+            upBoxIndex:1,
             percentage:20,
             btnMsg:'下一步',
             isLogin: false,
@@ -141,13 +152,19 @@ export default {
         }
     },
     methods:{
-        handleAvatarSuccess(res, file) {
-            this.imageUrl = URL.createObjectURL(file.raw);
-            console.log(res)
+        preImg(event){
+            if(this.upBoxIndex == 1){
+                this.uploadAction(this.$refs.inputer1.files[0].path)
+            }else if(this.upBoxIndex == 2){
+                this.uploadAction(this.$refs.inputer2.files[0].path)
+            }else{
+                this.uploadAction(this.$refs.inputer3.files[0].path)
+            }
+            // console.log(this.$refs.inputer.files[0].path)
+            
+            // this.imgList = this.$refs.inputer.files[0].path
         },
-        handleAvatarError(err, file, fileList){
-            console.log(err)
-        },
+       
         userOutput() {
             if (this.user == '') {
                 this.userPla = '账号不能为空'
@@ -171,6 +188,7 @@ export default {
             this.$Win.closeWin(win)
         }  ,
         register(){
+            let _this = this
             let msg =JSON.stringify({
                 mobile: this.registerData.phone,
                 code: this.registerData.verCode,
@@ -185,29 +203,130 @@ export default {
             // }else{
             //     this.$router.push('/login')
             // }
-            if(this.registerData.phone ==''||this.registerData.name==''||this.registerData.pwd==''||this.registerData.idNumber==''){
-                this.$message.error('请完善相关信息');
-            }else{
-                this.isone = false
-                this.istwo = true
-                this.percentage = 50
-                if(this.registerData.moneyPass ==''||this.registerData.bank==''||this.registerData.bankNumber==''||this.registerData.bankAddress==''||this.registerData.organizationCode==''){
+            if(this.btnMsg == '下一步'){
+                if(this.registerData.phone ==''||this.registerData.name==''||this.registerData.pwd==''||this.registerData.idNumber==''){
                     this.$message.error('请完善相关信息');
                 }else{
                     this.isone = false
+                    this.istwo = true
+                    this.percentage = 50
+                    this.btnMsg = '再下一步'
+                }
+            }else if(this.btnMsg == '再下一步'){
+                if(this.registerData.moneyPass ==''||this.registerData.bank==''||this.registerData.bankNumber==''||this.registerData.bankAddress==''||this.registerData.organizationCode==''){
+                    this.$message.error('请完善相关信息');
+                }else{
+                     this.isone = false
                     this.istwo = false
                     this.isthree = true
                     this.percentage = 100
                     this.btnMsg = "立即注册"
-                    // if(){
-                        console.log(this.imageUrl)
-                        console.log(this.img)
-                    // }
+                }
+            }else{
+                if(this.imgList.img1 == null ||this.imgList.img2 == null ||this.imgList.img3 == null){
+                    this.$message.error('请完善相关信息');
+                }else{
+                    let msg = JSON.stringify({
+                        phoneNum: this.registerData.phone,
+                        name: this.registerData.name,
+                        idCardNum: this.registerData.idNumber,
+                        loginPassword: this.registerData.pwd,
+                        moneyPassword: this.registerData.moneyPass,
+                        bankName: this.registerData.bank,
+                        bankCardNum: this.registerData.bankNumber,
+                        bankAddress: this.registerData.bankAddress,
+                        agent: this.registerData.organizationCode,
+                        idCardPicPos: this.imgList.img1,
+                        idCardPicNeg: this.imgList.img2,
+                        bankCardPicPos: this.imgList.img3
+                    })
+                    console.log(msg)
+                    this.$pro.post('app_register', msg).then((res) => {
+                        console.log(JSON.stringify(res))
+                        
+                        if (res.result == 1) {
+                            _this.$alert('恭喜你!注册成功', '提示', {
+                                confirmButtonText: '确定',
+                                callback: action => {
+                                    _this.closeWinC
+                                }
+                            });
+                        } else {
+                           _this.$message.error('错误'+res.message);
+                        }
+
+                    })
                 }
             }
             
-            
-        }  
+        },
+        //将图片压缩转成base64
+        getBase64Image(img) {
+            var canvas = document.createElement("canvas");
+            var width = img.width;
+            var height = img.height;
+            //calculate the width and height, constraining the proportions
+            if (width > height) {
+                if (width > 640) {
+                    height = Math.round(height *= 640 / width);
+                    width = 640;
+                }
+            } else {
+                if (height > 1024) {
+                    width = Math.round(width *= 1024 / height);
+                    height = 1024;
+                }
+            }
+            canvas.width = width; /*设置新的图片的宽度*/
+            canvas.height = height; /*设置新的图片的长度*/
+            var ctx = canvas.getContext("2d");
+            // console.log('图片转码：' + ctx)
+            ctx.drawImage(img, 0, 0, width, height); /*绘图*/
+            var dataURL = canvas.toDataURL("image/png", 1.0);
+            // this.voucherImg=dataURL;
+            // console.log('base64:' + dataURL)
+            return dataURL.replace("data:image/png;base64,", "");
+        },
+        uploadAction(imgPath) {
+            var _this = this;
+            // console.log('1、：' + imgPath)
+            var image = new Image();
+            image.src = imgPath;
+            image.onload = function() {
+                // console.log('实例img：' + image)
+                var file = _this.getBase64Image(image);
+                // console.log('2、：' + file)
+                var msg = JSON.stringify({
+                    img: file
+                })
+                //console.log(msg);
+                _this.$pro.post('upload_base64_img_register', msg).then(function(res) {
+                    console.log('返回结果：' + JSON.stringify(res))
+                    // console.log(res)
+                    if (res.result == 1) {
+                        _this.$message({
+                            message: '上传成功',
+                            type: 'success'
+                        });
+                        // Toast.success('上传成功');
+                        _this.$set(_this.imgList,'img' + _this.upBoxIndex,res.msg)
+                        // console.log(_this.imgList)
+                        // console.log(_this.upBoxIndex)
+                        // console.log(_this.imgList['img' + _this.upBoxIndex])
+                        // console.log(_this.imgList.img1)
+                        // _this.popupShow2 = false;
+                        // _this.$router.back(-2);
+                    } else {
+                        Dialog.alert({
+                            message: '凭证上传失败，请重试'
+                        })
+                        // _this.voucherImg='';
+                    }
+
+                })
+            }
+
+        },
     },
     computed:{
         myData(){
@@ -267,7 +386,42 @@ export default {
     font-weight:400;
     color:#333333;
     
-
+    .imgBox{
+        text-align: center;
+        >div{
+            border: #333333 1px dashed;
+            position: relative;
+            width: 200px;
+            height: 100px;
+            margin: 0 auto;
+            
+            i{
+                font-size: 50px;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%,-50%)
+            }
+            input{
+                width: 100%;
+                height: 100%;
+                opacity: 0;
+                 position: absolute;
+                top: 0;
+                left: 0;
+                z-index: 2;
+                cursor: pointer;
+            }
+            img{
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                 z-index: 1;
+            }
+        }
+    }
 
     h1{
         width: 92%;

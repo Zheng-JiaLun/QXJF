@@ -18,18 +18,53 @@
                     <P class="dangqian">
                         <span>当前余额</span><el-input v-model="dangqian" :disabled="true"></el-input>
                     </P>  -->
-                    <el-radio v-model="radio100" value="100" label="100" border>100</el-radio>
-                    <el-radio v-model="radio100" value="500" label="500" border>500</el-radio>
-                    <el-radio v-model="radio100" value="1000" label="1000" border>1000</el-radio>
-                    <el-radio v-model="radio100" value="2000" label="2000" border>2000</el-radio>
-                    <el-radio v-model="radio100" value="3000" label="3000" border>3000</el-radio>
-                    <el-radio v-model="radio100" value="5000" label="5000" border>5000</el-radio>
-                    <P class="fukuan">
+                    <div class="xianxia" v-show="!xianUpDwon"> 
+                       <div>
+                           <h3>
+                               <span>支付银行:</span><el-input placeholder="请输入支付银行" v-model="user.bank"/>
+                           </h3>
+                           <h3>
+                               <span>支付卡号:</span><el-input placeholder="请输入支付卡号" v-model="user.bankNum"/>
+                           </h3>
+                           <h3>
+                               <span>金额:</span><el-input placeholder="请输入支付金额" v-model="user.money"/>
+                           </h3>
+                           <h3 class="pingzheng">
+                               <span>上传凭证:</span>
+                                <div>
+                                    <i class="el-icon-plus"></i>
+                                    <input type="file" accept="image/*" @change="preImg" ref="inputer1">
+                                    <img :src="'http://39.100.151.138:8082' + user.img" alt="">
+                                </div>
+                           </h3>
+                       </div>
+                       <div>
+                           <h3>
+                               <span>开户银行:</span><el-input v-model="other.bank"/>
+                           </h3>
+                           <h3>
+                               <span>开户姓名:</span><el-input  v-model="other.name"/>
+                           </h3>
+                           <h3>
+                               <span>银行卡号:</span><el-input v-model="other.bankNum"/>
+                           </h3>
+                           <h3>
+                               <span>开户网点:</span><el-input v-model="other.address"/>
+                           </h3>
+                       </div>
+                    </div>
+                    <el-radio v-show="xianUpDwon" v-model="radio100" value="100" label="100" border>100</el-radio>
+                    <el-radio v-show="xianUpDwon" v-model="radio100" value="500" label="500" border>500</el-radio>
+                    <el-radio v-show="xianUpDwon" v-model="radio100" value="1000" label="1000" border>1000</el-radio>
+                    <el-radio v-show="xianUpDwon" v-model="radio100" value="2000" label="2000" border>2000</el-radio>
+                    <el-radio v-show="xianUpDwon" v-model="radio100" value="3000" label="3000" border>3000</el-radio>
+                    <el-radio v-show="xianUpDwon" v-model="radio100" value="5000" label="5000" border>5000</el-radio>
+                    <P class="fukuan" v-show="xianUpDwon">
                         <span>付款金额</span><el-input placeholder="输入金额" @focus="payNum()" v-model="fukuan" style="margin-left:8%;"></el-input><span style="padding-left:5px;margin:0">元</span>
                     </P>   
                     <p>
                         <el-radio v-model="radio" label="1" >线下入金</el-radio>
-                        <el-radio v-model="radio" label="2">线上入金</el-radio>
+                        <el-radio v-model="radio" label="2" >线上入金</el-radio>
                     </p>   
                  </div>
         
@@ -94,7 +129,7 @@ export default {
     data(){
         return{
             activeName:'second',
-            radio:'1',
+            radio:'2',
             radio100: '5000',
             
             kahao:'',
@@ -108,7 +143,20 @@ export default {
                 accountOpen:'',
                 money:''
             },
-            uInfo:{}
+            xianUpDwon:true,
+            uInfo:{},
+            user:{
+                bank:'',
+                bankNum:'',
+                money:'',
+                img:''
+            },
+            other:{
+                bank:'',
+                name:'',
+                bankNum:'',
+                address:''
+            }
         }
     },
      mounted(){
@@ -118,6 +166,7 @@ export default {
         this.account.bankCardNumber = this.uInfo.bankcard;
         this.account.depositBank = this.uInfo.bankName;
         this.account.accountOpen = this.uInfo.bankAddress;
+        this.initXianxia()
     },
     methods:{
 			closeWin() {
@@ -127,53 +176,134 @@ export default {
             payNum(){
                 this.radio100 = ''
             },
+             preImg(event){
+                this.uploadAction(this.$refs.inputer1.files[0].path)
+            },
+            initXianxia(){
+                var _this = this;
+				var msg = JSON.stringify({
+					user_id: JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId
+				})
+
+				this.$post('get_agt_bankinfo', msg).then(function(res) {
+                    console.log(res)
+					if (res.result == 1) {
+                        _this.other.name = res.msg[0].accountname
+                        _this.other.bank = res.msg[0].bankname
+                        _this.other.address = res.msg[0].bankaddress
+                        _this.other.bankNum = res.msg[0].cardnumber
+                        // console.log()
+						// for (var i = 0; i < res.msg.length; i++) {
+						// 	var obj = {};
+						// 	obj.bankcard = res.msg[i].cardnumber;
+						// 	obj.accout = res.msg[i].accountname;
+						// 	obj.openBank = res.msg[i].bankname;
+						// 	obj.openBankMin = res.msg[i].bankaddress;
+						// 	_this.actions.push(obj);
+						// }
+
+						// _this.account = _this.actions[0]
+					}
+
+				})
+            },
             yToQ(){
                 let _this = this
-                if(this.fukuan != ''){
-                    if(this.fukuan < 100){
-                        this.$message.error('金额不能小于100元');
-                        return
-                    }else{
+                if(this.radio == '2'){
+                    if(this.fukuan != ''){
+                        if(this.fukuan < 100){
+                            this.$message.error('金额不能小于100元');
+                            return
+                        }else{
+                            var msg = JSON.stringify({
+                                user_id: JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId,
+                                pay_amount: this.fukuan,
+                                pay_channel: 4
+                            })
+                            
+                        }
+                        
+                    }else if(this.radio100 != '' && this.fukuan == ''){
                         var msg = JSON.stringify({
                             user_id: JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId,
-                            pay_amount: this.fukuan,
+                            pay_amount: this.radio100,
                             pay_channel: 4
                         })
-                        
+                    }else{
+                        this.$message.error('请输入或选择金额~');
+                        return
                     }
-                    
-                }else if(this.radio100 != '' && this.fukuan == ''){
-                    var msg = JSON.stringify({
-                        user_id: JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId,
-                        pay_amount: this.radio100,
-                        pay_channel: 4
+                    this.$pro.post('create_pay_order', msg).then(function(res) {
+                        console.log(res);
+                        if (res.result === 1) {
+                            _this.$message({
+                            showClose: true,
+                            message: '入金成功~',
+                            type: 'success',
+                            center: true,
+                            });
+                            // Toast.clear();
+                            // _this.$store.commit('setOrderId', res.msg.order_id);
+                            // _this.$router.push('/thirdParty');
+                        } else {
+                            _this.$message({
+                            showClose: true,
+                            message: '错误'+res.message,
+                            type: 'error'
+                            });
+                            // Toast.clear();
+                            // Toast.fail(res.message);
+                        }
                     })
                 }else{
-                    this.$message.error('请输入或选择金额~');
-                    return
-                }
-                this.$pro.post('create_pay_order', msg).then(function(res) {
-                    console.log(res);
-                    if (res.result === 1) {
-                        _this.$message({
-                        showClose: true,
-                        message: '入金成功~',
-                        type: 'success',
-                        center: true,
-                        });
-                        // Toast.clear();
-                        // _this.$store.commit('setOrderId', res.msg.order_id);
-                        // _this.$router.push('/thirdParty');
+                    let _this = this
+                    var msg = JSON.stringify({
+                        user_id:JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId,
+                        //user_id: 0,
+                        bank_account_name: this.other.name,
+                        pay_bankcard: Number(this.other.bankNum),
+                        bank_name: this.other.bank,
+                        bank_branch: this.other.address,
+                        bankcard: this.user.bankNum,
+                        pay_bank_account_name: this.user.bank,
+                        tvalue: Number(this.user.money),
+                        
+                        //pay_photo:require('../../../assets/img/index/up-img.png'),
+                        pay_photo:this.user.img,
+                        type: 0,
+                        
+                    });
+                    //console.log(msg)
+                    
+                    if (this.other.name != '' && this.other.bankNum != '' && this.other.bank != '' && this.other.address !=
+                        '' && this.user.money != ''&& this.user.img != ''&& this.user.bank != ''&& this.user.bankNum != '') {
+                            
+                        this.$post('add_inout_detail', msg).then(function(res) {
+                            //console.log(res)
+                            console.log(JSON.stringify(res))
+                            if (res.result == 1) {
+                                
+                               _this.$message({
+                                message: '受理成功',
+                                type: 'success'
+                                });
+                                _this.user.bank=''
+                                _this.user.bankNum=''
+                                _this.user.money=''
+                                _this.user.img=''
+                                setTimeout(function(){
+                                    _this.closeWin()
+                                },1000)
+                            } else {
+                                _this.$message.error('错误:'+res.message);
+                            }
+                        })
+
                     } else {
-                        _this.$message({
-                        showClose: true,
-                        message: '错误'+res.message,
-                        type: 'error'
-                        });
-                        // Toast.clear();
-                        // Toast.fail(res.message);
+                        _this.$message.error('请填写完整信息');
                     }
-                })
+                }
+                
                 
             },
             qToY(){
@@ -214,8 +344,85 @@ export default {
                 }
 
                
+            },
+             //将图片压缩转成base64
+            getBase64Image(img) {
+                var canvas = document.createElement("canvas");
+                var width = img.width;
+                var height = img.height;
+                //calculate the width and height, constraining the proportions
+                if (width > height) {
+                    if (width > 640) {
+                        height = Math.round(height *= 640 / width);
+                        width = 640;
+                    }
+                } else {
+                    if (height > 1024) {
+                        width = Math.round(width *= 1024 / height);
+                        height = 1024;
+                    }
+                }
+                canvas.width = width; /*设置新的图片的宽度*/
+                canvas.height = height; /*设置新的图片的长度*/
+                var ctx = canvas.getContext("2d");
+                // console.log('图片转码：' + ctx)
+                ctx.drawImage(img, 0, 0, width, height); /*绘图*/
+                var dataURL = canvas.toDataURL("image/png", 1.0);
+                // this.voucherImg=dataURL;
+                // console.log('base64:' + dataURL)
+                return dataURL.replace("data:image/png;base64,", "");
+            },
+            uploadAction(imgPath) {
+                var _this = this;
+                // console.log('1、：' + imgPath)
+                var image = new Image();
+                image.src = imgPath;
+                image.onload = function() {
+                    // console.log('实例img：' + image)
+                    var file = _this.getBase64Image(image);
+                    // console.log('2、：' + file)
+                    var msg = JSON.stringify({
+                        img: file
+                    })
+                    //console.log(msg);
+                    _this.$pro.post('upload_base64_img_register', msg).then(function(res) {
+                        console.log('返回结果：' + JSON.stringify(res))
+                        // console.log(res)
+                        if (res.result == 1) {
+                            _this.$message({
+                                message: '上传成功',
+                                type: 'success'
+                            });
+                            // Toast.success('上传成功');
+                            _this.$set(_this.user,'img',res.msg)
+                            // console.log(_this.imgList)
+                            // console.log(_this.upBoxIndex)
+                            // console.log(_this.imgList['img' + _this.upBoxIndex])
+                            // console.log(_this.imgList.img1)
+                            // _this.popupShow2 = false;
+                            // _this.$router.back(-2);
+                        } else {
+                            Dialog.alert({
+                                message: '凭证上传失败，请重试'
+                            })
+                            // _this.voucherImg='';
+                        }
+
+                    })
+                }
+
+            },
+    },
+    watch:{
+        radio:function(val){
+            console.log(val)
+            if(val == 1){
+                this.xianUpDwon = false
+            }else{
+                this.xianUpDwon = true
             }
-    }
+        }
+    },
 }
 </script>
 
@@ -251,7 +458,68 @@ h1{
         margin: 5px 10px;
         width: 80px;
     }
-    
+    .xianxia{
+        width: 700px;
+        display: flex;
+        justify-content: space-between;
+        margin-left: -182px;
+        >div{
+            width: 45%;
+            >h3{
+                display: flex;
+                font-size: 15px;
+                font-weight: 300;
+                span{
+                    flex: 3;
+                    text-align: right;
+                }
+                .el-input{
+                    flex: 7
+                }
+            }
+            .pingzheng{
+                display: flex;
+                span{
+                    flex: 3;
+                }
+                >div{
+                    flex: 7;
+                border: #C0C4CC 1px dashed;
+                position: relative;
+                width: 100px;
+                height: 80px;
+                margin: 0 auto;
+                
+                i{
+                    font-size: 50px;
+                    color: #C0C4CC;
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%,-50%)
+                }
+                input{
+                    width: 100%;
+                    height: 100%;
+                    opacity: 0;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    z-index: 2;
+                    cursor: pointer;
+                }
+                img{
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    z-index: 1;
+                }
+            }
+            }
+        }
+    }
 
     P{
         width: 100%;

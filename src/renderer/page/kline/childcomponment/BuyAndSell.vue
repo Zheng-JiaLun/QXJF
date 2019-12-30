@@ -39,7 +39,7 @@
       <div class="input flex">
         <div class="cl flex">
           <span @click="setPrice()">{{setPriceName}}<i class="el-icon-d-caret"></i></span>
-          <el-input class="inner" placeholder v-model="gen" clearable :disabled="setPriceName == '跟盘'?true:false" type="number"></el-input>
+          <el-input class="inner" placeholder v-model="gen" clearable :disabled="setPriceName == '市价'?true:false" type="number"></el-input>
         </div>
         <div class="cl flex">
           <span>数量:</span>
@@ -76,7 +76,7 @@ export default {
       num: 1,
       stopPrint: 0,
       stopLoss: 0,
-      setPriceName:'跟盘',
+      setPriceName:'市价',
       genTemporary:"",//跟盘最新暂存数据 
       isTransaction:false,
       heyue: {
@@ -125,10 +125,10 @@ export default {
   },
   methods: {
     setPrice(){
-      if(this.setPriceName == '跟盘'){
+      if(this.setPriceName == '市价'){
         this.setPriceName = '限价'
       }else if(this.setPriceName == '限价'){
-        this.setPriceName = '跟盘'
+        this.setPriceName = '市价'
         this.gen = this.genTemporary
       }
       
@@ -151,7 +151,7 @@ export default {
                 tradePrice: _this.gen,
                 futuresCode: _this.heyue.heyueCode,
                 updown: 1,
-                priceType: this.setPriceName == '跟盘'?1:2,
+                priceType: this.setPriceName == '市价'?1:2,
                 stopLoss: Number(_this.stopLoss),
                 stopProfit: Number(_this.stopPrint)
               })
@@ -199,7 +199,7 @@ export default {
                 tradePrice: _this.gen,
                 futuresCode: _this.heyue.heyueCode,
                 updown: 2,
-                priceType: this.setPriceName == '跟盘'?1:2,
+                priceType: this.setPriceName == '市价'?1:2,
                 stopLoss: Number(_this.stopLoss),
                 stopProfit: Number(_this.stopProfit)
               })
@@ -300,7 +300,7 @@ export default {
       // console.log(val)
       if(val.code == this.heyue.heyueCode){
         
-        if(this.setPriceName == '跟盘'){
+        if(this.setPriceName == '市价'){
             this.gen = val.buyPoint
             this.genTemporary = val.buyPoint
         }else{

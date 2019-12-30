@@ -8,14 +8,14 @@
             <tbody>
                 <!-- <router-link to="/kline"> -->
                 <!-- :style="{border:isactive == index ? '1px solid #A4A4A4' : ''}" -->
-                <tr v-for="(item,index) in childMsg" :key="index" @click="hangqingbg(index,item.code);" 
+                <tr v-for="(item,index) in childMsg" :key="index" @click="hangqingbg(index,item.code);"  
                     :style="{background:isactive == index?'#22304C':''}"
                   
                     :class="item.changePoint?(item.changePoint>0?'changeUp':'changeDown'):' '"
                     >
                     <!-- :class="classUp?'changeUp':''" :class="{'changeUp':currentIndex == index}"-->
                      
-                    <td style="color:#B3B3B3;">{{item.id}}</td>
+                    <td style="color:#B3B3B3;">{{index+1}}</td>
                     <td style="color:#DCDC0A;min-width:80px" :title="item.name">{{item.name}}</td>
                     <td style="color:#DCDC0A;">{{item.code}}</td>
                     <!-- 最新价 -->
@@ -34,7 +34,8 @@
                     <td :style="item.changePoint >0?'color:#FF3322;':'color:#00BD00;'">{{item.changePoint?item.changePoint:0}}</td>
                     <!-- 涨幅 -->
                     <td :style="item.changeRate >0?'color:rgba(255,51,34,1);':'color:rgba(0,189,0,1);'">{{item.changeRate?item.changeRate:0}}%</td>
-                    <td style="color:#00BD00;">{{item.point}}</td>
+                    <!-- 开盘 -->
+                    <td style="color:#00BD00;">{{item.openPoint?'0':item.openPoint}}</td>
                     <td>{{item.point}}</td>
                     <td style="color:#FF3322;">{{item.point}}</td>
                     <td style="color:#00BD00;">{{item.point}}</td>
@@ -58,7 +59,7 @@
 import {mapMutations,mapActions,mapGetters} from 'vuex';
 export default {
     name:'hangqingCP',
-    props:['msg'],
+    props:['msg','panShow'],
     data(){
         return{
             childMsg:this.msg,
@@ -164,8 +165,15 @@ export default {
         ])
     },
      watch:{
-         
+          panShow:function(val){
+            if(val){
+
+            }
+            console.log(val)
+
+        },
         quoteDataAC:function(val){
+            console.log(val)
             let a = this.childMsg
             for(let i=0;i<a.length;i++){
                 if(this.childMsg[i].code == val.code){
@@ -174,6 +182,17 @@ export default {
                     this.childMsg[i].num            = val.totalNum    //成交总量
                     this.childMsg[i].buyNum         = val.buyNum      //买量
                     this.childMsg[i].sellNum        = val.sellNum     //卖量
+                    this.childMsg[i].openPoint        = val.openPoint     //开盘
+                    this.childMsg[i].preClosePoint        = val.preClosePoint     //昨收盘
+                    this.childMsg[i].higePoint        = val.higePoint     //最高
+                    this.childMsg[i].lowPoint        = val.lowPoint     //最低
+                    this.childMsg[i].openPoint        = val.openPoint     //持仓量
+                    this.childMsg[i].openPoint        = val.openPoint     //结算价
+                    this.childMsg[i].openPoint        = val.limitUp     //涨停
+                    this.childMsg[i].openPoint        = val.limitDown     //跌停
+                    this.childMsg[i].openPoint        = val.openPoint     //昨持仓
+                    this.childMsg[i].openPoint        = val.openPoint     //昨结算
+                    this.childMsg[i].openPoint        = val.openPoint     //成交总价
                     // this.childMsg[i].changePoint    = val.changePoint   //涨跌
                     this.childMsg[i].changeRate     = val.changeRate     //涨幅
                     if(val.changePoint.substring(0,1) == "-"){
@@ -201,6 +220,7 @@ export default {
         //    this.$router.push({name:kline})
         }
     },
+   
 }
 </script>
 
