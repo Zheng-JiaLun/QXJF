@@ -135,7 +135,9 @@ export default {
             type: 'success'
           });
           setTimeout(function(){
-            _this.close()
+            // _this.close()
+            let data = {value: true}
+            _this.$Win.closeWin(data)
           },1500)
           
         }else{

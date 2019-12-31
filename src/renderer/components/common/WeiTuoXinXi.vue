@@ -37,6 +37,7 @@
 <script>
 export default {
   name: "weituo",
+  inject:['reload'],
   props: ["Listheight"],
   data() {
     return {
@@ -96,6 +97,10 @@ export default {
           animation: "none"
         }
       });
+      console.log(data)
+      if(data){
+        this.reload()
+      }
     },
     axiosWeiTuo(){
       let _this = this

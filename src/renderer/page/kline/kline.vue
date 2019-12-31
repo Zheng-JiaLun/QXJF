@@ -73,17 +73,17 @@
           ></CandleStick> -->
           <!-- <Hello></Hello> -->
           <div v-show="isactive == 0">
-            <MinuteBox :candleHeight="candleHeight" :candleWidth="candleWidth" :toChildOption="minuteOption" @function="toFatherMinute"></MinuteBox>
+            <MinuteBox :candleHeight="candleHeight" :candleWidth="candleWidth" :toChildOption="minuteOption" @function="toFatherMinute" :islogin='islogin'></MinuteBox>
           </div>
           <div v-show="isactive != 0">
-            <MinuteBox :candleHeight="candleHeight" :candleWidth="candleWidth" :toChildOption="klineOption" @function="toFatherKline"></MinuteBox>
+            <MinuteBox :candleHeight="candleHeight" :candleWidth="candleWidth" :toChildOption="klineOption" @function="toFatherKline" :islogin='islogin'></MinuteBox>
           </div>
           
          
           <!-- <zbEchart :klineFlag="klineFlag" :proInfo="proInfo"></zbEchart> -->
         </div>
         <!-- 简易信息展示 -->
-        <div class="centerLM" id="centerLM">
+        <div class="centerLM" id="centerLM" v-show="islogin">
           <div class="data flex">
             <p>{{userMsg.name?userMsg.name:"未登录"}}</p>
             <p class="flex" v-show="islogin">
@@ -153,7 +153,7 @@
         </div>
         <!-- 此区域为买卖及合约清单展示，主要分为左右两部分，
         左边为买卖操作窗口，右边为合约清单-->
-        <div class="centerLB" id="centerLB">
+        <div class="centerLB" id="centerLB" v-show="islogin">
           <!-- 合约买卖操作窗口 -->
           <div class="centerLBL">
             <BuyAndSell></BuyAndSell>
@@ -313,16 +313,8 @@ export default {
           key: "年"
         },
         {
-          title: "MA5",
-          key: "MA5"
-        },
-        {
-          title: "MA10",
-          key: "MA10"
-        },
-        {
-          title: "MA20",
-          key: "MA20"
+          title: "MA",
+          key: "MA"
         },
         {
           title: "BOLL",
@@ -411,7 +403,14 @@ export default {
         Windows: //窗口指标
         [
             
-            {Index:"MA",Modify: false, Change: false}, 
+            {Index:"MA",
+            Modify: false, 
+            Change: false,
+            // Args:[ 
+            //   { Name:'M5', Value:5}, { Name:'M10', Value:10 }
+            // ]
+            }, 
+            // {Index:"BOLL",Modify: false, Change: false},
             {Index:"VOL",Modify: false, Change: false}
         ],
         IsAutoUpdate:true, //自动更新数据
@@ -455,32 +454,36 @@ export default {
         var Hight = document.documentElement.clientHeight;
         document.getElementById("kline").style.height = Hight - 60 + "px";
         document.getElementById("center").style.height = Hight - 118 + "px";
-        if (this.viewSize == "max") {
-          document.getElementById("centerLT").style.height = Hight - 118 + "px";
-          this.candleHeight = Hight - 118;
-          document.getElementById("centerLM").style.height = "0px";
-          document.getElementById("centerLB").style.height = "0px";
-        } else if (this.viewSize == "min") {
-          document.getElementById("centerLB").style.height =
-            (Hight - 115) / 2 - 32 + "px";
-          document.getElementById("centerLM").style.height = "30px";
-          document.getElementById("centerLT").style.height = //K线展示区域的高度
-            (Hight - 115) / 2 + "px";
-          this.candleHeight = (Hight - 115) / 2; //将高度传给K线组件
-          document.getElementById("List").style.height =
-            (Hight - 115) / 2 - 61 + "px";
-          this.listSize = document.getElementById("List").clientHeight;
-        } else {
+        if(this.islogin){
+          if (this.viewSize == "max") {
+            document.getElementById("centerLT").style.height = Hight - 118 + "px";
+            this.candleHeight = Hight - 118;
+            document.getElementById("centerLM").style.height = "0px";
+            document.getElementById("centerLB").style.height = "0px";
+          } else if (this.viewSize == "min") {
+            document.getElementById("centerLB").style.height =
+              (Hight - 115) / 2 - 32 + "px";
+            document.getElementById("centerLM").style.height = "30px";
+            document.getElementById("centerLT").style.height = //K线展示区域的高度
+              (Hight - 115) / 2 + "px";
+            this.candleHeight = (Hight - 115) / 2; //将高度传给K线组件
+            document.getElementById("List").style.height =
+              (Hight - 115) / 2 - 34 + "px";
+            this.listSize = document.getElementById("List").clientHeight;
+          } else {
+            document.getElementById("centerLT").style.height =
+              (Hight - 115) / 2 + "px";
+            this.candleHeight = (Hight - 115) / 2; //将高度传给K线组件
+            document.getElementById("centerLB").style.height =
+              (Hight - 115) / 2 - 34 + "px";
+            document.getElementById("List").style.height =
+              (Hight - 115) / 2 - 34 + "px";
+            this.listSize = document.getElementById("List").clientHeight;
+          }
+        }else{
           document.getElementById("centerLT").style.height =
-            (Hight - 115) / 2 + "px";
-          this.candleHeight = (Hight - 115) / 2; //将高度传给K线组件
-          document.getElementById("centerLB").style.height =
-            (Hight - 115) / 2 - 61 + "px";
-          document.getElementById("List").style.height =
-            (Hight - 115) / 2 - 61 + "px";
-          this.listSize = document.getElementById("List").clientHeight;
+              (Hight - 115) + "px";
         }
-
         this.candleWidth = window.innerWidth
         
       })();
@@ -550,7 +553,13 @@ export default {
             this.klineOption.KLine.Period = 3
             console.log("年线")
             break;
-        
+          case 5:
+            this.$set(this.klineOption.Windows[0],'Index','MA')
+            break;
+          case 6:
+            this.$set(this.klineOption.Windows[0],'Index','BOLL')
+            break;
+
           default:
             
             break;
@@ -563,19 +572,32 @@ export default {
     },
     // 此函数获取窗口大小，并动态修改相关板块的高度
     reboxSize() {
-      
       var Hight = document.documentElement.clientHeight; //获取视图的高度
-      document.getElementById("kline").style.height = Hight - 60 + "px"; //K线页面展示的高度
-      document.getElementById("center").style.height = Hight - 118 + "px"; //减去两个固定高度的导航栏
-      document.getElementById("centerLT").style.height = //K线展示区域的高度
-        (Hight - 115) / 2 + "px";
-      document.getElementById("centerLM").style.height = "30px";
-      this.candleHeight = (Hight - 115) / 2; //将高度传给K线组件
-      document.getElementById("centerLB").style.height =
-        (Hight - 115) / 2 - 61 + "px";
-      document.getElementById("List").style.height =
-        (Hight - 115) / 2 - 61 + "px";
-      this.listSize = document.getElementById("List").clientHeight;
+      if(this.islogin){
+        document.getElementById("kline").style.height = Hight - 60 + "px"; //K线页面展示的高度
+        document.getElementById("center").style.height = Hight - 118 + "px"; //减去两个固定高度的导航栏
+        document.getElementById("centerLT").style.height = //K线展示区域的高度
+          (Hight - 115) / 2 + "px";
+        document.getElementById("centerLM").style.height = "30px";
+        this.candleHeight = (Hight - 115) / 2; //将高度传给K线组件
+        document.getElementById("centerLB").style.height =
+          (Hight - 115) / 2 - 34 + "px";
+        document.getElementById("List").style.height =
+          (Hight - 115) / 2 - 34 + "px";
+        this.listSize = document.getElementById("List").clientHeight;
+      }else{
+        document.getElementById("kline").style.height = Hight - 60 + "px"; //K线页面展示的高度
+        document.getElementById("center").style.height = Hight - 118 + "px"; //减去两个固定高度的导航栏
+        document.getElementById("centerLT").style.height = //K线展示区域的高度
+          (Hight - 115) + "px";
+       
+        this.candleHeight = (Hight - 115) / 2; //将高度传给K线组件
+        
+        
+        this.listSize = document.getElementById("List").clientHeight;
+      }
+      
+      
      
     },
     // 此函数用于控制时间选择器的隐藏或显示
@@ -699,10 +721,12 @@ export default {
         let msg =  JSON.parse(localStorage.getItem(this.$store.state.localStorageUid))
         this.userMsg = msg
         this.islogin = true
+        this.reboxSize();
       }else{
         this.userMsg.usermoney = false
         this.userMsg.name = false
         this.islogin = false
+        this.reboxSize();
       }
     },
     changeIsplaceOrder:function(val){

@@ -74,7 +74,10 @@
                
                 <div class="foot2">
                     <div class="left">
-                        <span style="color:rgba(255,255,255,1);">上证指数：</span><span>2909.46</span><span>-1345.46</span><span>-2.90%</span>
+                       
+                            <span style="color:rgba(255,255,255,1);">上证指数：</span><span>{{'0'}}</span><span>-1345.46</span><span>-2.90%</span>
+                      
+                        
                     </div>
                     <div class="foot2-right">
                         <span :class="panShow?'footerPanShow':' '" @click="isPanShow()">内盘</span>
@@ -122,6 +125,7 @@ export default {
 				nowIndex:0,
 				initList:{},
                 spee:0.1,
+                bottomMsg:{}
         }
     },
     computed: {
@@ -203,13 +207,13 @@ export default {
             // 'token': uuid,
             }).then((res) =>{
                 this.msg = res.data.msg
-                // console.log(this.msg,"````````````````````")
+                console.log(this.msg,"````````````````````")
                 // this.$store.commit('setklineMsg',res.data.msg[0].item)
                 // console.log(this.msg)
             }).catch(function (error) {
                 console.log(error);
             });
-            console.log(this.$refs) 
+            // console.log(this.$refs) 
             // this.newMsg = this.$store.state.market.quoteData
         },
 
@@ -228,14 +232,17 @@ export default {
     computed:{
         changeAC(){
             return this.$store.getters.quoteDataAC
-        }
+        },
+      
     //     ...mapGetters([
     //         'quoteDataAC'
     //     ])
     },
-    // watch:{
-   
-    // },
+    watch:{
+        changeAC:function(val){
+            console.log(val)
+        }
+    },
     components:{
         HangqingCP
     }

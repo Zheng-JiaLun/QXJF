@@ -99,21 +99,21 @@
         
          type="card" >
           <!-- 引入持仓组件 -->
-          <el-tab-pane label="持仓" name="chicang" id="chicang">
-            <ChiCang :pinChang='pinChang' :selector="selector"></ChiCang>
+          <el-tab-pane label="持仓" name="chicang" id="chicang2">
+            <ChiCang :pinChang='pinChang' :selector="selector"  @childFn="parentFn"></ChiCang>
           </el-tab-pane>
           <!-- 引入委托组件 -->
-          <el-tab-pane label="委托" name="weituo" id="weituo">
+          <el-tab-pane label="委托" name="weituo" id="weituo2">
             <WeiTuo></WeiTuo>
           </el-tab-pane>
           <!-- 引入成交组件 -->
-          <el-tab-pane label="成交" name="chengjiao" id="chengjiao">
+          <el-tab-pane label="成交" name="chengjiao" id="chengjiao2">
             <ChengJiao :value='value'></ChengJiao>
           </el-tab-pane>
-          <el-tab-pane label="出入金" name="churujin" class="pane" id="churujin">
+          <el-tab-pane label="出入金" name="churujin" class="pane" id="churujin2">
             <ChuRuJin :value="value"></ChuRuJin>
           </el-tab-pane>
-          <el-tab-pane label="交割查询" name="jiaoge" class="pane" id="jiaoge">
+          <el-tab-pane label="交割查询" name="jiaoge" class="pane" id="jiaoge2">
             <JiaoGe :value="value"></JiaoGe>
           </el-tab-pane>
         </el-tabs>
@@ -133,6 +133,7 @@ export default {
     props:['listSize','value'],
     data(){
         return {
+            Listheight:'',
             activeName :"chicang",
             TabIndex: "",
             pinChang:false,
@@ -147,6 +148,7 @@ export default {
             options: [
              
             ],
+            childMsg:{},
             islock:true,
             updown:{
               limitDown:'0',
@@ -161,6 +163,9 @@ export default {
         console.log(event,this.activeName)
         // 向父元素传值的自定义监听函数
         this.$emit("listenTabindex",1);
+      },
+      parentFn(val){
+      this.childMsg = val
       },
       islockBtn(){
         this.islock = !this.islock
@@ -282,7 +287,38 @@ export default {
         }
       },
       // 快捷平仓
-      quickPC(){},
+      quickPC(){
+        let _this = this
+        console.log(this.childMsg)
+       
+        let msgs = JSON.stringify({
+            userID:JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId,
+            tradeNum: _this.childMsg.futures_num,
+            tradePrice: _this.childMsg.futures_price,
+            futuresCode: _this.childMsg.futures_code,
+            updown: _this.childMsg.updown,
+            priceType: _this.childMsg.orderTradeType,
+            serialNum: _this.childMsg.serialnum,
+            stopLoss: _this.childMsg.stoploss,
+            stopProfit:_this.childMsg.stopprofit
+        })
+        this.$pro.post('close_position', msgs).then((res) => {
+          console.log(res)
+          if(res.result == 1){
+            // this.axiosChiCang()
+              _this.$message({
+              type: 'success',
+              message: '成功'
+            });
+          }else{
+            
+            _this.$message.error('失败:'+res.message);
+          }
+          
+        })
+      
+        
+      },
       //单个平仓
       onePC(){
         this.pinChang = !this.pinChang
@@ -356,12 +392,14 @@ export default {
        //  当窗口发生变化或页面加载时，获父级传递过来的高度，动态修改自身的高度
       listSize: {
         handler: function(Val, oldVal) {
+          
           this.Listheight= +Val;
-          document.getElementById("chicang").style.height = this.Listheight-28 + "px";
-          document.getElementById("weituo").style.height = this.Listheight-28 + "px";
-          document.getElementById("chengjiao").style.height = this.Listheight-28 + "px";
-          document.getElementById("churujin").style.height = this.Listheight-28 + "px";
-          document.getElementById("jiaoge").style.height = this.Listheight-28 + "px";
+          document.getElementById("chicang2").style.height = this.Listheight-24-this.Listheight*0.08 + "px";
+          document.getElementById("weituo2").style.height = this.Listheight-24-this.Listheight*0.08 + "px";
+          document.getElementById("chengjiao2").style.height = this.Listheight-24-this.Listheight*0.08 + "px";
+          document.getElementById("churujin2").style.height = this.Listheight-24-this.Listheight*0.08 + "px";
+          document.getElementById("jiaoge2").style.height = this.Listheight-24-this.Listheight*0.08 + "px";
+          // console.log(Val,this.Listheight,document.getElementById("chicang2").style)
         }
       },
       inputVal(Val){

@@ -197,7 +197,7 @@ export default {
      
     },
     parentFn(val){
-      console.log(val)
+      // console.log(val)
       val.addtime = val.addtime.replace('T',' ')
       this.childMsg = val
     },
@@ -206,14 +206,47 @@ export default {
       this.$emit('listenData',val)
     },
     kuaijiepingcang() {
-      
+      let _this = this
+      if(this.childMsg.addtime == ''){
+        this.$message({
+          message: '请先选中持仓列表',
+          type: 'warning'
+        });
+      }else{
+        console.log(this.childMsg)
+        let msgs = JSON.stringify({
+            userID:JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId,
+            tradeNum: _this.childMsg.futures_num,
+            tradePrice: _this.childMsg.futures_price,
+            futuresCode: _this.childMsg.futures_code,
+            updown: _this.childMsg.updown,
+            priceType: _this.childMsg.orderTradeType,
+            serialNum: _this.childMsg.serialnum,
+            stopLoss: _this.childMsg.stoploss,
+            stopProfit:_this.childMsg.stopprofit
+        })
+        this.$pro.post('close_position', msgs).then((res) => {
+          // console.log(res)
+          if(res.result == 1){
+            // this.axiosChiCang()
+              _this.$message({
+              type: 'success',
+              message: '成功'
+            });
+          }else{
+            
+            _this.$message.error('失败:'+res.message);
+          }
+          
+        })
+      }
     },
     bufenfanshou() {
       this.selector = !this.selector
     },
      quanbupingcang(){
        let _this = this
-      console.log(this.$store.state.serialnum)
+      // console.log(this.$store.state.serialnum)
       this.$confirm('确定全部平仓?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',

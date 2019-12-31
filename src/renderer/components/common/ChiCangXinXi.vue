@@ -29,19 +29,19 @@
         <el-table-column prop="price_unit" label="变动单位" show-overflow-tooltip></el-table-column>
         <el-table-column label="最新价格" show-overflow-tooltip>
            <template slot-scope="scope">
-            <span :style="scope.row.buyPoint >scope.row.futures_price?'color:#FF3322;':'color:#00BD00;'">{{scope.row.buyPoint}}</span>
+            <span :style="scope.row.buyPoint >scope.row.futures_price?'color:#FF3322;':'color:#00BD00;'">{{scope.row.buyPoint == '0'?"0":scope.row.buyPoint}}</span>
           </template>
         </el-table-column>
         <el-table-column  label="盈亏" show-overflow-tooltip>
            <template slot-scope="scope">
             <span :style="scope.row.buyPoint - scope.row.futures_price >= 0 ? 'color:#FF3322;' : 'color:#00BD00;'"
-            >{{(scope.row.buyPoint*1000 - scope.row.futures_price*1000)*scope.row.futures_num/1000}}</span>
+            >{{scope.row.buyPoint == '0'?'0':(scope.row.buyPoint*1000 - scope.row.futures_price*1000)*scope.row.futures_num/1000}}</span>
           </template>
         </el-table-column>
         <el-table-column  label="本币盈亏" show-overflow-tooltip>
             <template slot-scope="scope">
               <span :style="scope.row.buyPoint - scope.row.futures_price >= 0 ? 'color:#FF3322;' : 'color:#00BD00;'"
-              >{{(scope.row.buyPoint*1000 - scope.row.futures_price*1000)*scope.row.futures_num/1000*scope.row.cs}}元</span>
+              >{{scope.row.buyPoint == '0'?'0':(scope.row.buyPoint*1000 - scope.row.futures_price*1000)*scope.row.futures_num/1000*scope.row.cs}}元</span>
             </template>
         </el-table-column>
         <el-table-column label="止盈止亏" show-overflow-tooltip>
@@ -61,6 +61,7 @@
 import { setInterval } from 'timers';
 export default {
   name: "chicang",
+  inject:['reload'],
   props: ["Listheight","pinChang","selector"],
   data() {
     return {
@@ -182,7 +183,7 @@ export default {
 
     },
     async setPrLoss(a) {
-      console.log(a)
+      // console.log(a)
       let data = await this.$Win.openWin({
         // browserwindow原生属性
         width: 900, // 窗口宽
@@ -199,6 +200,10 @@ export default {
           animation: "none"
         }
       });
+      console.log(data)
+      if(data){
+        this.reload()
+      }
     },
     axiosChiCang(){
       let _this = this
@@ -220,7 +225,7 @@ export default {
           // res.msg.zybzj//自用保证金
           this.$emit('childTopFn',res.msg);
           _this.tableData = res.msg.data
-         
+        //  console.log(res)
           let hqMsg = JSON.parse(localStorage.getItem(_this.$store.state.localStorageHq))[0].item,
               arr   = [],
               serialNum = [];
@@ -251,6 +256,7 @@ export default {
     setPingchang(msg){
       // console.log(msg)
       const h = this.$createElement;
+      let _this = this
       this.$msgbox({
         title: '提示',
         message: h('p', {style:'text-align:center;'}, [
@@ -297,7 +303,7 @@ export default {
             // console.log(res)
             if(res.result == 1){
               // this.axiosChiCang()
-               this.$message({
+               _this.$message({
                 type: 'success',
                 message: '成功'
               });
@@ -379,8 +385,12 @@ export default {
           //计算动态权益
           for(let i=0;i<this.tableData.length;i++){
             
-          
-            arr.push((this.tableData[i].buyPoint*1000 - this.tableData[i].futures_price*1000)*this.tableData[i].futures_num*this.tableData[i].cs/1000)
+            if(this.tableData[i].buyPoint == '0'){
+              // return ''
+            }else{
+              arr.push((this.tableData[i].buyPoint*1000 - this.tableData[i].futures_price*1000)*this.tableData[i].futures_num*this.tableData[i].cs/1000)
+            }
+            
           }
         
           _this.equity = eval(arr.join("+")).toFixed(2)

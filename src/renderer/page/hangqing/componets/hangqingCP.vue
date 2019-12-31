@@ -19,7 +19,7 @@
                     <td style="color:#DCDC0A;min-width:80px" :title="item.name">{{item.name}}</td>
                     <td style="color:#DCDC0A;">{{item.code}}</td>
                     <!-- 最新价 -->
-                    <td :style="item.buyPoint >=60?'color:#FF3322;':'color:#00BD00;'">{{item.buyPoint}}</td>
+                    <td :style="item.buyPoint >=60?'color:#FF3322;':'color:#00BD00;'">{{item.point}}</td>
                     <!-- 买价 -->
                     <td style="color:#FF3322;">{{item.buyPoint}}</td>
                     <!-- 买量 -->
@@ -35,16 +35,26 @@
                     <!-- 涨幅 -->
                     <td :style="item.changeRate >0?'color:rgba(255,51,34,1);':'color:rgba(0,189,0,1);'">{{item.changeRate?item.changeRate:0}}%</td>
                     <!-- 开盘 -->
-                    <td style="color:#00BD00;">{{item.openPoint?'0':item.openPoint}}</td>
+                    <td style="color:#00BD00;">{{item.openPoint?item.openPoint:'0'}}</td>
+                    <!-- 昨收盘 -->
+                    <td>{{item.preClosePoint?item.preClosePoint:'0'}}</td>
+                    <!-- 最高 -->
+                    <td style="color:#FF3322;">{{item.higePoint?item.higePoint:'0'}}</td>
+                    <!-- 最低 -->
+                    <td style="color:#00BD00;">{{item.lowPoint?item.lowPoint:'0'}}</td>
+                    <!-- 持仓量 -->
                     <td>{{item.point}}</td>
-                    <td style="color:#FF3322;">{{item.point}}</td>
-                    <td style="color:#00BD00;">{{item.point}}</td>
-                    <td>{{item.point}}</td>
+                    <!-- 结算价 -->
                     <td style="color:#3071E8;">{{item.point}}</td>
+                    <!-- 涨停 -->
+                    <td>{{item.limitUp?item.limitUp:'0'}}</td>
+                    <!-- 跌停 -->
+                    <td>{{item.limitDown?item.limitDown:'0'}}</td>
+                    <!-- 昨持仓 -->
                     <td>{{item.point}}</td>
-                    <td>{{item.point}}</td>
-                    <td>{{item.point}}</td>
+                    <!-- 昨结算 -->
                     <td style="color:#DCDC0A;">{{item.point}}</td>
+                    <!-- 成交总价 -->
                     <td>{{item.point}}</td>
 
                 </tr>
@@ -169,11 +179,11 @@ export default {
             if(val){
 
             }
-            console.log(val)
+            // console.log(val)
 
         },
         quoteDataAC:function(val){
-            console.log(val)
+            // console.log(val)
             let a = this.childMsg
             for(let i=0;i<a.length;i++){
                 if(this.childMsg[i].code == val.code){
@@ -188,8 +198,8 @@ export default {
                     this.childMsg[i].lowPoint        = val.lowPoint     //最低
                     this.childMsg[i].openPoint        = val.openPoint     //持仓量
                     this.childMsg[i].openPoint        = val.openPoint     //结算价
-                    this.childMsg[i].openPoint        = val.limitUp     //涨停
-                    this.childMsg[i].openPoint        = val.limitDown     //跌停
+                    this.childMsg[i].limitUp        = val.limitUp     //涨停
+                    this.childMsg[i].limitDown        = val.limitDown     //跌停
                     this.childMsg[i].openPoint        = val.openPoint     //昨持仓
                     this.childMsg[i].openPoint        = val.openPoint     //昨结算
                     this.childMsg[i].openPoint        = val.openPoint     //成交总价

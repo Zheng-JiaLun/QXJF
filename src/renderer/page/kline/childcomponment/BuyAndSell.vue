@@ -144,7 +144,7 @@ export default {
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            if(this.isTransaction){
+            // if(this.isTransaction){
               var msg = JSON.stringify({
                 userID: JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId,
                 tradeNum: _this.num,
@@ -172,12 +172,12 @@ export default {
                   // alert(res.message)
                 }
               })
-            }else{
-               this.$message({
-                  type: 'warning',
-                  message:'失败~'
-                });
-            }
+            // }else{
+            //    this.$message({
+            //       type: 'warning',
+            //       message:'失败~'
+            //     });
+            // }
             
            
           }).catch(() => {

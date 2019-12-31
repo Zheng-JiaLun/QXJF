@@ -80,11 +80,9 @@ export default {
         // this.currentRow = val;
       },
       initChengJiao(){
-        if (!localStorage.getItem(this.$store.state.localStorageLogin)) { //判断是否为登录状态
-          // console.log('未登录状态');
-        
-        } else {
-          // console.log('登录状态',JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId);
+       
+        if (localStorage.getItem(this.$store.state.localStorageLogin)) { //判断是否为登录状态
+         
           let nowTime = new Date().getFullYear()+'-'+new Date().getMonth()+'-'+new Date().getDate()
           let msg = JSON.stringify({
             userID: JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId,
@@ -94,12 +92,13 @@ export default {
             endTime: this.changeValue[1]+' 23:59:59'
           });
           this.$pro.post('get_history_order_new', msg).then((res) => {
+            console.log(res)
             if(res.result == 1){
               this.delData = res.msg.data
             }else{
               console.log("错误:",res.msg)
             }
-              this.delData = res.msg.data
+              // this.delData = res.msg.data
 
           })
         }

@@ -63,7 +63,8 @@
             <ul class="ul01 flex">
               <li>
                 <p>
-                  <i class="el-icon-lock"></i>
+                  <i v-show="!islock" @click="islockBtn()" class="el-icon-lock"></i>
+                  <i v-show="islock" @click="islockBtn()" class="el-icon-unlock"></i>
                 </p>
                 <!-- <input type="text" placeholder="合约代码"  v-model="inputVal"/> -->
                 <el-cascader :options="options" :show-all-levels="false" v-model="inputVal"></el-cascader>
@@ -222,6 +223,7 @@ export default {
       activeName :"chicang",
       text:"父组件传入的值",
       TabIndex: "",
+      islock:true,
       pinChang:false,
       inputVal:'',
       codePrice:'',
@@ -435,6 +437,9 @@ export default {
         // this.showorhide2 = false;
         this.showorhide1 = false;
       }
+    },
+    islockBtn(){
+      this.islock = !this.islock
     },
     // 此函数用于控制时间选择器的隐藏或显示
     showBoxindex(data) {
