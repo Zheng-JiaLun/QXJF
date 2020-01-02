@@ -213,7 +213,7 @@ pro = {
 		var date=new Date();
 
 		var year=date.getFullYear();
-		var month=date.getMonth();
+		var month=date.getMonth()+1;
 		var day=date.getDate();
 
 		var hour=date.getHours();
@@ -230,6 +230,7 @@ pro = {
 		if (second<10) {
 			second='0'+second;
 		}
+		
 
 
 		var x=date.getDay();//获取星期

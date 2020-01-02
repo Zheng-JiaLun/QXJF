@@ -63,6 +63,7 @@ export default{
 			let dataObject = JSON.parse(data.content);
 			// console.log(dataObject[0]);
 			state.market.quoteData = dataObject[0]
+			
 			// commit('setQuoteData', dataObject[0]);
 			// console.log(state.market.quoteData)
 			// if (state.market.computedFdyk && state.account.loginStatus) {

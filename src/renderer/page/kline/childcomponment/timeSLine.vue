@@ -9,7 +9,7 @@ import  HQChart  from "../../../jscommon/umychart.vue/umychart.vue.js";
 // import  HQChart  from "../../../jscommon/umychart.vue/umychart.vue(2).js";
 export default {
     name:'timeSLine',
-     props:["candleHeight",'candleWidth','toChildOption','islogin'],
+     props:["candleHeight",'candleWidth','toChildOption','islogin','isdownload'],
     data(){
         return{
             Symbol:"600000.sh",
@@ -34,12 +34,16 @@ export default {
          OnSize()
         { 
             var chartWidth = window.innerWidth-(window.innerWidth*0.18);
-            if(this.changeislogin){
-                 var chartHeight = (window.innerHeight-115)/2;
+            if(this.isdownload){
+                if(this.changeislogin){
+                    var chartHeight = (window.innerHeight-115)/2;
+                }else{
+                    var chartHeight = (window.innerHeight-115);
+                }
             }else{
-                var chartHeight = (window.innerHeight-115);
-                
+                 var chartHeight = (window.innerHeight-145);
             }
+            
            
             
             var minute=this.$refs.minute;
@@ -71,10 +75,13 @@ export default {
             return this.$store.state.chanpinInfo
         },
         changewindows(){
-            return this.toChildOption.Windows[0].Index
+            return this.toChildOption.Windows[0].Index?this.toChildOption.Windows[0].Index:''
         },
         changeislogin(){
             return this.islogin
+        },
+        changeisdownload(){
+            return this.isdownload
         }
     },
     watch: {
@@ -117,7 +124,10 @@ export default {
         changeislogin:function(val){
             console.log(val)
             this.OnSize();
-        }
+        },
+        changeisdownload:function(val){
+            this.OnSize();
+        },
         // changeCode:function(){
         //     this.CreateMinuteChart()
         //     // console.log("k线监听code````````",this)

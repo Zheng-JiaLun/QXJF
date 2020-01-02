@@ -70,6 +70,12 @@
 <script>
 export default {
   name: "transaction",
+  props:{
+    hangqingData:{
+      type:Array,
+      default:() => []
+    }
+  },
   data() {
     return {
       gen: 0,
@@ -77,7 +83,7 @@ export default {
       stopPrint: 0,
       stopLoss: 0,
       setPriceName:'市价',
-      genTemporary:"",//跟盘最新暂存数据 
+      // genTemporary:"",//跟盘最新暂存数据 
       isTransaction:false,
       heyue: {
         heyueClass: "",
@@ -129,13 +135,12 @@ export default {
         this.setPriceName = '限价'
       }else if(this.setPriceName == '限价'){
         this.setPriceName = '市价'
-        this.gen = this.genTemporary
+        
       }
       
     },
     shijia(type){
       let _this = this
-      // console.log(this.isTransaction,"````",this.$store.state.isTransaction)
       if(localStorage.getItem('ycxUserLoginState_QXJF')){
          if(type == 1){
            
@@ -144,7 +149,6 @@ export default {
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            // if(this.isTransaction){
               var msg = JSON.stringify({
                 userID: JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId,
                 tradeNum: _this.num,
@@ -157,29 +161,16 @@ export default {
               })
               console.log(msg)
               _this.$pro.post('buy_sale_order', msg).then((res) => {
-                // _this.guadanState1 = false;
                 console.log(res)
                 if (res.result == 1) {
-                  // _this.active = 0;
-                  // console.log(res)
-                  // _this.$store.state.market.initChicang++
                   _this.$message({
                     type: 'success',
                     message:'买入成功'
                   });
                 }else{
                   this.$message.error(res.message);
-                  // alert(res.message)
                 }
               })
-            // }else{
-            //    this.$message({
-            //       type: 'warning',
-            //       message:'失败~'
-            //     });
-            // }
-            
-           
           }).catch(() => {
             this.$message({
               type: 'info',
@@ -192,7 +183,7 @@ export default {
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-             if(this.isTransaction){
+             
               var msg = JSON.stringify({
                 userID: JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId,
                 tradeNum: _this.num,
@@ -204,27 +195,17 @@ export default {
                 stopProfit: Number(_this.stopProfit)
               })
               _this.$pro.post('buy_sale_order', msg).then((res) => {
-                // _this.guadanState1 = false;
                 console.log(res)
                 if (res.result == 1) {
-                  // _this.active = 0;
-                  // console.log(res)
-                  // _this.$store.state.market.initChicang++
                   _this.$message({
                     type: 'success',
                     message:'卖出成功'
                   });
                 }else{
                   this.$message.error(res.message);
-                  // alert(res.message)
                 }
               })
-            }else{
-               this.$message({
-                  type: 'warning',
-                  message:'失败~'
-                });
-            }
+           
           }).catch(() => {
             this.$message({
               type: 'info',
@@ -259,13 +240,10 @@ export default {
     },
     heyueNameCh(value) {
       this.heyue.heyueCode = value;
-     
-      
     }
   },
   created(){
     this.heyueClassOptions = JSON.parse(localStorage.getItem(this.$store.state.localStorageHq))
-    // console.log(this.heyueClassOptions) 
   },
   computed:{
     changeQuoteData(){
@@ -277,38 +255,24 @@ export default {
   },
   watch:{
     'heyue.heyueCode'(val){
-      
-       let hqMsg = JSON.parse(localStorage.getItem(this.$store.state.localStorageHq))[0].item
-       this.$store.state.market.quoteData
-      for(let i=0;i<hqMsg.length;i++){
-        if(hqMsg[i].code == val){
-          let time = eval(hqMsg[i].tradeTime)
-          this.gen = hqMsg[i].buyPoint
-          
-          if(this.$pro.dateTime_range(time)){
-            this.isTransaction = true
-          }else{
-            this.isTransaction = false
+      for(let i=0;i<this.hangqingData.length;i++){
+        if(this.hangqingData[i].code == val){
+          // let time = eval(hangqingData[i].tradeTime)
+          this.gen = this.hangqingData[i].buyPoint
+        }
+      }
+    },
+    hangqingData:function(val){
+      // console.log(val)
+      for (let i = 0; i < val.length; i++) {
+        if(val[i].code == this.heyue.heyueCode){
+          // let time = eval(hangqingData[i].tradeTime)
+          if(this.setPriceName == '市价'){
+            this.gen = val[i].point
           }
         }
       }
-      
-
-       //执行请求跟盘数据
-    },
-    changeQuoteData:function(val){
-      // console.log(val)
-      if(val.code == this.heyue.heyueCode){
-        
-        if(this.setPriceName == '市价'){
-            this.gen = val.buyPoint
-            this.genTemporary = val.buyPoint
-        }else{
-          
-        }
-      }
-    },
-    
+    }
   }
 };
 </script>

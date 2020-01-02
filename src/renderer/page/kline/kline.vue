@@ -73,10 +73,10 @@
           ></CandleStick> -->
           <!-- <Hello></Hello> -->
           <div v-show="isactive == 0">
-            <MinuteBox :candleHeight="candleHeight" :candleWidth="candleWidth" :toChildOption="minuteOption" @function="toFatherMinute" :islogin='islogin'></MinuteBox>
+            <MinuteBox :candleHeight="candleHeight" :candleWidth="candleWidth" :toChildOption="minuteOption" @function="toFatherMinute" :islogin='islogin' :isdownload='isdownload'></MinuteBox>
           </div>
           <div v-show="isactive != 0">
-            <MinuteBox :candleHeight="candleHeight" :candleWidth="candleWidth" :toChildOption="klineOption" @function="toFatherKline" :islogin='islogin'></MinuteBox>
+            <MinuteBox :candleHeight="candleHeight" :candleWidth="candleWidth" :toChildOption="klineOption" @function="toFatherKline" :islogin='islogin' :isdownload='isdownload'></MinuteBox>
           </div>
           
          
@@ -140,8 +140,13 @@
             </div> -->
           </div>
           <div class="action flex" v-show="islogin">
+            
             <div class="new flex" @click="placeOrders()">
               <i class="el-icon-sort"></i>
+            </div>
+            <div class="download flex" @click="download()">
+              <i class="el-icon-download" v-show="isdownload"></i>
+              <i class="el-icon-upload2" v-show="!isdownload"></i>
             </div>
             <!-- <div class="ping flex">
               <button>
@@ -153,15 +158,16 @@
         </div>
         <!-- 此区域为买卖及合约清单展示，主要分为左右两部分，
         左边为买卖操作窗口，右边为合约清单-->
-        <div class="centerLB" id="centerLB" v-show="islogin">
+        <transition name="el-zoom-in-bottom">
+        <div class="centerLB" id="centerLB" v-if="islogin" v-show="isdownload">
           <!-- 合约买卖操作窗口 -->
           <div class="centerLBL">
-            <BuyAndSell></BuyAndSell>
+            <BuyAndSell :hangqingData='hangqingData'></BuyAndSell>
           </div>
           <!-- 合约清单展示区域 -->
           <div class="centerLBR">
             <div id="List">
-              <List @listenTabindex="showBoxindex()" :listSize="listSize" :value="value1" @listenData="listenDataFn"></List>
+              <List @listenTabindex="showBoxindex()" :listSize="listSize" :value="value1"  @listenData="listenDataFn"></List>
             </div>
             <!-- <div class="listbottom">
               <span>上证指数：</span>
@@ -171,10 +177,13 @@
             </div>-->
           </div>
           <!-- 买卖下单操作窗口(默认隐藏) -->
+           <transition name="el-zoom-in-top">
           <div id="placeOrder" v-show="isplaceOrder">
-            <PlaceOrder @listenTabindex="showBoxindex()" :listSize="listSize" :value="value1"></PlaceOrder>
+            <PlaceOrder @listenTabindex="showBoxindex()" :hangqingData='hangqingData' :listSize="listSize" :value="value1"></PlaceOrder>
           </div>
+         </transition>
         </div>
+        </transition>
       </div>
       <!-- 主体区域的右边部分，此部分主要展示合约详情 -->
       <div class="centerR">
@@ -217,6 +226,8 @@ export default {
         name:false,
         usermoney:false
       },
+      isdownload:true,
+      hangqingData:[],
       showorhide1: false,
       topData:{},
       height: "300px",
@@ -246,8 +257,8 @@ export default {
           key: "5"
         },
         {
-          title: "10分",
-          key: "10"
+          title: "15分",
+          key: "15"
         },
         {
           title: "30分",
@@ -433,7 +444,7 @@ export default {
             Period: 0, //周期 0 日线 1 周线 2 月线 3 年线 4 1分钟 5 5分钟 6 15分钟 7 30分钟 8 60分钟 9 季线 10 分笔线 11 2小时 12 4小时
             MaxReqeustDataCount: 1000, //日线数据最近1000天
             MaxRequestMinuteDayCount: 15,    //分钟数据最近15天
-            PageSize: 50, //一屏显示多少数据 
+            PageSize: 100, //一屏显示多少数据 
             IsShowTooltip: true //是否显示K线提示信息
         },
         
@@ -455,31 +466,49 @@ export default {
         document.getElementById("kline").style.height = Hight - 60 + "px";
         document.getElementById("center").style.height = Hight - 118 + "px";
         if(this.islogin){
-          if (this.viewSize == "max") {
-            document.getElementById("centerLT").style.height = Hight - 118 + "px";
-            this.candleHeight = Hight - 118;
-            document.getElementById("centerLM").style.height = "0px";
-            document.getElementById("centerLB").style.height = "0px";
-          } else if (this.viewSize == "min") {
-            document.getElementById("centerLB").style.height =
-              (Hight - 115) / 2 - 32 + "px";
-            document.getElementById("centerLM").style.height = "30px";
-            document.getElementById("centerLT").style.height = //K线展示区域的高度
-              (Hight - 115) / 2 + "px";
-            this.candleHeight = (Hight - 115) / 2; //将高度传给K线组件
-            document.getElementById("List").style.height =
-              (Hight - 115) / 2 - 34 + "px";
-            this.listSize = document.getElementById("List").clientHeight;
-          } else {
-            document.getElementById("centerLT").style.height =
-              (Hight - 115) / 2 + "px";
-            this.candleHeight = (Hight - 115) / 2; //将高度传给K线组件
-            document.getElementById("centerLB").style.height =
-              (Hight - 115) / 2 - 34 + "px";
-            document.getElementById("List").style.height =
-              (Hight - 115) / 2 - 34 + "px";
-            this.listSize = document.getElementById("List").clientHeight;
+          if(this.isdownload){
+            if (this.viewSize == "max") {
+              document.getElementById("centerLT").style.height = Hight - 118 + "px";
+              this.candleHeight = Hight - 118;
+              document.getElementById("centerLM").style.height = "0px";
+              document.getElementById("centerLB").style.height = "0px";
+            } else if (this.viewSize == "min") {
+              document.getElementById("centerLB").style.height =
+                (Hight - 115) / 2 - 32 + "px";
+              document.getElementById("centerLM").style.height = "30px";
+              document.getElementById("centerLT").style.height = //K线展示区域的高度
+                (Hight - 115) / 2 + "px";
+              this.candleHeight = (Hight - 115) / 2; //将高度传给K线组件
+              document.getElementById("List").style.height =
+                (Hight - 115) / 2 - 34 + "px";
+              this.listSize = document.getElementById("List").clientHeight;
+            } else {
+              document.getElementById("centerLT").style.height =
+                (Hight - 115) / 2 + "px";
+              this.candleHeight = (Hight - 115) / 2; //将高度传给K线组件
+              document.getElementById("centerLB").style.height =
+                (Hight - 115) / 2 - 34 + "px";
+              document.getElementById("List").style.height =
+                (Hight - 115) / 2 - 34 + "px";
+              this.listSize = document.getElementById("List").clientHeight;
+            }
+          }else{
+            if (this.viewSize == "max") {
+               document.getElementById("centerLT").style.height = Hight - 148 + "px";
+               this.candleHeight = Hight - 148;
+            }else if(this.viewSize == "min"){
+              document.getElementById("centerLT").style.height = //K线展示区域的高度
+                Hight - 145 + "px";
+                this.candleHeight = Hight - 145; //将高度传给K线组件
+                 this.listSize = document.getElementById("List").clientHeight;
+            }else{
+               document.getElementById("centerLT").style.height =
+                Hight - 145 + "px";
+                 this.candleHeight = Hight - 145; //将高度传给K线组件
+                 this.listSize = document.getElementById("List").clientHeight;
+            }
           }
+          
         }else{
           document.getElementById("centerLT").style.height =
               (Hight - 115) + "px";
@@ -498,8 +527,9 @@ export default {
     // localStorage.setItem('placeOrderIndex',"0")
     //判断是否登录
     if(JSON.parse(localStorage.getItem(this.$store.state.localStorageLogin))){
-      // this.userMsg = JSON.parse(localStorage.getItem(this.$store.state.localStorageUid))
-      // console.log(this.userMsg)
+      this.hangqingData = JSON.parse(localStorage.getItem(this.$store.state.localStorageHq))[0].item
+      
+
       this.islogin = true
       var msg = JSON.stringify({
         userID: JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId
@@ -527,6 +557,18 @@ export default {
         localStorage.setItem('placeOrderIndex',"2")
       }
       
+    },
+    //k线界面交易信息隐藏显示
+    download(){
+      var Hight = document.documentElement.clientHeight; //获取视图的高度
+      this.isdownload = !this.isdownload
+      if(this.isdownload){
+        document.getElementById("centerLT").style.height = //K线展示区域的高度
+            (Hight - 115) / 2 + "px";
+      }else{
+        document.getElementById("centerLT").style.height = //K线展示区域的高度
+            Hight - 145 + "px";
+      }
     },
     handleCommand(command){
       console.log(this.isactive)
@@ -576,15 +618,21 @@ export default {
       if(this.islogin){
         document.getElementById("kline").style.height = Hight - 60 + "px"; //K线页面展示的高度
         document.getElementById("center").style.height = Hight - 118 + "px"; //减去两个固定高度的导航栏
-        document.getElementById("centerLT").style.height = //K线展示区域的高度
-          (Hight - 115) / 2 + "px";
-        document.getElementById("centerLM").style.height = "30px";
-        this.candleHeight = (Hight - 115) / 2; //将高度传给K线组件
-        document.getElementById("centerLB").style.height =
-          (Hight - 115) / 2 - 34 + "px";
-        document.getElementById("List").style.height =
-          (Hight - 115) / 2 - 34 + "px";
-        this.listSize = document.getElementById("List").clientHeight;
+        // if(this.isdownload){
+          document.getElementById("centerLT").style.height = //K线展示区域的高度
+            (Hight - 115) / 2 + "px";
+          document.getElementById("centerLM").style.height = "30px";
+          this.candleHeight = (Hight - 115) / 2; //将高度传给K线组件
+          document.getElementById("centerLB").style.height =
+            (Hight - 115) / 2 - 34 + "px";
+          document.getElementById("List").style.height =
+            (Hight - 115) / 2 - 34 + "px";
+          this.listSize = document.getElementById("List").clientHeight;
+        // }else{
+
+        // }
+       
+        
       }else{
         document.getElementById("kline").style.height = Hight - 60 + "px"; //K线页面展示的高度
         document.getElementById("center").style.height = Hight - 118 + "px"; //减去两个固定高度的导航栏
@@ -653,8 +701,8 @@ export default {
           case '5':
             this.klineOption.KLine.Period = 5
             break;
-          case '10':
-            this.klineOption.KLine.Period = 20010 //自定义分钟数10分钟
+          case '15':
+            this.klineOption.KLine.Period = 6 //自定义分钟数10分钟
             break;
           case '30':
             this.klineOption.KLine.Period = 7
@@ -713,6 +761,9 @@ export default {
    updataSocketData() {
       return this.$store.getters.updataSocketData;
     },
+    changeDataAC(){
+      return this.$store.getters.quoteDataAC
+    }
   },
   watch:{
     changeLoginStatus:function(val){
@@ -728,6 +779,29 @@ export default {
         this.islogin = false
         this.reboxSize();
       }
+    },
+    changeDataAC:function(val){
+      let data = this.hangqingData
+      for(let i=0;i<data.length;i++){
+        if(val.code ==data[i].code){
+          data.splice(i,1,val)
+        }
+      }
+      
+        // else{
+      //   for(let i=0;i<this.hangqingData.length;i++){
+      //     console.log(this.hangqingData)
+      //     if(val.code ==this.hangqingData[i].code){
+      //       this.hangqingData.splice(i,1,val)
+      //     }else{
+      //       this.hangqingData.push(val)
+      //     }
+      //   }
+        
+      // }
+      
+      
+      
     },
     changeIsplaceOrder:function(val){
       if(val){
@@ -903,6 +977,13 @@ export default {
           div:first-child {
             margin: 5px 5px;
             :first-child {
+              border: #a7a7a7 solid 1px;
+              border-radius: 50%;
+            }
+          }
+          div:last-child {
+            margin: 5px 5px;
+            :last-child {
               border: #a7a7a7 solid 1px;
               border-radius: 50%;
             }

@@ -128,10 +128,11 @@ export default {
             // })
             //this.$store.dispatch('accountLogin')
             if(this.loginInput.user == '' ||this.loginInput.user ==null){
-                alert('账号不能为空')
+                 this.$message.error('错误:账号不能为空');
             }else if(this.loginInput.pwd ==''||this.loginInput.pwd.length<6){
                 //this.accountLogin01()
-                alert('密码长度不能少于6位')
+                this.$message.error('错误:密码长度不能少于6位');
+                
             }else{
                 //this.accountLogin01()
                 // let win = this.$Win.getWinByName('login')
@@ -143,12 +144,16 @@ export default {
                 // console.log(msg)
                 _this.$pro.post('login', JSON.stringify(msg)).then((res) => {
                     // Toast.clear();
-                    // console.log(res);
+                    console.log(res);
                     if (res.result == 1) {
                         var setSocketParam = {
                             userId: res.msg.userId,
                             token: res.msg.token
                         }
+                         _this.$message({
+                            message: '恭喜你，登陆成功，正在跳转',
+                            type: 'success'
+                        });
                         // _this.$store.commit('setSocketParam', setSocketParam);
                         
                         // this.$store.dispatch('setSocketParam',setSocketParam)
@@ -164,14 +169,18 @@ export default {
                         // _this.$initHangqing();
                         // _this.$store.dispatch('connectSocket');
                         // _this.$router.push('./index');
-                        this.$Win.closeWin({value:'登陆成功'})
+                        setTimeout(function(){
+                             
+                        },1000)
+                       this.$Win.closeWin({value:'登陆成功'})
                         // ipcRenderer.send('MainMsgFromRender',true)
                     }else{
-                        alert(res.message)
+                        _this.$message.error('错误：'+res.message);
                     }
                     
                 }).catch((error) => {
                     console.log(error)
+                    _this.$message.error('错误');
                     // alert('错误' + error)
                 })
                 

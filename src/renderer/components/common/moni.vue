@@ -190,10 +190,11 @@
       </div>
     </div>
     <!--左边为买卖操作窗口，右边为合约清单-->
+     <transition name="el-zoom-in-top">
     <div class="centerLB" id="centerLB" v-show="isbuy">
       <!-- 合约买卖操作窗口 -->
       <div class="centerLBL">
-        <BuyAndSell></BuyAndSell>
+        <BuyAndSell  :hangqingData='hangqingData'></BuyAndSell>
       </div>
       <!-- 合约清单展示区域 -->
       <div class="centerLBR">
@@ -202,6 +203,7 @@
         </div>
       </div>
     </div>
+    </transition>
   </div>
 </template>
 <script>
@@ -238,6 +240,7 @@ export default {
       listSize:"500px",
       isbuy:false,
       codePrice:'',
+      hangqingData:[],
       topMsg:{},
       tableData: [
         {
@@ -640,7 +643,7 @@ export default {
   created(){
     this.hqOptions()
     this.postUserMsg()
-    
+    this.hangqingData = JSON.parse(localStorage.getItem(this.$store.state.localStorageHq))[0].item
   },
   
   computed:{
@@ -658,16 +661,21 @@ export default {
       this.reload()
     },
     changeSocketData:function(Val){
-      // console.log( this.$store.state.equityData)
-      if(Val.code == this.inputVal[1]){
-          
-          if(this.priceMode == '市价'){
-            this.codePrice = Val.point
-          }
-          this.updown.limitDown = Val.limitDown
-          this.updown.limitUp = Val.limitUp
+      let data = this.hangqingData
+      for(let i=0;i<data.length;i++){
+        if(Val.code ==data[i].code){
+          data.splice(i,1,Val)
         }
+        if(data[i].code == this.inputVal[1]){
+          if(this.priceMode == '市价'){
+            this.codePrice = data[i].point
+          }
+          this.updown.limitDown = data[i].limitDown
+          this.updown.limitUp = data[i].limitUp
+        }
+      }
     },
+   
     activeName(Val){
       if(Val == 'chicang'){
         this.ischichang = true

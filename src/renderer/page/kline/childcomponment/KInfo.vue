@@ -172,7 +172,7 @@ export default {
       let flag      = false,
           flag2      = false
       let tradeTime = this.proInfo.tradeTime
-      
+      // console.log(this.proInfo,"20202020202020202")
         for(let i=0;i<tradeTime.length;i++){
           if(tradeTime[i].end.slice(0,1) == '0' && tradeTime[i].end.slice(0,2) < tradeTime[i].open.slice(0,2)){//判断是否结束时间是第二天得情况
             let _newdate1 = (new Date().getYear()+1900)+'-'+(new Date().getMonth()+1)+'-'+(new Date().getDate()+1)+' '//当前天数加一天

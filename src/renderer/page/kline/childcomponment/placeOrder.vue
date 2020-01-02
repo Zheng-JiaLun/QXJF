@@ -130,7 +130,11 @@ import ChuRuJin from "../../../components/common/ChuRuJinChaXun";
 import JiaoGe from "../../../components/common/JiaoGeChaXun";
 export default {
     name:"placeOrder",
-    props:['listSize','value'],
+    props:{
+      listSize:null,
+      value:null,
+      hangqingData:Array
+      },
     data(){
         return {
             Listheight:'',
@@ -406,13 +410,27 @@ export default {
         console.log(Val)
         
       },
-      changequoteDataAC:function(Val){
-        if(Val.code == this.inputVal[1]){
-          this.codePrice = Val.point
-          this.updown.limitDown = Val.limitDown
-          this.updown.limitUp = Val.limitUp
+      hangqingData:function(val){
+        // console.log(this.inputVal)
+        for (let i = 0; i < val.length; i++) {
+        if(val[i].code == this.inputVal[1]){
+          // let time = eval(hangqingData[i].tradeTime)
+          if(this.priceMode == '市价'){
+            this.codePrice = val[i].point
+           
+          }
+          this.updown.limitDown = val[i].limitDown
+          this.updown.limitUp = val[i].limitUp
         }
+      }
       },
+      // changequoteDataAC:function(Val){
+      //   if(Val.code == this.inputVal[1]){
+      //     this.codePrice = Val.point
+      //     this.updown.limitDown = Val.limitDown
+      //     this.updown.limitUp = Val.limitUp
+      //   }
+      // },
       activeName(Val){
         if(Val == 'chicang'){
           this.ischichang = true

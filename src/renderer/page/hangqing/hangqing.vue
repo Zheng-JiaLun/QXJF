@@ -207,7 +207,7 @@ export default {
             // 'token': uuid,
             }).then((res) =>{
                 this.msg = res.data.msg
-                console.log(this.msg,"````````````````````")
+                // console.log(this.msg,"````````````````````")
                 // this.$store.commit('setklineMsg',res.data.msg[0].item)
                 // console.log(this.msg)
             }).catch(function (error) {
@@ -240,7 +240,7 @@ export default {
     },
     watch:{
         changeAC:function(val){
-            console.log(val)
+            // console.log(val)
         }
     },
     components:{
