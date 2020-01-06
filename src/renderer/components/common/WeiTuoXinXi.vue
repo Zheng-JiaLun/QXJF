@@ -27,8 +27,8 @@
         </template>
       </el-table-column>
       <el-table-column label="撤单" show-overflow-tooltip>
-        <template>
-          <div class="chedan">撤单</div>
+        <template slot-scope="scope">
+          <div class="chedan" @click="cancelOrder(scope.row)">撤单</div>
         </template>
       </el-table-column>
     </el-table>
@@ -81,11 +81,46 @@ export default {
     };
   },
   methods: {
+    //撤单按钮
+    cancelOrder(a){
+      console.log(a)
+      let _this = this
+      let msg = JSON.stringify({
+        userID:JSON.parse(localStorage.getItem('ycxUserInfo_QXJF')).userId,
+        serialNum:a.serialnum
+      })
+      console.log(msg)
+      this.$confirm('确认撤单?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+          center:true,
+        }).then(() => {
+          _this.$pro.post('cancel_trust', msg).then((res) => {
+            console.log(res)
+            if (res.result == 1) {
+              _this.$message({
+                type: 'success',
+                message: '撤单成功!'
+              });
+              _this.axiosWeiTuo()
+            }else{
+              _this.$message.error('错误:'+res.message);
+            }
+          })
+          
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消'
+          });          
+        });
+    },
     async setPrLoss(a) {
       let data = await this.$Win.openWin({
         // browserwindow原生属性
-        width: 900, // 窗口宽
-        height: 476, // 窗口高
+        width: 600, // 窗口宽
+        height: 370, // 窗口高
 
         // electron-vue-windows自定义的属性
         windowConfig: {

@@ -3,6 +3,7 @@ import axios from 'axios'
 import App from './App'
 import router from './router'
 import Win from 'electron-vue-windows'
+import electron from 'electron'
 import './style/styleYY.scss'
 import './style/styleZJ.scss'
 import store from './store/index.js'
@@ -34,6 +35,7 @@ Vue.prototype.$Win =Win
 Vue.prototype.$Echarts =Echarts
 // Vue.prototype.$pako = pako //解压
 Vue.prototype.$pro = pro
+Vue.prototype.$electron = electron
 Vue.prototype.$subEn = pro.subEn //字符串切割
 Vue.prototype.$post = pro.post
 Vue.prototype.$initHangqing = pro.initHangqing //初始化行情列表

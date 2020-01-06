@@ -143,75 +143,84 @@ export default {
       let _this = this
       if(localStorage.getItem('ycxUserLoginState_QXJF')){
          if(type == 1){
-           
-          this.$confirm('确定买入?', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-          }).then(() => {
-              var msg = JSON.stringify({
-                userID: JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId,
-                tradeNum: _this.num,
-                tradePrice: _this.gen,
-                futuresCode: _this.heyue.heyueCode,
-                updown: 1,
-                priceType: this.setPriceName == '市价'?1:2,
-                stopLoss: Number(_this.stopLoss),
-                stopProfit: Number(_this.stopPrint)
-              })
-              console.log(msg)
-              _this.$pro.post('buy_sale_order', msg).then((res) => {
-                console.log(res)
-                if (res.result == 1) {
-                  _this.$message({
-                    type: 'success',
-                    message:'买入成功'
-                  });
-                }else{
-                  this.$message.error(res.message);
-                }
-              })
-          }).catch(() => {
-            this.$message({
-              type: 'info',
-              message: '已取消买入'
-            });          
-          });
+           if(this.heyue.heyueCode == ''){
+             this.$message.error('请输入正确合约参数');
+           }else{
+              this.$confirm(this.heyue.heyueCode+' , '+this.num+'手'+' , '+this.setPriceName+' '+'确定买入?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+              }).then(() => {
+                  var msg = JSON.stringify({
+                    userID: JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId,
+                    tradeNum: _this.num,
+                    tradePrice: _this.gen,
+                    futuresCode: _this.heyue.heyueCode,
+                    updown: 1,
+                    priceType: this.setPriceName == '市价'?1:2,
+                    stopLoss: Number(_this.stopLoss),
+                    stopProfit: Number(_this.stopPrint)
+                  })
+                  console.log(msg)
+                  _this.$pro.post('buy_sale_order', msg).then((res) => {
+                    console.log(res)
+                    if (res.result == 1) {
+                      _this.$message({
+                        type: 'success',
+                        message:'买入成功'
+                      });
+                    }else{
+                      this.$message.error(res.message);
+                    }
+                  })
+              }).catch(() => {
+                this.$message({
+                  type: 'info',
+                  message: '已取消买入'
+                });          
+              });
+           }
+          
         }else{
-          this.$confirm('确定卖出?', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-          }).then(() => {
-             
-              var msg = JSON.stringify({
-                userID: JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId,
-                tradeNum: _this.num,
-                tradePrice: _this.gen,
-                futuresCode: _this.heyue.heyueCode,
-                updown: 2,
-                priceType: this.setPriceName == '市价'?1:2,
-                stopLoss: Number(_this.stopLoss),
-                stopProfit: Number(_this.stopProfit)
-              })
-              _this.$pro.post('buy_sale_order', msg).then((res) => {
-                console.log(res)
-                if (res.result == 1) {
-                  _this.$message({
-                    type: 'success',
-                    message:'卖出成功'
-                  });
-                }else{
-                  this.$message.error(res.message);
-                }
-              })
-           
-          }).catch(() => {
-            this.$message({
-              type: 'info',
-              message: '已取消卖出'
-            });          
-          });
+           if(this.heyue.heyueCode == ''){
+             this.$message.error('请输入正确合约参数');
+           }else{
+              this.$confirm(this.heyue.heyueCode+' , '+this.num+'手'+' , '+this.setPriceName+' '+'确定卖出?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+              }).then(() => {
+                
+                  var msg = JSON.stringify({
+                    userID: JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId,
+                    tradeNum: _this.num,
+                    tradePrice: _this.gen,
+                    futuresCode: _this.heyue.heyueCode,
+                    updown: 2,
+                    priceType: this.setPriceName == '市价'?1:2,
+                    stopLoss: Number(_this.stopLoss),
+                    stopProfit: Number(_this.stopProfit)
+                  })
+                  _this.$pro.post('buy_sale_order', msg).then((res) => {
+                    console.log(res)
+                    if (res.result == 1) {
+                      _this.$message({
+                        type: 'success',
+                        message:'卖出成功'
+                      });
+                    }else{
+                      this.$message.error(res.message);
+                    }
+                  })
+              
+              }).catch(() => {
+                this.$message({
+                  type: 'info',
+                  message: '已取消卖出'
+                });          
+              });
+           }
+          
         }
       }else{
         	this.$confirm('未登录,请登录后操作~', '温馨提示', {

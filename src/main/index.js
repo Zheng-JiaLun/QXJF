@@ -50,6 +50,11 @@ ipcMain.on('max', e => {
 	}
 });
 ipcMain.on('close', e=> mainWindow.close());
+ipcMain.on('hangqingsend',(event,arg)=>{
+        console.log("msg >>",arg)
+          event.sender.send('toxiadan','arg')
+})
+
 //主进程
 // ipcMain.on('MainMsgFromRender',function (event, arg) {
  

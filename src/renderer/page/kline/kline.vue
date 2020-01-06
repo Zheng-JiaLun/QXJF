@@ -442,9 +442,9 @@ export default {
             DragMode: 1, //拖拽模式 0 禁止拖拽 1 数据拖拽 2 区间选择
             Right: 1, //复权 0 不复权 1 前复权 2 后复权
             Period: 0, //周期 0 日线 1 周线 2 月线 3 年线 4 1分钟 5 5分钟 6 15分钟 7 30分钟 8 60分钟 9 季线 10 分笔线 11 2小时 12 4小时
-            MaxReqeustDataCount: 1000, //日线数据最近1000天
-            MaxRequestMinuteDayCount: 15,    //分钟数据最近15天
-            PageSize: 100, //一屏显示多少数据 
+            MaxReqeustDataCount: 2000, //日线数据最近1000天
+            MaxRequestMinuteDayCount: 2,    //分钟数据最近15天
+            PageSize: 50, //一屏显示多少数据 
             IsShowTooltip: true //是否显示K线提示信息
         },
         

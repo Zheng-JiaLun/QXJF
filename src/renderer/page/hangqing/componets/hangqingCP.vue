@@ -8,9 +8,9 @@
             <tbody>
                 <!-- <router-link to="/kline"> -->
                 <!-- :style="{border:isactive == index ? '1px solid #A4A4A4' : ''}" -->
-                <tr v-for="(item,index) in childMsg" :key="index" @click="hangqingbg(index,item.code,item);"  
+                <tr v-for="(item,index) in childMsg" :key="index" v-if="panShow?(item.plate_type == '1'?true:false):(item.plate_type == '2'?true:false)" @dblclick="hangqingbg(index,item.code,item);"  
                     :style="{background:isactive == index?'#22304C':''}"
-                  
+                    @click='hangqing(index,item.code,item)'
                     :class="item.changePoint?(item.changePoint>0?'changeUp':'changeDown'):' '"
                     >
                     <!-- :class="classUp?'changeUp':''" :class="{'changeUp':currentIndex == index}"-->
@@ -67,6 +67,8 @@
 </template>
 
 <script>
+
+import {ipcRenderer,ipcMain} from 'electron'  //导入ipcRenderer
 import {mapMutations,mapActions,mapGetters} from 'vuex';
 export default {
     name:'hangqingCP',
@@ -184,7 +186,7 @@ export default {
             if(val){
 
             }
-            // console.log(val)
+            console.log(val)
         },
         changeTime:function(val){
             // console.log(this.msg)
@@ -198,7 +200,7 @@ export default {
            }
         },
         quoteDataAC:function(val){
-            // console.log(val)
+            // console.log(this.childMsg)
             let a = this.childMsg
             for(let i=0;i<a.length;i++){
                 if(this.childMsg[i].code == val.code){
@@ -238,15 +240,11 @@ export default {
                 this.$store.state.activeIndex = '/kline'
                 this.$router.push('/kline')
             }   
-          
-          
-        //    this.$store.dispatch("aCChanpinInfo",code)
-        //    this.$store.dispatch("setPath",'/kline')
-           
-        //    this.$store.commit('setChanpinInfo',code)//把当前股票的code赋值给vuex里面的生成K线图需要的参数
-        //    this.$store.commit('klineMsgs',code)
-        //    this.$store.state.chanpinInfo = b
-        //    this.$router.push({name:kline})
+        },
+        hangqing(a,code,item){
+            // console.log(this)
+            this.$electron.ipcRenderer.send('hangqingsend',code)
+            this.$store.state.selectInfo = code
         }
     },
    

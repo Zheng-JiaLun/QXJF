@@ -183,13 +183,15 @@ export default {
           // width: type == '/login' ? 494 : 550, 
           // height: type == '/login' ? 560 : 680, 
           //electron-vue-windows 自定义的属性
+          
           windowConfig:{
             router:type, //路由*必填
             data:{
               
             }, //传送数据
             name:'',  //窗口名称
-            animation: 'fromLeft' //动画
+            animation: 'fromLeft', //动画
+            
           }          
         })
         console.log(data.value)
@@ -276,16 +278,19 @@ export default {
       
       async showBoxxiadan() {
         // console.log()
+        let _this = this
         if(JSON.parse(localStorage.getItem(this.$store.state.localStorageLogin))){
           if(this.$route.path == '/kline'){
             this.$store.state.isplaceOrder = !this.$store.state.isplaceOrder
           }else{
+           
             let data = await this.$Win.openWin({
               // browserwindow原生属性
               width: 1400, // 窗口宽
               height: 516, // 窗口高
-
+              resizable: true,  // 窗口是否可以改变尺寸
               // electron-vue-windows自定义的属性
+              alwaysOnTop:true,
               windowConfig: {
                 router: "/moni", // 路由 *必填
                 data: {

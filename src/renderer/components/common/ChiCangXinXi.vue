@@ -186,8 +186,8 @@ export default {
       // console.log(a)
       let data = await this.$Win.openWin({
         // browserwindow原生属性
-        width: 900, // 窗口宽
-        height: 476, // 窗口高
+        width: 600, // 窗口宽
+        height: 370, // 窗口高
 
         // electron-vue-windows自定义的属性
         windowConfig: {

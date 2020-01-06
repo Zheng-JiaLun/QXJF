@@ -89,6 +89,7 @@ export default new Vuex.Store({
     orderId:null ,//订单号
     connSignalr:null,
     chanpinInfo:'',		//产品编号(默认第一个)
+    
     realTimeData:'',
     nowTime:'',//当前时间
     activeIndex:'/',//导航栏默认选中项

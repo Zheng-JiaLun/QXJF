@@ -63,8 +63,8 @@
             <ul class="ul01 flex">
               <li>
                 <p>
-                  <i v-show="!islock" @click="islockBtn()" class="el-icon-lock"></i>
-                  <i v-show="islock" @click="islockBtn()" class="el-icon-unlock"></i>
+                  <i v-show="islock" @click="islockBtn()" class="el-icon-lock"></i>
+                  <i v-show="!islock" @click="islockBtn()" class="el-icon-unlock"></i>
                 </p>
                 <!-- <input type="text" placeholder="合约代码"  v-model="inputVal"/> -->
                 <el-cascader :options="options" :show-all-levels="false" v-model="inputVal"></el-cascader>
@@ -154,7 +154,7 @@
          type="card" >
           <!-- 引入持仓组件 -->
           <el-tab-pane label="持仓" name="chicang" id="chicang">
-            <ChiCang :pinChang='pinChang' :selector="selector"></ChiCang>
+            <ChiCang :pinChang='pinChang' :selector="selector" @childFn="parentFn"></ChiCang>
           </el-tab-pane>
           <!-- 引入委托组件 -->
           <el-tab-pane label="委托" name="weituo" id="weituo">
@@ -207,6 +207,7 @@
   </div>
 </template>
 <script>
+import { ipcRenderer } from 'electron'  //导入ipcRenderer
 import ChiCang from '../common/ChiCangXinXi';
 import ChengJiao from '../common/ChengJiaoChaXun';
 import ChuRuJin from '../common/ChuRuJinChaXun';
@@ -225,7 +226,7 @@ export default {
       activeName :"chicang",
       text:"父组件传入的值",
       TabIndex: "",
-      islock:true,
+      islock:false,
       pinChang:false,
       inputVal:'',
       codePrice:'',
@@ -403,6 +404,7 @@ export default {
        options: [
           
       ],
+      childMsg:{},
       updown:{
         limitDown:'0',
         limitUp:'0'
@@ -414,6 +416,7 @@ export default {
     };
   },
   methods: {
+    
     close() {
       let win = this.$Win.getWinByName("yidemoni");
       this.$Win.closeWin(win);
@@ -441,8 +444,22 @@ export default {
         this.showorhide1 = false;
       }
     },
+    parentFn(val){
+      this.childMsg = val
+    },
     islockBtn(){
       this.islock = !this.islock
+      if(this.islock == false){
+        localStorage.setItem('islock',JSON.stringify({
+          islock:false,
+          val:this.inputVal
+        }))
+      }else{
+        localStorage.setItem('islock',JSON.stringify({
+          islock:true,
+          val:this.inputVal
+        }))
+      }
     },
     // 此函数用于控制时间选择器的隐藏或显示
     showBoxindex(data) {
@@ -470,104 +487,143 @@ export default {
       let _this = this
       if(e == 1){
         //买
-        this.$confirm('确定买入?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          if(_this.inputNum == ''||_this.codePrice == ''||_this.inputVal == ''){
-            this.$message({
-              type: 'warning',
-              message: '请输入正确参数'
-            });  
-            return ""
-          }
-            var msg = JSON.stringify({
-              userID: JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId,
-              tradeNum: _this.inputNum,
-              tradePrice: _this.codePrice,
-              futuresCode: _this.inputVal[1],
-              updown:1,
-              priceType:this.priceMode == '市价'?1:2,
-              stopLoss: Number(_this.stopLoss),
-              stopProfit: Number(_this.stopPrint)
-            })
-            _this.$pro.post('buy_sale_order', msg).then((res) => {
-              // _this.guadanState1 = false;
-              console.log(res)
-              if (res.result == 1) {
-                // _this.active = 0;
-                // console.log(res)
-                // _this.$store.state.market.initChicang++
-                _this.$message({
-                  type: 'success',
-                  message:'买入成功'
-                });
-              }else{
-                this.$message.error(res.message);
-                // alert(res.message)
-              }
-            })
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消买入'
-          });          
-        });
-      }else{
-        //卖
-        this.$confirm('确定卖出?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-           if(_this.inputNum == ''||_this.codePrice == ''||_this.inputVal == ''){
+        console.log(this.inputVal)
+        if(this.inputVal == ''){
+           this.$message.error('请输入正确合约参数');
+        }else{
+          this.$confirm(this.inputVal[1]+' , '+'买入 , '+_this.inputNum+'手'+' , '+this.priceMode+' , '+'确定买入?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            if(_this.inputNum == ''||_this.codePrice == ''||_this.inputVal == ''){
               this.$message({
                 type: 'warning',
                 message: '请输入正确参数'
               });  
               return ""
             }
-            var msg = JSON.stringify({
-              userID: JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId,
-              tradeNum: _this.inputNum,
-              tradePrice: _this.codePrice,
-              futuresCode: _this.inputVal[1],
-              updown: 2,
-              priceType: this.priceMode == '市价'?1:2,
-              stopLoss: Number(_this.stopLoss),
-              stopProfit: Number(_this.stopPrint)
-            })
-            _this.$pro.post('buy_sale_order', msg).then((res) => {
-              // _this.guadanState1 = false;
-              console.log(res)
-              if (res.result == 1) {
-                // _this.active = 0;
-                // console.log(res)
-                // _this.$store.state.market.initChicang++
-                _this.$message({
-                  type: 'success',
-                  message:'卖出成功'
-                });
-              }else{
-                this.$message.error(res.message);
-                // alert(res.message)
+              var msg = JSON.stringify({
+                userID: JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId,
+                tradeNum: _this.inputNum,
+                tradePrice: _this.codePrice,
+                futuresCode: _this.inputVal[1],
+                updown:1,
+                priceType:this.priceMode == '市价'?1:2,
+                stopLoss: Number(_this.stopLoss),
+                stopProfit: Number(_this.stopPrint)
+              })
+              _this.$pro.post('buy_sale_order', msg).then((res) => {
+                // _this.guadanState1 = false;
+                console.log(res)
+                if (res.result == 1) {
+                  // _this.active = 0;
+                  // console.log(res)
+                  // _this.$store.state.market.initChicang++
+                  _this.$message({
+                    type: 'success',
+                    message:'买入成功'
+                  });
+                }else{
+                  this.$message.error(res.message);
+                  // alert(res.message)
+                }
+              })
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消买入'
+            });          
+          });
+        }
+        
+      }else{
+        //卖
+        if(this.inputVal == ''){
+          this.$message.error('请输入正确合约参数');
+        }else{
+          this.$confirm(this.inputVal[1]+' , '+'卖出 , '+_this.inputNum+'手'+' , '+this.priceMode+' , '+'确定卖出?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            if(_this.inputNum == ''||_this.codePrice == ''||_this.inputVal == ''){
+                this.$message({
+                  type: 'warning',
+                  message: '请输入正确参数'
+                });  
+                return ""
               }
-            })
-         
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消卖出'
-          });          
-        });
+              var msg = JSON.stringify({
+                userID: JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId,
+                tradeNum: _this.inputNum,
+                tradePrice: _this.codePrice,
+                futuresCode: _this.inputVal[1],
+                updown: 2,
+                priceType: this.priceMode == '市价'?1:2,
+                stopLoss: Number(_this.stopLoss),
+                stopProfit: Number(_this.stopPrint)
+              })
+              _this.$pro.post('buy_sale_order', msg).then((res) => {
+                // _this.guadanState1 = false;
+                console.log(res)
+                if (res.result == 1) {
+                  // _this.active = 0;
+                  // console.log(res)
+                  // _this.$store.state.market.initChicang++
+                  _this.$message({
+                    type: 'success',
+                    message:'卖出成功'
+                  });
+                }else{
+                  this.$message.error(res.message);
+                  // alert(res.message)
+                }
+              })
+          
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消卖出'
+            });          
+          });
+        }
+       
       }
     },
     quickFS(){
       this.selector = !this.selector;
     },
     quickPC(){
-      this.reload()
+      let _this = this
+      console.log(this.childMsg)
+      
+      let msgs = JSON.stringify({
+          userID:JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId,
+          tradeNum: _this.childMsg.futures_num,
+          tradePrice: _this.childMsg.futures_price,
+          futuresCode: _this.childMsg.futures_code,
+          updown: _this.childMsg.updown,
+          priceType: _this.childMsg.orderTradeType,
+          serialNum: _this.childMsg.serialnum,
+          stopLoss: _this.childMsg.stoploss,
+          stopProfit:_this.childMsg.stopprofit
+      })
+      this.$pro.post('close_position', msgs).then((res) => {
+        console.log(res)
+        if(res.result == 1){
+          // this.axiosChiCang()
+            _this.$message({
+            type: 'success',
+            message: '成功'
+          });
+        }else{
+          
+          _this.$message.error('失败:'+res.message);
+        }
+        
+      })
+      // this.reload()
     },
     onePC(){
       this.pinChang = !this.pinChang
@@ -641,15 +697,27 @@ export default {
     }
   },
   created(){
+    
     this.hqOptions()
     this.postUserMsg()
     this.hangqingData = JSON.parse(localStorage.getItem(this.$store.state.localStorageHq))[0].item
+    let isLock = JSON.parse(localStorage.getItem('islock'))
+    if(isLock.islock){ //判断是否是锁定合约代码状态，如果是锁定状态，每次都把数据渲染到选择框里
+      this.islock = true
+      this.inputVal = isLock.val
+    }
+    let data = this.$Win.getParameter()
+    console.log(data) // {id: 1}
+     this.$electron.ipcRenderer.on('toxiadan',(event,arg) => {
+      console.log('Data >>',arg) //arg就是Main进程传输来的数据，id必须一致，否则接收无效
+    })
   },
   
   computed:{
      updataSocketData() {
       return this.$store.getters.updataSocketData;
     },
+  
     changeSocketData(){
       return this.$store.getters.quoteDataAC
     }
@@ -657,7 +725,7 @@ export default {
   watch:{
     updataSocketData:function(val){
      
-      console.log("222",val) 
+      // console.log("222",val) 
       this.reload()
     },
     changeSocketData:function(Val){
@@ -675,7 +743,12 @@ export default {
         }
       }
     },
-   
+    // 监听持仓列表传递过来的数据
+    childMsg(val){
+      if(!this.islock){//非锁定状态就把数据传递给合约代码
+        this.inputVal = ['自选',val.futures_code]
+      }
+    },
     activeName(Val){
       if(Val == 'chicang'){
         this.ischichang = true
@@ -702,7 +775,9 @@ export default {
   width: 100%;
   height: 100%;
   background-color: #2f343b;
+  // -webkit-app-region:drag;
   // 横向展示区域样式
+ 
   .top {
     color: #cccccc;
     font-size: 14px;

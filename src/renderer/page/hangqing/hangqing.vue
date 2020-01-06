@@ -4,8 +4,8 @@
         <div class="tianchuang" v-if="istanchuang"></div>
         <div class="right">
             <div class="nav">
-               <a name="hangqingbg" :class="panShow?'panShow':' '" @click="isPanShow()">内盘</a>
-                <a name="hangqingbg" :class="!panShow?'panShow':' '" @click="isPanShow()">外盘</a>
+               <a name="hangqingbg" :class="panShow?'panShow':' '" @click="isPanShow(1)">内盘</a>
+                <a name="hangqingbg" :class="!panShow?'panShow':' '" @click="isPanShow(2)">外盘</a>
             </div>
             <div class="zujian">
                <!-- <el-tabs
@@ -36,25 +36,25 @@
                         <HangqingCP :msg='msg[0].item' :panShow='panShow'></HangqingCP>
                     </el-tab-pane>
                     <el-tab-pane  label = "上海能源INE" name="上海能源INE" v-if="panShow">
-                        <HangqingCP :msg= msg[1].item></HangqingCP>
+                        <HangqingCP :msg= msg[1].item :panShow='panShow'></HangqingCP>
                     </el-tab-pane>
                     <el-tab-pane  label = "中金所" name="中金所"  v-if="panShow">
-                        <HangqingCP :msg= msg[2].item></HangqingCP>
+                        <HangqingCP :msg= msg[2].item :panShow='panShow'></HangqingCP>
                     </el-tab-pane>
                     <el-tab-pane  label = "大宗商品" name="大宗商品"  v-if="panShow">
-                        <HangqingCP :msg= msg[3].item ></HangqingCP>
+                        <HangqingCP :msg= msg[3].item :panShow='panShow'></HangqingCP>
                     </el-tab-pane>
                     <el-tab-pane  label = "瑞士EUREX" name="瑞士EUREX"  v-if="!panShow">
-                        <HangqingCP :msg= msg[4].item></HangqingCP>
+                        <HangqingCP :msg= msg[4].item :panShow='panShow'> </HangqingCP>
                     </el-tab-pane>
                     <el-tab-pane  label = "纽约COMEX" name="纽约COMEX"  v-if="!panShow">
-                        <HangqingCP :msg= msg[5].item></HangqingCP>
+                        <HangqingCP :msg= msg[5].item :panShow='panShow'></HangqingCP>
                     </el-tab-pane>
                     <el-tab-pane  label = "纽约NYMEX" name="纽约NYMEX"  v-if="!panShow">
-                        <HangqingCP :msg= msg[6].item></HangqingCP>
+                        <HangqingCP :msg= msg[6].item :panShow='panShow'></HangqingCP>
                     </el-tab-pane>
                     <el-tab-pane  label = "香港HKEX" name="香港HKEX"  v-if="!panShow">
-                        <HangqingCP :msg= msg[7].item></HangqingCP>
+                        <HangqingCP :msg= msg[7].item :panShow='panShow'></HangqingCP>
                     </el-tab-pane>
                 </el-tabs>
             </div>
@@ -80,8 +80,8 @@
                         
                     </div>
                     <div class="foot2-right">
-                        <span :class="panShow?'footerPanShow':' '" @click="isPanShow()">内盘</span>
-                        <span :class="!panShow?'footerPanShow':' '" @click="isPanShow()">外盘</span>
+                        <span :class="panShow?'footerPanShow':' '" @click="showBoxxiadan()">下单</span>
+                        <!-- <span :class="!panShow?'footerPanShow':' '" @click="isPanShow()">外盘</span> -->
                         <span >
                         <!-- <img src="../../assets/img/hangqing/实时行情拷贝副本.png" > -->
                         <i class="el-icon-search"></i>
@@ -154,8 +154,55 @@ export default {
             this.nowIndex = index
         },
         //内外盘切换
-        isPanShow(){
-            this.panShow = !this.panShow
+        isPanShow(e){
+            if(e == 1){
+                this.panShow = true
+                // this.activeName = '上海能源INE'
+            }else{
+                this.panShow = false
+                // this.activeName = '瑞士EUREX'
+            }
+            
+        },
+        async showBoxxiadan() {
+            // console.log()
+            if(JSON.parse(localStorage.getItem(this.$store.state.localStorageLogin))){
+            if(this.$route.path == '/kline'){
+                this.$store.state.isplaceOrder = !this.$store.state.isplaceOrder
+            }else{
+                let data = await this.$Win.openWin({
+                // browserwindow原生属性
+                width: 1400, // 窗口宽
+                height: 516, // 窗口高
+                resizable: true,  // 窗口是否可以改变尺寸
+                // electron-vue-windows自定义的属性
+                alwaysOnTop:true,
+                windowConfig: {
+                    router: "/moni", // 路由 *必填
+                    data: {
+                    id: 1
+                    }, // 传送数据
+                    name: "yidemoni", // 窗口名称
+                    animation: "fromBottom"
+                }
+                });
+            }
+            }else{
+            this.$confirm('未登录', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning',
+                center: true
+            }).then(() => {
+                // this.$message({
+                //   type: 'success',
+                //   message: '删除成功!'
+                // });
+                // this.showBox('/login')
+            })
+            }
+            
+        
         },
         hangqingbgChange(){
             var navs = document.getElementsByName('hangqingbg')

@@ -10,8 +10,8 @@
             <ul class="ul01 flex">
               <li>
                 <p>
-                  <i v-show="!islock" @click="islockBtn()" class="el-icon-lock"></i>
-                  <i v-show="islock" @click="islockBtn()" class="el-icon-unlock"></i>
+                  <i v-show="islock" @click="islockBtn()" class="el-icon-lock"></i>
+                  <i v-show="!islock" @click="islockBtn()" class="el-icon-unlock"></i>
                 </p>
                 <!-- <input type="text" placeholder="合约代码" v-model="inputVal"/> -->
                 <el-cascader :options="options" :show-all-levels="false" v-model="inputVal"></el-cascader>
@@ -153,7 +153,7 @@ export default {
              
             ],
             childMsg:{},
-            islock:true,
+            islock:false,
             updown:{
               limitDown:'0',
               limitUp:'0'
@@ -174,12 +174,17 @@ export default {
       islockBtn(){
         this.islock = !this.islock
         // console.log(this.inputVal)
-        // if(this.islock == false){
-        //   localStorage.setItem('islock',JSON.stringify({
-        //     islock:false,
-        //     val:this.inputVal[1]
-        //   }))
-        // }
+        if(this.islock == false){
+          localStorage.setItem('islock',JSON.stringify({
+            islock:false,
+            val:this.inputVal
+          }))
+        }else{
+          localStorage.setItem('islock',JSON.stringify({
+            islock:true,
+            val:this.inputVal
+          }))
+        }
       },
       buy(e){
         let _this = this
@@ -382,10 +387,16 @@ export default {
           }
         })
         this.options = hq
+        // console.log(this.options)
       },
     },
     created(){
       this.hqOptions()
+      let isLock = JSON.parse(localStorage.getItem('islock'))
+      if(isLock.islock){ //判断是否是锁定合约代码状态，如果是锁定状态，每次都把数据渲染到选择框里
+        this.islock = true
+        this.inputVal = isLock.val
+      }
     },
     computed:{
       changequoteDataAC(){
@@ -407,8 +418,14 @@ export default {
         }
       },
       inputVal(Val){
-        console.log(Val)
+        // console.log(Val)
         
+      },
+      // 监听持仓列表传递过来的数据
+      childMsg(val){
+        if(!this.islock){//非锁定状态就把数据传递给合约代码
+          this.inputVal = ['自选',val.futures_code]
+        }
       },
       hangqingData:function(val){
         // console.log(this.inputVal)

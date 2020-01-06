@@ -43,7 +43,7 @@
         </div>
       </div>
       <p
-        style="font-size: 12px;color: #4176D8;padding: 10px 0;"
+        style="font-size: 16px;color: #4176D8;padding: 10px 0;"
       >窗口关闭前此合约对应的止损止盈单不会出发（客户端止损止盈，不是交易所指令，只对在本地程序运行时有效）</p>
     </div>
     <div class="footer">
