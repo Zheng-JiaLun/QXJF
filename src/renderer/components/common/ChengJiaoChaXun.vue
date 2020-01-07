@@ -8,7 +8,7 @@
        @current-change="handleCurrentChange"
     >
       <el-table-column prop="futures_name" label="合约" show-overflow-tooltip ></el-table-column>
-      <el-table-column prop="price_unit" label="手数" show-overflow-tooltip ></el-table-column>
+      <el-table-column prop="trade_num" label="手数" show-overflow-tooltip ></el-table-column>
       <el-table-column label="买卖" show-overflow-tooltip >
         <template slot-scope="scope">
           <span
@@ -41,11 +41,11 @@
           <span style="color: #DCDC0A;">{{scope.row.serialnum}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="止盈止损" show-overflow-tooltip >
+      <!-- <el-table-column label="止盈止损" show-overflow-tooltip >
         <template slot-scope="scope">
           <span style="cursor: pointer;" @click="setPrLoss()">{{scope.row.stop_pro_loss}}</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
     </el-table>
   </div>
 </template>

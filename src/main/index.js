@@ -16,6 +16,7 @@ const winURL = process.env.NODE_ENV === 'development'
   ? `http://localhost:9080`
   : `file://${__dirname}/index.html`
 
+  
 function createWindow () {
   /**
    * Initial window options
@@ -52,7 +53,8 @@ ipcMain.on('max', e => {
 ipcMain.on('close', e=> mainWindow.close());
 ipcMain.on('hangqingsend',(event,arg)=>{
         console.log("msg >>",arg)
-          event.sender.send('toxiadan','arg')
+        // console.log(mainWindow)
+        // mainWindow.webContents.send('toxiadan','arg')
 })
 
 //主进程

@@ -474,22 +474,22 @@ export default {
               document.getElementById("centerLB").style.height = "0px";
             } else if (this.viewSize == "min") {
               document.getElementById("centerLB").style.height =
-                (Hight - 115) / 2 - 32 + "px";
+                (Hight - 115) / 2 - 104 + "px";
               document.getElementById("centerLM").style.height = "30px";
               document.getElementById("centerLT").style.height = //K线展示区域的高度
-                (Hight - 115) / 2 + "px";
+                (Hight - 115) / 2 + 70  + "px";
               this.candleHeight = (Hight - 115) / 2; //将高度传给K线组件
               document.getElementById("List").style.height =
-                (Hight - 115) / 2 - 34 + "px";
+                (Hight - 115) / 2 - 104 + "px";
               this.listSize = document.getElementById("List").clientHeight;
             } else {
               document.getElementById("centerLT").style.height =
-                (Hight - 115) / 2 + "px";
+                (Hight - 115) / 2 + 70 + "px";
               this.candleHeight = (Hight - 115) / 2; //将高度传给K线组件
               document.getElementById("centerLB").style.height =
-                (Hight - 115) / 2 - 34 + "px";
+                (Hight - 115) / 2 - 104 + "px";
               document.getElementById("List").style.height =
-                (Hight - 115) / 2 - 34 + "px";
+                (Hight - 115) / 2 - 104 + "px";
               this.listSize = document.getElementById("List").clientHeight;
             }
           }else{
@@ -564,7 +564,9 @@ export default {
       this.isdownload = !this.isdownload
       if(this.isdownload){
         document.getElementById("centerLT").style.height = //K线展示区域的高度
-            (Hight - 115) / 2 + "px";
+            (Hight - 115) / 2+ 70 + "px";
+        document.getElementById("centerLB").style.height =
+          (Hight - 115) / 2 - 104 + "px";
       }else{
         document.getElementById("centerLT").style.height = //K线展示区域的高度
             Hight - 145 + "px";
@@ -620,13 +622,13 @@ export default {
         document.getElementById("center").style.height = Hight - 118 + "px"; //减去两个固定高度的导航栏
         // if(this.isdownload){
           document.getElementById("centerLT").style.height = //K线展示区域的高度
-            (Hight - 115) / 2 + "px";
+            (Hight - 115) / 2 + 70 + "px";
           document.getElementById("centerLM").style.height = "30px";
           this.candleHeight = (Hight - 115) / 2; //将高度传给K线组件
-          document.getElementById("centerLB").style.height =
-            (Hight - 115) / 2 - 34 + "px";
+          document.getElementById("centerLB").style.height = (Hight - 115) / 2 - 104 + "px";
+            // (Hight - 115) / 2 - 104 + "px";
           document.getElementById("List").style.height =
-            (Hight - 115) / 2 - 34 + "px";
+            (Hight - 115) / 2 - 104 + "px";
           this.listSize = document.getElementById("List").clientHeight;
         // }else{
 
@@ -772,7 +774,8 @@ export default {
         let msg =  JSON.parse(localStorage.getItem(this.$store.state.localStorageUid))
         this.userMsg = msg
         this.islogin = true
-        this.reboxSize();
+        // this.reboxSize();
+        this.reload()
       }else{
         this.userMsg.usermoney = false
         this.userMsg.name = false

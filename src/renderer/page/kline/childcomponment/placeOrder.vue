@@ -100,7 +100,10 @@
          type="card" >
           <!-- 引入持仓组件 -->
           <el-tab-pane label="持仓" name="chicang" id="chicang2">
-            <ChiCang :pinChang='pinChang' :selector="selector"  @childFn="parentFn"></ChiCang>
+            <ChiCang  :selector="selector"  @childFn="parentFn"  @selectFn="selectFn"></ChiCang>
+            <div class="determineBtn" v-show="selector">
+              <button @click="determineBtn()">{{selectorText}}</button>
+            </div>
           </el-tab-pane>
           <!-- 引入委托组件 -->
           <el-tab-pane label="委托" name="weituo" id="weituo2">
@@ -149,6 +152,8 @@ export default {
             stopPrint:'0',
             ischichang:true,
             selector:false,
+            selectorText:'确定反手',
+            selectorArr:[],
             options: [
              
             ],
@@ -161,6 +166,43 @@ export default {
         }
     },
     methods:{
+      //确定反手/平仓
+      determineBtn(){
+        let _this = this,arr = [];
+        for(let i=0;i<this.selectorArr.length;i++){
+          arr.push(this.selectorArr[i].serialnum)
+        }
+        if(this.selectorText == '确定反手'){
+
+        }else{
+          var msg = JSON.stringify({
+            userID:JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId,
+            serialNum:arr.toString()
+          })
+          // console.log(msg)
+          _this.$post('select_close',msg).then(function(res){
+            // console.log(res)
+            if(res.result == 1){
+              //  _this.$store.state.market.initChicang++
+              _this.$message({
+                type: 'success',
+                message: '平仓成功!'
+              });
+            }else{
+                _this.$message({
+                type: 'info',
+                message: '错误:'+res.msg.Message
+              });
+              
+            }
+          })
+        }
+      },
+      // 持仓组件反出来的选中数组
+      selectFn(val){
+        this.selectorArr = val
+        console.log(val)
+      },
       handleClick(tab, event) {
         this.TabIndex = tab.index;
         localStorage.setItem("tabindex",tab.index)
@@ -285,6 +327,7 @@ export default {
       },
       //快捷反手
       quickFS(){
+        this.selectorText = '确定反手'
         this.selector = !this.selector;
       },
        //市价/限价切换按钮
@@ -328,9 +371,10 @@ export default {
       
         
       },
-      //单个平仓
+      //部分平仓
       onePC(){
-        this.pinChang = !this.pinChang
+        this.selectorText = '确定平仓'
+        this.selector = !this.selector
       },
       //全部平仓
       allPC(){
@@ -694,6 +738,25 @@ export default {
       width: 60%;
       border: 1px solid black;
       color: #ffffff;
+      .determineBtn{
+        position: absolute;
+        bottom: 7px;
+        left: 0;
+        button{
+          border: none;
+          border-radius: 5px;
+          width: 70px;
+          height: 25px;
+          background: #4176d8;
+          color: white;
+          line-height: 25px;
+          margin-left: 5px;
+          cursor: pointer;
+          :hover{
+            background: #224586;
+          }
+        }
+      }
       .el-tabs{
         height: 100%;
         

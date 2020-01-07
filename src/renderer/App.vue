@@ -131,6 +131,7 @@ export default {
         // loginOff:userInfor,
         isLogin:false,
         isUserShow:false,
+        
         loginInput: {
 					user: '',
 					pwd: ''
@@ -145,6 +146,7 @@ export default {
     reloadX(){
       this.reload()
     },
+   
       reload(){
         this.isRouterAlive = false
         this.$nextTick(function(){
@@ -158,6 +160,7 @@ export default {
       },
     
       async showBox(type){
+        
         //console.log(type)
         var a =0  // 窗口宽
         var b =0  // 窗口高
@@ -194,7 +197,7 @@ export default {
             
           }          
         })
-        console.log(data.value)
+        
         if(data.value == '登陆成功'){
           this.$pro.isLogin()
           this.name = JSON.parse(localStorage.getItem('ycxUserInfo_QXJF')).name
@@ -287,14 +290,14 @@ export default {
             let data = await this.$Win.openWin({
               // browserwindow原生属性
               width: 1400, // 窗口宽
-              height: 516, // 窗口高
+              height: 410, // 窗口高
               resizable: true,  // 窗口是否可以改变尺寸
               // electron-vue-windows自定义的属性
               alwaysOnTop:true,
               windowConfig: {
                 router: "/moni", // 路由 *必填
                 data: {
-                  id: 1
+                  id: _this.number
                 }, // 传送数据
                 name: "yidemoni", // 窗口名称
                 animation: "fromBottom"

@@ -1,12 +1,12 @@
 <template>
   <div class="chicang">
     <div id="chicangTable">
-      <el-table :data="tableData" class="table01" highlight-current-row @current-change="handleSelectionChange">
+      <el-table :data="tableData" class="table01" ref="multipleSelection" highlight-current-row @selection-change="handleCheckChange" @current-change="handleSelectionChange">
         <el-table-column
           type="selection"
           width="45" v-if="selector">
         </el-table-column>
-        <el-table-column width="45px" v-if="pinChang">
+        <el-table-column width="45px">
           <template slot-scope="scope" >
             <i class="el-icon-remove" @click="setPingchang(scope.row)" style="font-size: 18px;color: #4176D8;cursor: pointer;"></i>
           </template>
@@ -52,9 +52,7 @@
         <el-table-column prop="orderType" label="类型" show-overflow-tooltip></el-table-column>
       </el-table>
     </div>
-    <div class="determineBtn" v-show="selector">
-      <button @click="determineBtn()">确定反手</button>
-    </div>
+    
   </div>
 </template>
 <script>
@@ -62,13 +60,14 @@ import { setInterval } from 'timers';
 export default {
   name: "chicang",
   inject:['reload'],
-  props: ["Listheight","pinChang","selector"],
+  props: ["Listheight","selector"],
   data() {
     return {
       dialogVisible: false,
       zuixinjia: "暂无数据",
       equity:null,
       count:0,
+     
       multipleSelection:[],
       tableData: [
         {
@@ -174,14 +173,18 @@ export default {
     };
   },
   methods: {
+    //选中单行
     handleSelectionChange(val) {
       // this.multipleSelection = val;
       // console.log(val)
       this.$emit('childFn',val);
     },
-    determineBtn(){
-
+    // 选中多行
+    handleCheckChange(val){
+      // console.log(val)
+      this.$emit('selectFn',val);
     },
+    
     async setPrLoss(a) {
       // console.log(a)
       let data = await this.$Win.openWin({
@@ -200,7 +203,7 @@ export default {
           animation: "none"
         }
       });
-      console.log(data)
+      // console.log(data)
       if(data){
         this.reload()
       }
@@ -423,25 +426,7 @@ export default {
   }
   
 }
-.determineBtn{
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    button{
-      border: none;
-      border-radius: 5px;
-      width: 70px;
-      height: 25px;
-      background: #4176d8;
-      color: white;
-      line-height: 25px;
-      margin-left: 5px;
-      cursor: pointer;
-      :hover{
-        background: #224586;
-      }
-    }
-  }
+
 #chicangTable::-webkit-scrollbar {
   // display: none;
   width: 10px; // 横向滚动条

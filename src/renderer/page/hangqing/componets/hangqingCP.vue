@@ -67,7 +67,6 @@
 </template>
 
 <script>
-
 import {ipcRenderer,ipcMain} from 'electron'  //导入ipcRenderer
 import {mapMutations,mapActions,mapGetters} from 'vuex';
 export default {

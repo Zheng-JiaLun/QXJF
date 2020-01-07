@@ -1,5 +1,5 @@
 <template>
-  <div class="transaction flex">
+  <div class="transaction flex" style="height: 100%;min-height: 274px;">
     <!-- 买入卖出组件的展示区域 -->
     <div class="cont">
       <!-- 买入卖出组件顶部下拉选择框展示区域 -->
@@ -312,6 +312,9 @@ export default {
     height: 100%;
     min-width: 300px;
     color:#b7b7b7;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
     .top {
       padding: 5% 0;
       .select {

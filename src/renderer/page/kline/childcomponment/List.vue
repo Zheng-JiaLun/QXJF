@@ -12,8 +12,9 @@
     >
       <!-- 在此区域引入持仓信息的组件 -->
       <el-tab-pane label="持仓信息" name="chicang" id="chicang">
-        <Chicang :Listheight='Listheight' :pinChang='pinChang' :selector="selector" @childFn="parentFn" @childTopFn="parentTopFn"></Chicang>
+        <Chicang :Listheight='Listheight' :selector="selector" @childFn="parentFn" @childTopFn="parentTopFn" @selectFn="selectFn"></Chicang>
         <div class="chichangbottom">
+          <button @click="determineBtn()" v-show="selector">{{selectorText}}</button>
           <div class="jincangxinxi">
             <span>进仓时间：</span>
             <span class="spandata">{{childMsg.addtime}}</span>
@@ -97,6 +98,8 @@ export default {
       changecssfanshou: 'false',
       changecsspingcang: 'false',
       changecsskuaijie: 'false',
+      selectorText:'确定反手',
+      selectorArr:[],
       TabIndex: "",
       activeName: "chicang",
       selector:false,
@@ -192,18 +195,57 @@ export default {
     setPrLoss() {
       this.dialogVisible = true;
     },
-    bufenpingcang() {
-      this.pinChang = !this.pinChang;
-     
+    bufenpingcang(){
+      this.selectorText = '确定平仓'
+      this.selector = !this.selector
+    },
+    determineBtn() {
+      // this.pinChang = !this.pinChang;
+      let _this = this,arr = [];
+      for(let i=0;i<this.selectorArr.length;i++){
+         arr.push(this.selectorArr[i].serialnum)
+      }
+      if(this.selectorText == '确定反手'){
+
+      }else{
+        var msg = JSON.stringify({
+          userID:JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId,
+          serialNum:arr.toString()
+        })
+        // console.log(msg)
+        _this.$post('select_close',msg).then(function(res){
+          // console.log(res)
+          if(res.result == 1){
+            //  _this.$store.state.market.initChicang++
+            _this.$message({
+              type: 'success',
+              message: '平仓成功!'
+            });
+          }else{
+              _this.$message({
+              type: 'info',
+              message: '错误:'+res.msg.Message
+            });
+            
+          }
+        })
+      }
+    },
+    // 持仓组件反出来的选中数组
+    selectFn(val){
+      this.selectorArr = val
+      console.log(val)
     },
     parentFn(val){
       // console.log(val)
       val.addtime = val.addtime.replace('T',' ')
       this.childMsg = val
+      this.$emit('selectDataFn',val)
     },
     parentTopFn(val){
       
       this.$emit('listenData',val)
+      console.log(val)
     },
     kuaijiepingcang() {
       let _this = this
@@ -242,7 +284,8 @@ export default {
       }
     },
     bufenfanshou() {
-      this.selector = !this.selector
+      this.selectorText = '确定反手'
+      this.selector = !this.selector;
     },
      quanbupingcang(){
        let _this = this
@@ -314,6 +357,20 @@ export default {
     font-size: 14px;
     color: rgba(97, 104, 138, 1);
     height: 26px;
+    >button{
+          border: none;
+          border-radius: 5px;
+          width: 70px;
+          height: 25px;
+          background: #4176d8;
+          color: white;
+          line-height: 25px;
+          margin-left: 5px;
+          cursor: pointer;
+          :hover{
+            background: #224586;
+          }
+        }
     .jincangxinxi {
       padding-top: 5px;
       white-space:nowrap;

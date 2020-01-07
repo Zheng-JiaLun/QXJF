@@ -1,4 +1,7 @@
-
+body,html,#App{
+	height: 100%;
+	font-family: "微软雅黑",monospace;
+}
 body{
 	margin: 0px;
 	.el-message-box{
@@ -226,7 +229,7 @@ body{
 			.el-table__body-wrapper{
 				overflow-y: auto;
 				overflow-x: auto;
-				height: 340px;
+				height: 240px;
 			}
 		}
 		
@@ -238,7 +241,7 @@ body{
 			background: #191B1F;
 		}
 		.el-table__body-wrapper{
-			height: 340px;
+			height: 240px;
 		}
 	}
 	.container{

@@ -154,7 +154,10 @@
          type="card" >
           <!-- 引入持仓组件 -->
           <el-tab-pane label="持仓" name="chicang" id="chicang">
-            <ChiCang :pinChang='pinChang' :selector="selector" @childFn="parentFn"></ChiCang>
+            <ChiCang  :selector="selector" @childFn="parentFn" @selectFn="selectFn"></ChiCang>
+            <div class="determineBtn" v-show="selector">
+              <button @click="determineBtn()">{{selectorText}}</button>
+            </div>
           </el-tab-pane>
           <!-- 引入委托组件 -->
           <el-tab-pane label="委托" name="weituo" id="weituo">
@@ -199,7 +202,7 @@
       <!-- 合约清单展示区域 -->
       <div class="centerLBR">
         <div id="List">
-          <List @listenTabindex="showBoxindex()" :listSize="listSize" :value="value1" @listenData="listenDataFn"></List>
+          <List @listenTabindex="showBoxindex()" :listSize="listSize" :value="value1" @listenData="listenDataFn" @selectDataFn='selectDataFn'></List>
         </div>
       </div>
     </div>
@@ -208,6 +211,7 @@
 </template>
 <script>
 import { ipcRenderer } from 'electron'  //导入ipcRenderer
+
 import ChiCang from '../common/ChiCangXinXi';
 import ChengJiao from '../common/ChengJiaoChaXun';
 import ChuRuJin from '../common/ChuRuJinChaXun';
@@ -227,7 +231,7 @@ export default {
       text:"父组件传入的值",
       TabIndex: "",
       islock:false,
-      pinChang:false,
+      // pinChang:false,
       inputVal:'',
       codePrice:'',
       inputNum:'1',
@@ -241,6 +245,8 @@ export default {
       listSize:"500px",
       isbuy:false,
       codePrice:'',
+      selectorText:'确定反手',
+      selectorArr:[],
       hangqingData:[],
       topMsg:{},
       tableData: [
@@ -416,7 +422,46 @@ export default {
     };
   },
   methods: {
-    
+    //确定反手/平仓
+    determineBtn(){
+      let _this = this,arr = [];
+      for(let i=0;i<this.selectorArr.length;i++){
+         arr.push(this.selectorArr[i].serialnum)
+      }
+      if(this.selectorText == '确定反手'){
+
+      }else{
+        var msg = JSON.stringify({
+          userID:JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId,
+          serialNum:arr.toString()
+        })
+        // console.log(msg)
+        _this.$post('select_close',msg).then(function(res){
+          // console.log(res)
+          if(res.result == 1){
+            //  _this.$store.state.market.initChicang++
+            _this.$message({
+              type: 'success',
+              message: '平仓成功!'
+            });
+          }else{
+              _this.$message({
+              type: 'info',
+              message: '错误:'+res.msg.Message
+            });
+            
+          }
+        })
+      }
+    },
+    selectDataFn(val){
+      console.log(val)
+    },
+    // 持仓组件反出来的多选选中数组
+    selectFn(val){
+      this.selectorArr = val
+      console.log(val)
+    },
     close() {
       let win = this.$Win.getWinByName("yidemoni");
       this.$Win.closeWin(win);
@@ -592,6 +637,7 @@ export default {
       }
     },
     quickFS(){
+      this.selectorText = '确定反手'
       this.selector = !this.selector;
     },
     quickPC(){
@@ -626,7 +672,8 @@ export default {
       // this.reload()
     },
     onePC(){
-      this.pinChang = !this.pinChang
+      this.selectorText = '确定平仓'
+      this.selector = !this.selector
     },
     allPC(){
       let _this = this
@@ -717,12 +764,17 @@ export default {
      updataSocketData() {
       return this.$store.getters.updataSocketData;
     },
-  
+    changeGetParameter(){
+      return this.$Win.getParameter()
+    },
     changeSocketData(){
       return this.$store.getters.quoteDataAC
     }
   },
   watch:{
+    changeGetParameter:function(val){
+      console.log(val)
+    },
     updataSocketData:function(val){
      
       // console.log("222",val) 
@@ -835,7 +887,7 @@ export default {
   }
   // 内容展示区域样式
   .container {
-    padding: 32px 40px;
+    padding: 29px 40px;
     color: #cccccc;
     display: flex;
     /*滚动条样式*/
@@ -1023,10 +1075,29 @@ export default {
       
     }
     .right {
-      height: 400px;
+      height: 300px;
       width: 60%;
       border: 1px solid black;
       color: #ffffff;
+      .determineBtn{
+        position: absolute;
+        bottom: 7px;
+        left: 0;
+        button{
+          border: none;
+          border-radius: 5px;
+          width: 70px;
+          height: 25px;
+          background: #4176d8;
+          color: white;
+          line-height: 25px;
+          margin-left: 5px;
+          cursor: pointer;
+          :hover{
+            background: #224586;
+          }
+        }
+      }
     }
   }
   .centerLB {
@@ -1038,7 +1109,7 @@ export default {
     display: flex;
     z-index: 3;
    background: #191B1F;
-    height: 464px;
+    height: 360px;
     .centerLBL {
       background: #191B1F;
       width: 30%;

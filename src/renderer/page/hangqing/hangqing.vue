@@ -80,12 +80,13 @@
                         
                     </div>
                     <div class="foot2-right">
-                        <span :class="panShow?'footerPanShow':' '" @click="showBoxxiadan()">下单</span>
+                        <span class="footBtn" @click="showBoxxiadan()">下单</span>
                         <!-- <span :class="!panShow?'footerPanShow':' '" @click="isPanShow()">外盘</span> -->
-                        <span >
-                        <!-- <img src="../../assets/img/hangqing/实时行情拷贝副本.png" > -->
-                        <i class="el-icon-search"></i>
-                        <input placeholder="合约代码/名称" v-model="input"></span>
+                        <!-- <span >
+                            <img src="../../assets/img/hangqing/实时行情拷贝副本.png" >
+                            <i class="el-icon-search"></i>
+                            <input placeholder="合约代码/名称" v-model="input">
+                        </span> -->
                     </div>
                 </div>
             </div>
@@ -298,7 +299,7 @@ export default {
 
 <style lang="scss" scoped>
 .hangqing{
-    height: 100%;
+    height: calc(100% - 60px);
     width: 100%;
     // display: flex;
     position: relative;
@@ -407,7 +408,7 @@ export default {
     width: 100%;
     z-index: 999;
     position: absolute;
-    bottom: 0;
+    bottom: 0px;
     left: 0;
     .foot1{
         height: 26px;
@@ -455,6 +456,9 @@ export default {
             height: 27px;
             // display:inline-block;
             background:rgba(42,47,56,1);
+            .footBtn:hover{
+                background: #22272E;
+            }
             .footerPanShow{
                 background:rgba(64,70,79,1);
                 border:1px solid rgba(128,128,128,1);

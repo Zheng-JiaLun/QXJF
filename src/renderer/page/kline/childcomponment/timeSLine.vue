@@ -36,7 +36,7 @@ export default {
             var chartWidth = window.innerWidth-(window.innerWidth*0.18);
             if(this.isdownload){
                 if(this.changeislogin){
-                    var chartHeight = (window.innerHeight-115)/2;
+                    var chartHeight = (window.innerHeight-115)/2+70;
                 }else{
                     var chartHeight = (window.innerHeight-115);
                 }
