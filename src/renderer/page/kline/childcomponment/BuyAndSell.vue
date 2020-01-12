@@ -74,6 +74,14 @@ export default {
     hangqingData:{
       type:Array,
       default:() => []
+    },
+    inputVal:{
+      type:Array,
+      default:() => []
+    },
+    chicangselect:{
+      type:Object,
+      default:() => {}
     }
   },
   data() {
@@ -141,6 +149,7 @@ export default {
     },
     shijia(type){
       let _this = this
+      // localStorage.setItem('buycode',_this.heyue.heyueCode)//用户(买卖)操作的合约存一个,继续展示到页面上
       if(localStorage.getItem('ycxUserLoginState_QXJF')){
          if(type == 1){
            if(this.heyue.heyueCode == ''){
@@ -253,6 +262,7 @@ export default {
   },
   created(){
     this.heyueClassOptions = JSON.parse(localStorage.getItem(this.$store.state.localStorageHq))
+    this.heyue.heyueCode = this.$store.state.chanpinInfo
   },
   computed:{
     changeQuoteData(){
@@ -260,16 +270,31 @@ export default {
     },
     changeIsTransaction(){
       return this.$store.state.isTransaction
+    },
+    changeInfo(){
+      return this.$store.state.chanpinInfo
     }
   },
   watch:{
     'heyue.heyueCode'(val){
+      this.$store.state.chanpinInfo = val
       for(let i=0;i<this.hangqingData.length;i++){
         if(this.hangqingData[i].code == val){
           // let time = eval(hangqingData[i].tradeTime)
           this.gen = this.hangqingData[i].buyPoint
         }
       }
+    },
+    changeInfo(val){
+       this.heyue.heyueCode = val
+    },
+    inputVal(val){
+      // console.log(val)
+      // this.heyue.heyueCode = val[1]
+    },
+    chicangselect(val){
+      console.log(val)
+      this.heyue.heyueCode = val.futures_code
     },
     hangqingData:function(val){
       // console.log(val)
@@ -351,7 +376,7 @@ export default {
       justify-content:space-between;
       .cl {
         width: 45%;
-        padding: 5% 0;
+        padding: 2% 0;
         :first-child:hover{
           background-color: rgba(80, 80, 80, 0.788);
           cursor: pointer;

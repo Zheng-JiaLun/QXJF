@@ -1,7 +1,11 @@
 <template>
   <div class="chicang">
     <div id="chicangTable">
-      <el-table :data="tableData" class="table01" ref="multipleSelection" highlight-current-row @selection-change="handleCheckChange" @current-change="handleSelectionChange">
+      <el-table :data="tableData"
+       class="table01" ref="multipleTable"
+        highlight-current-row
+       
+         @selection-change="handleCheckChange" @current-change="handleSelectionChange">
         <el-table-column
           type="selection"
           width="45" v-if="selector">
@@ -41,7 +45,7 @@
         <el-table-column  label="本币盈亏" show-overflow-tooltip>
             <template slot-scope="scope">
               <span :style="scope.row.buyPoint - scope.row.futures_price >= 0 ? 'color:#FF3322;' : 'color:#00BD00;'"
-              >{{scope.row.buyPoint == '0'?'0':(scope.row.buyPoint*1000 - scope.row.futures_price*1000)*scope.row.futures_num/1000*scope.row.cs}}元</span>
+              >{{scope.row.buyPoint == '0'?'0':(scope.row.buyPoint*10000 - scope.row.futures_price*10000)*scope.row.futures_num*scope.row.cs/10000}}元</span>
             </template>
         </el-table-column>
         <el-table-column label="止盈止亏" show-overflow-tooltip>
@@ -60,7 +64,7 @@ import { setInterval } from 'timers';
 export default {
   name: "chicang",
   inject:['reload'],
-  props: ["Listheight","selector"],
+  props: ["Listheight","selector","clearSelection"],
   data() {
     return {
       dialogVisible: false,
@@ -244,6 +248,8 @@ export default {
           if(res.msg.data.length == "0"){
             _this.$store.state.equityData = 0
           }else{
+            // console.log(arr)
+            // console.log(eval(arr.join("+")))
             _this.equity = eval(arr.join("+"))
            _this.$store.state.serialnum = serialNum
             _this.$store.state.equityData = _this.equity
@@ -270,7 +276,7 @@ export default {
           h('span', null, '确定平仓 '),
           h('i', { style: 'color: teal' }, '?')
         ]),
-        center: true,
+        // center: true,
         showCancelButton: true,
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -374,6 +380,10 @@ export default {
       }else{
         this.tableData = []
       }
+    },
+    clearSelection(val){
+      console.log(val)
+      this.$refs.multipleTable.clearSelection();
     },
     changeQuoteData:function(val){
       let _this =this

@@ -4,8 +4,8 @@
         <div class="tianchuang" v-if="istanchuang"></div>
         <div class="right">
             <div class="nav">
-               <a name="hangqingbg" :class="panShow?'panShow':' '" @click="isPanShow(1)">内盘</a>
-                <a name="hangqingbg" :class="!panShow?'panShow':' '" @click="isPanShow(2)">外盘</a>
+               <a name="hangqingbg" :class="panshow?'panShow':' '" @click="isPanShow(1)">内盘</a>
+                <a name="hangqingbg" :class="!panshow?'panShow':' '" @click="isPanShow(2)">外盘</a>
             </div>
             <div class="zujian">
                <!-- <el-tabs
@@ -33,28 +33,28 @@
                         <HangqingCP :msg="item.item"></HangqingCP>
                     </el-tab-pane> -->
                     <el-tab-pane  label = "自选" name="自选" >
-                        <HangqingCP :msg='msg[0].item' :panShow='panShow'></HangqingCP>
+                        <HangqingCP :msg= msg[0].item :panshow='panshow'></HangqingCP>
                     </el-tab-pane>
-                    <el-tab-pane  label = "上海能源INE" name="上海能源INE" v-if="panShow">
-                        <HangqingCP :msg= msg[1].item :panShow='panShow'></HangqingCP>
+                    <el-tab-pane  label = "上海能源INE" name="上海能源INE" v-if="panshow">
+                        <HangqingCP :msg= msg[1].item :panshow='panshow'></HangqingCP>
                     </el-tab-pane>
-                    <el-tab-pane  label = "中金所" name="中金所"  v-if="panShow">
-                        <HangqingCP :msg= msg[2].item :panShow='panShow'></HangqingCP>
+                    <el-tab-pane  label = "中金所" name="中金所"  v-if="panshow">
+                        <HangqingCP :msg= msg[2].item :panshow='panshow'></HangqingCP>
                     </el-tab-pane>
-                    <el-tab-pane  label = "大宗商品" name="大宗商品"  v-if="panShow">
-                        <HangqingCP :msg= msg[3].item :panShow='panShow'></HangqingCP>
+                    <el-tab-pane  label = "大宗商品" name="大宗商品"  v-if="panshow">
+                        <HangqingCP :msg= msg[3].item :panshow='panshow'></HangqingCP>
                     </el-tab-pane>
-                    <el-tab-pane  label = "瑞士EUREX" name="瑞士EUREX"  v-if="!panShow">
-                        <HangqingCP :msg= msg[4].item :panShow='panShow'> </HangqingCP>
+                    <el-tab-pane  label = "瑞士EUREX" name="瑞士EUREX"  v-if="!panshow">
+                        <HangqingCP :msg= msg[4].item :panshow='panshow'> </HangqingCP>
                     </el-tab-pane>
-                    <el-tab-pane  label = "纽约COMEX" name="纽约COMEX"  v-if="!panShow">
-                        <HangqingCP :msg= msg[5].item :panShow='panShow'></HangqingCP>
+                    <el-tab-pane  label = "纽约COMEX" name="纽约COMEX"  v-if="!panshow">
+                        <HangqingCP :msg= msg[5].item :panshow='panshow'></HangqingCP>
                     </el-tab-pane>
-                    <el-tab-pane  label = "纽约NYMEX" name="纽约NYMEX"  v-if="!panShow">
-                        <HangqingCP :msg= msg[6].item :panShow='panShow'></HangqingCP>
+                    <el-tab-pane  label = "纽约NYMEX" name="纽约NYMEX"  v-if="!panshow">
+                        <HangqingCP :msg= msg[6].item :panshow='panshow'></HangqingCP>
                     </el-tab-pane>
-                    <el-tab-pane  label = "香港HKEX" name="香港HKEX"  v-if="!panShow">
-                        <HangqingCP :msg= msg[7].item :panShow='panShow'></HangqingCP>
+                    <el-tab-pane  label = "香港HKEX" name="香港HKEX"  v-if="!panshow">
+                        <HangqingCP :msg= msg[7].item :panshow='panshow'></HangqingCP>
                     </el-tab-pane>
                 </el-tabs>
             </div>
@@ -80,7 +80,8 @@
                         
                     </div>
                     <div class="foot2-right">
-                        <span class="footBtn" @click="showBoxxiadan()">下单</span>
+                        <span class="footBtn" @click="showBoxxiadan('1')">内盘下单</span>
+                        <span class="footBtn" @click="showBoxxiadan('2')">外盘下单</span>
                         <!-- <span :class="!panShow?'footerPanShow':' '" @click="isPanShow()">外盘</span> -->
                         <!-- <span >
                             <img src="../../assets/img/hangqing/实时行情拷贝副本.png" >
@@ -96,7 +97,7 @@
 </template>
 
 <script>
-//import {ipcRenderer} from 'electron'
+import {ipcRenderer} from 'electron'
 //const { BrowserWindow } = require('electron').remote
 import {mapMutations,mapActions,mapGetters} from 'vuex';
 import  _axios  from "../../assets/js/common";
@@ -109,9 +110,9 @@ export default {
         return{
             input:'',
             istanchuang:false,
-            activeName:"自选",
+            activeName:"上海能源INE",
             msg:null,
-            panShow:true,
+            panshow:true,
             newMsg:null,
             websock: null,
             active: 0,
@@ -157,36 +158,43 @@ export default {
         //内外盘切换
         isPanShow(e){
             if(e == 1){
-                this.panShow = true
-                // this.activeName = '上海能源INE'
+                this.panshow = true
+                this.activeName = '上海能源INE'
             }else{
-                this.panShow = false
-                // this.activeName = '瑞士EUREX'
+                this.panshow = false
+                this.activeName = '瑞士EUREX'
             }
+            localStorage.setItem('panshow',this.panshow)
             
         },
-        async showBoxxiadan() {
+        async showBoxxiadan(a) {
             // console.log()
             if(JSON.parse(localStorage.getItem(this.$store.state.localStorageLogin))){
             if(this.$route.path == '/kline'){
                 this.$store.state.isplaceOrder = !this.$store.state.isplaceOrder
             }else{
-                let data = await this.$Win.openWin({
-                // browserwindow原生属性
-                width: 1400, // 窗口宽
-                height: 516, // 窗口高
-                resizable: true,  // 窗口是否可以改变尺寸
-                // electron-vue-windows自定义的属性
-                alwaysOnTop:true,
-                windowConfig: {
-                    router: "/moni", // 路由 *必填
-                    data: {
-                    id: 1
-                    }, // 传送数据
-                    name: "yidemoni", // 窗口名称
-                    animation: "fromBottom"
+                // let data = await this.$Win.openWin({
+                // // browserwindow原生属性
+                // width: 1400, // 窗口宽
+                // height: 410, // 窗口高
+                // resizable: true,  // 窗口是否可以改变尺寸
+                // // electron-vue-windows自定义的属性
+                // // alwaysOnTop:true, //窗口始终在最顶层
+                // windowConfig: {
+                //     router: "/moni", // 路由 *必填
+                //     data: {
+                //     id: a
+                //     }, // 传送数据
+                //     name: "yidemoni", // 窗口名称
+                //     animation: "fromBottom"
+                // }
+                // });
+                if(a == '1'){
+                    ipcRenderer.send('openNewWin','内盘')
+                }else{
+                    ipcRenderer.send('openNewWin','外盘')
                 }
-                });
+                
             }
             }else{
             this.$confirm('未登录', '提示', {
@@ -255,7 +263,7 @@ export default {
             // 'token': uuid,
             }).then((res) =>{
                 this.msg = res.data.msg
-                // console.log(this.msg,"````````````````````")
+                console.log(this.msg,"````````````````````")
                 // this.$store.commit('setklineMsg',res.data.msg[0].item)
                 // console.log(this.msg)
             }).catch(function (error) {
@@ -274,7 +282,10 @@ export default {
     },
     created(){
         this.axiosPost();
-        
+        if(JSON.parse(localStorage.getItem('panshow')) == false ){
+            this.panshow = false
+            this.activeName = '瑞士EUREX'
+        }
     },
     
     computed:{
@@ -305,7 +316,7 @@ export default {
     position: relative;
     .right{
         .panShow{
-            background: linear-gradient(-45deg, transparent 15px, rgb(87, 89, 92) 0);
+            background: linear-gradient(-45deg, transparent 15px, #22304C 0);
             // border: 1px solid #A4A4A4;
         }
     }

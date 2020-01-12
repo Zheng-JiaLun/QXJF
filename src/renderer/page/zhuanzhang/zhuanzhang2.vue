@@ -240,7 +240,7 @@ export default {
                             showClose: true,
                             message: '入金成功~',
                             type: 'success',
-                            center: true,
+                            // center: true,
                             });
                             // Toast.clear();
                             // _this.$store.commit('setOrderId', res.msg.order_id);
@@ -331,7 +331,7 @@ export default {
                                 showClose: true,
                                 message: '成功~',
                                 type: 'success',
-                                center: true,
+                                // center: true,
                             });
                         }else{
                             _this.$message({

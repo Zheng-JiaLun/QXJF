@@ -21,16 +21,16 @@
           :key="index" 
            :command="index"
            
-            style="display:flex;">
+            style="display:flex;padding-right:0;color: #a7a7a7;">
             <img
               src="../../assets/fenshi.png"
               v-if="item.key <1"
               style="display:inline-block;width:12px;height:12px;border:1px solid rgba(65,118,216,1);vertical-align:middle;margin: auto;"
             />
-            <span class="spanL" style="flex:2;text-align:center" v-if="item.key >=1">{{item.key}}</span>
+            <span class="spanL" style="display:inline-block;text-align:center;width:35px;" >{{item.key}}</span>
             <span
               class="spanR"
-              style="flex:8;text-align:left;margin-left:25px;vertical-align:middle;"
+              style="flex:8;text-align:left;margin-left:15px;vertical-align:middle;"
             >{{item.title}}</span>
           </el-dropdown-item>
         </el-dropdown-menu>
@@ -162,12 +162,12 @@
         <div class="centerLB" id="centerLB" v-if="islogin" v-show="isdownload">
           <!-- 合约买卖操作窗口 -->
           <div class="centerLBL">
-            <BuyAndSell :hangqingData='hangqingData'></BuyAndSell>
+            <BuyAndSell :hangqingData='hangqingData' :chicangselect="chicangselect"></BuyAndSell>
           </div>
           <!-- 合约清单展示区域 -->
           <div class="centerLBR">
             <div id="List">
-              <List @listenTabindex="showBoxindex()" :listSize="listSize" :value="value1"  @listenData="listenDataFn"></List>
+              <List @listenTabindex="showBoxindex()" :listSize="listSize" :value="value1"  @listenData="listenDataFn" @selectDataFn="selectDataFn"></List>
             </div>
             <!-- <div class="listbottom">
               <span>上证指数：</span>
@@ -230,6 +230,7 @@ export default {
       hangqingData:[],
       showorhide1: false,
       topData:{},
+      chicangselect:{},
       height: "300px",
       tabindex: 0,
       isactive: 0,
@@ -442,7 +443,7 @@ export default {
             DragMode: 1, //拖拽模式 0 禁止拖拽 1 数据拖拽 2 区间选择
             Right: 1, //复权 0 不复权 1 前复权 2 后复权
             Period: 0, //周期 0 日线 1 周线 2 月线 3 年线 4 1分钟 5 5分钟 6 15分钟 7 30分钟 8 60分钟 9 季线 10 分笔线 11 2小时 12 4小时
-            MaxReqeustDataCount: 2000, //日线数据最近1000天
+            MaxReqeustDataCount: 1000, //日线数据最近1000天
             MaxRequestMinuteDayCount: 2,    //分钟数据最近15天
             PageSize: 50, //一屏显示多少数据 
             IsShowTooltip: true //是否显示K线提示信息
@@ -557,6 +558,10 @@ export default {
         localStorage.setItem('placeOrderIndex',"2")
       }
       
+    },
+    // 持仓列表组件传递出来的单中某行的数据
+    selectDataFn(val){
+      this.chicangselect = val
     },
     //k线界面交易信息隐藏显示
     download(){

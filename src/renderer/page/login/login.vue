@@ -10,12 +10,12 @@
                 </div>
                 <div class="pwd">
                     <p>密码</p>
-                    <el-input v-model="loginInput.pwd" :placeholder="pwdPla" show-password @blur="pwdOutput()"></el-input>
+                    <el-input v-model="loginInput.pwd" :placeholder="pwdPla" show-password @blur="pwdOutput()" @keyup.enter.native="login()"></el-input>
                 </div>
                 <el-button type="primary" @click="login()">登录</el-button>
                 <div class="zidong">
                     <div class="left">
-                    <el-radio v-model="radio" label="1">下次自动登录</el-radio>
+                    <el-checkbox  v-model="checked" >下次自动登录</el-checkbox >
                     </div>
                     <div class="right">
                         <a @click="setPrLoss()">忘记密码？</a>
@@ -66,7 +66,7 @@ export default {
 					pwd: ''
 				},
             isLogin: false,
-            radio: null,
+            checked: true,
             userPla: '账号为手机号码',
             pwdPla: '请输入密码',
             // isuserNull: false,
@@ -74,9 +74,10 @@ export default {
 			
         }
     },
-    mounted(){
-        console.log(this.$store)
-    },
+    // mounted(){
+    //     console.log(this.$store)
+    // },
+    
     methods:{
         //...mapActions(['accountLogin']),
         //...mapMutations(['accountLogin01','accountLogin02']),
@@ -155,7 +156,7 @@ export default {
                             type: 'success'
                         });
                         // _this.$store.commit('setSocketParam', setSocketParam);
-                        
+                        localStorage.setItem('autoLogin',_this.checked)
                         // this.$store.dispatch('setSocketParam',setSocketParam)
                         // this.$store.dispatch('loginStatus',true)
                         localStorage.setItem(_this.$store.state.localStorageUid, JSON.stringify(res.msg));

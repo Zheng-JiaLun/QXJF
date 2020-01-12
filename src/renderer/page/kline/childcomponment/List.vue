@@ -12,7 +12,7 @@
     >
       <!-- 在此区域引入持仓信息的组件 -->
       <el-tab-pane label="持仓信息" name="chicang" id="chicang">
-        <Chicang :Listheight='Listheight' :selector="selector" @childFn="parentFn" @childTopFn="parentTopFn" @selectFn="selectFn"></Chicang>
+        <Chicang :Listheight='Listheight' :selector="selector" :clearSelection='clearSelection' @childFn="parentFn" @childTopFn="parentTopFn" @selectFn="selectFn"></Chicang>
         <div class="chichangbottom">
           <button @click="determineBtn()" v-show="selector">{{selectorText}}</button>
           <div class="jincangxinxi">
@@ -100,6 +100,7 @@ export default {
       changecsskuaijie: 'false',
       selectorText:'确定反手',
       selectorArr:[],
+      clearSelection:0,
       TabIndex: "",
       activeName: "chicang",
       selector:false,
@@ -195,10 +196,7 @@ export default {
     setPrLoss() {
       this.dialogVisible = true;
     },
-    bufenpingcang(){
-      this.selectorText = '确定平仓'
-      this.selector = !this.selector
-    },
+    
     determineBtn() {
       // this.pinChang = !this.pinChang;
       let _this = this,arr = [];
@@ -283,9 +281,23 @@ export default {
         })
       }
     },
+    bufenpingcang(){
+      this.clearSelection++
+      if(this.selectorText == '确定平仓'){
+         this.selector = !this.selector;
+      }else{
+        this.selectorText = '确定平仓'
+        this.selector = true;
+      }
+    },
     bufenfanshou() {
-      this.selectorText = '确定反手'
-      this.selector = !this.selector;
+      this.clearSelection++
+      if(this.selectorText == '确定反手'){
+        this.selector = !this.selector;
+      }else{
+        this.selectorText = '确定反手'
+        this.selector = true;
+      }
     },
      quanbupingcang(){
        let _this = this
@@ -294,7 +306,7 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning',
-        center: true
+        // center: true
       }).then(() => {
         var msg = JSON.stringify({
             userID:JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId,

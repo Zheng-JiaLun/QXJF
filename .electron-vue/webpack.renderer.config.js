@@ -11,7 +11,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const { VueLoaderPlugin } = require('vue-loader')
-
+// const {entries, htmlPlugin} = require('./muti-page.config')
 /**
  * List of node_modules to include in webpack bundle
  *
@@ -29,6 +29,7 @@ let rendererConfig = {
   externals: [
     ...Object.keys(dependencies || {}).filter(d => !whiteListedModules.includes(d))
   ],
+  // entry: entries,
   module: {
     rules: [
       {
@@ -111,6 +112,7 @@ let rendererConfig = {
   plugins: [
     new VueLoaderPlugin(),
     new MiniCssExtractPlugin({filename: 'styles.css'}),
+     // 注释原来的HtmlWebpackPlugin插件代码，在数组后添加.concat(htmlPlugin())
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: path.resolve(__dirname, '../src/index.ejs'),
@@ -169,8 +171,9 @@ let rendererConfig = {
     new webpack.NoEmitOnErrorsPlugin()
   ],
   output: {
-    filename: '[name].js',
-    libraryTarget: 'commonjs2',
+   filename: '[name].js',//修改filename的[name].js 为[name]/index.js，1、是为了将js文件和html文件归类在一起；2、[name].js时html访问的是绝对路径
+  //  filename: '[name]/index.js', 
+   libraryTarget: 'commonjs2',
     path: path.join(__dirname, '../dist/electron')
   },
   resolve: {

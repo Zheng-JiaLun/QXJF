@@ -101,7 +101,7 @@ export default {
              this.Line.JSChart.ChangePeriod(e);
         },
         changewindows(e){
-            console.log(e)
+            // console.log(e)
             this.Line.JSChart.ChangeIndex(1,e);
         },
         klineData: {
@@ -122,16 +122,18 @@ export default {
             deep: true
         },
         changeislogin:function(val){
-            console.log(val)
+            // console.log(val)
             this.OnSize();
         },
         changeisdownload:function(val){
             this.OnSize();
         },
-        // changeCode:function(){
-        //     this.CreateMinuteChart()
-        //     // console.log("k线监听code````````",this)
-        // }
+        changeCode:function(val){
+            // console.log(val)
+            // console.log(this.Line.JSChart.ChangeSymbol())
+            this.Line.JSChart.ChangeSymbol()
+            // console.log("k线监听code````````",this)
+        }
     }
 }
 </script>

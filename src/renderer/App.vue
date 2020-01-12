@@ -55,9 +55,13 @@
         <el-menu-item v-show="!isLogin" class="fr" style="float:right" @click="showBox('/login')" @userlogin="getUser">
           <span>登录</span>
         </el-menu-item>
+         <el-menu-item v-show="isLogin" class="fr" style="float:right">
+          <span class="simulation">{{simulation == '0'?'实盘':'模拟'}}</span>
+         </el-menu-item>
         <el-menu-item v-show="isLogin" class="fr" style="float:right" @click="isUserShow = !isUserShow">
           <span>{{name}}</span>
            <img style="height:80%;" :src='img' alt="">
+           
         </el-menu-item>
        
 
@@ -131,7 +135,7 @@ export default {
         // loginOff:userInfor,
         isLogin:false,
         isUserShow:false,
-        
+        simulation:'',//模拟/实盘
         loginInput: {
 					user: '',
 					pwd: ''
@@ -203,7 +207,7 @@ export default {
           this.name = JSON.parse(localStorage.getItem('ycxUserInfo_QXJF')).name
           this.img = 'http://39.100.151.138:8082' + JSON.parse(localStorage.getItem('ycxUserInfo_QXJF')).headImg
           this.isLogin = true
-          console.log(this.$store)
+          console.log(JSON.parse(localStorage.getItem('ycxUserInfo_QXJF')))
         }
 
 
@@ -214,6 +218,11 @@ export default {
 					cancelButtonText: '取消',
 					type: 'warning'
 				}).then(() => {
+          
+          if(JSON.parse(localStorage.getItem('autoLogin')) == false){
+            localStorage.removeItem('ycxUserInfo_QXJF')
+            localStorage.removeItem('ycxUserLoginState_QXJF')
+          }
 					ipcRenderer.send('close')
 				})
       },
@@ -287,29 +296,31 @@ export default {
             this.$store.state.isplaceOrder = !this.$store.state.isplaceOrder
           }else{
            
-            let data = await this.$Win.openWin({
-              // browserwindow原生属性
-              width: 1400, // 窗口宽
-              height: 410, // 窗口高
-              resizable: true,  // 窗口是否可以改变尺寸
-              // electron-vue-windows自定义的属性
-              alwaysOnTop:true,
-              windowConfig: {
-                router: "/moni", // 路由 *必填
-                data: {
-                  id: _this.number
-                }, // 传送数据
-                name: "yidemoni", // 窗口名称
-                animation: "fromBottom"
-              }
-            });
+            // let data = await this.$Win.openWin({
+            //   // browserwindow原生属性
+            //   width: 1400, // 窗口宽
+            //   height: 410, // 窗口高
+            //   resizable: true,  // 窗口是否可以改变尺寸
+            //   // electron-vue-windows自定义的属性
+            //   // alwaysOnTop:true,//始终在最顶层
+            //   windowConfig: {
+            //     router: "/moni", // 路由 *必填
+            //     data: {
+            //       id: _this.number
+            //     }, // 传送数据
+            //     name: "yidemoni", // 窗口名称
+            //     animation: "fromBottom"
+            //   }
+            // });
+            // console.log(data)
+           ipcRenderer.send('openNewWin','内盘')
           }
         }else{
           this.$confirm('还未登录, 是否前往登录?', '提示', {
             confirmButtonText: '前往登陆',
             cancelButtonText: '取消',
             type: 'warning',
-            center: true
+            // center: true
           }).then(() => {
             // this.$message({
             //   type: 'success',
@@ -326,6 +337,7 @@ export default {
     this.postHangqing()
     this.timer()
     localStorage.setItem("tabindex",'0')
+    ipcRenderer.send('createdNewWin')
   //  window.addEventListener('setItem', ()=> {
   //     this.name = localStorage.getItem('ycxUserLoginState_QXJF');
   //      this.isLogin = true
@@ -369,15 +381,15 @@ export default {
     //   }
     // }
   },
- 
+
   mounted(){
-    // console.log(this.$store)
     this.change();
     if(JSON.parse(localStorage.getItem('ycxUserLoginState_QXJF')) == true){
       this.$pro.isLogin()
        this.name = JSON.parse(localStorage.getItem('ycxUserInfo_QXJF')).name
        this.img = 'http://39.100.151.138:8082' + JSON.parse(localStorage.getItem('ycxUserInfo_QXJF')).headImg
       this.isLogin = true
+      this.simulation = JSON.parse(localStorage.getItem('ycxUserLoginState_QXJF')).type
     }else{
       this.isLogin = false
        this.$store.state.account.loginStatus = false
@@ -467,6 +479,12 @@ function generateUUID() {
 
   .fr{
     height: 60px;
+    .simulation{
+      color: rgb(159, 166, 176);
+      border: 1px solid  rgb(159, 166, 176);
+      border-radius: 12px;
+      padding: 3px 12px;
+    }
     }
   .fr:hover{
     background:rgba(82,90,101,1) !important;

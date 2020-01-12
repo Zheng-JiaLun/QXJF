@@ -1,7 +1,7 @@
 <template>
   <div class="moni">
     <!-- 横向信息展示区域 -->
-    <div class="top">
+    <div class="top" :style="isbuy?'background: #22272e;':''">
       <ul class="flex firstul">
         <li>{{userMsg.name}}</li>
         <li>
@@ -68,7 +68,7 @@
                 </p>
                 <!-- <input type="text" placeholder="合约代码"  v-model="inputVal"/> -->
                 <el-cascader :options="options" :show-all-levels="false" v-model="inputVal"></el-cascader>
-                <i class="el-icon-search"></i>
+                <!-- <i class="el-icon-search"></i> -->
               </li>
               <li>
                 <p>手数</p>
@@ -154,7 +154,7 @@
          type="card" >
           <!-- 引入持仓组件 -->
           <el-tab-pane label="持仓" name="chicang" id="chicang">
-            <ChiCang  :selector="selector" @childFn="parentFn" @selectFn="selectFn"></ChiCang>
+            <ChiCang  :selector="selector" :clearSelection='clearSelection' @childFn="parentFn" @selectFn="selectFn"></ChiCang>
             <div class="determineBtn" v-show="selector">
               <button @click="determineBtn()">{{selectorText}}</button>
             </div>
@@ -193,11 +193,11 @@
       </div>
     </div>
     <!--左边为买卖操作窗口，右边为合约清单-->
-     <transition name="el-zoom-in-top">
+     <!-- <transition name="el-zoom-in-top"> -->
     <div class="centerLB" id="centerLB" v-show="isbuy">
       <!-- 合约买卖操作窗口 -->
       <div class="centerLBL">
-        <BuyAndSell  :hangqingData='hangqingData'></BuyAndSell>
+        <BuyAndSell  :hangqingData='hangqingData' :childMsg='childMsg' :inputVal="inputVal" :chicangselect="chicangselect"></BuyAndSell>
       </div>
       <!-- 合约清单展示区域 -->
       <div class="centerLBR">
@@ -206,7 +206,7 @@
         </div>
       </div>
     </div>
-    </transition>
+    <!-- </transition> -->
   </div>
 </template>
 <script>
@@ -240,6 +240,7 @@ export default {
       ischichang:true,
       priceMode:"市价",
       selector:false,
+      clearSelection:0,
       showorhide1: false,
       value1: "",
       listSize:"500px",
@@ -248,6 +249,7 @@ export default {
       selectorText:'确定反手',
       selectorArr:[],
       hangqingData:[],
+      chicangselect:{},
       topMsg:{},
       tableData: [
         {
@@ -456,6 +458,7 @@ export default {
     },
     selectDataFn(val){
       console.log(val)
+      this.chicangselect = val
     },
     // 持仓组件反出来的多选选中数组
     selectFn(val){
@@ -463,11 +466,14 @@ export default {
       console.log(val)
     },
     close() {
-      let win = this.$Win.getWinByName("yidemoni");
-      this.$Win.closeWin(win);
+      localStorage.removeItem('isbuy')
+      // let win = this.$Win.getWinByName("yidemoni");
+      // this.$Win.closeWin(win);
+      ipcRenderer.send('closeXiadan')
     },
     changeClose(){
       this.isbuy = !this.isbuy
+      localStorage.setItem('isbuy',this.isbuy)
     },
      //监听子组件传递过来的数据展示到信息栏
     listenDataFn(val){
@@ -530,9 +536,10 @@ export default {
     },
      buy(e){
       let _this = this
+      localStorage.setItem('buycode',_this.inputVal[1])//用户(买卖)操作的合约存一个,继续展示到页面上
       if(e == 1){
         //买
-        console.log(this.inputVal)
+        // console.log(this.inputVal)
         if(this.inputVal == ''){
            this.$message.error('请输入正确合约参数');
         }else{
@@ -559,11 +566,8 @@ export default {
                 stopProfit: Number(_this.stopPrint)
               })
               _this.$pro.post('buy_sale_order', msg).then((res) => {
-                // _this.guadanState1 = false;
-                console.log(res)
+                // console.log(res)
                 if (res.result == 1) {
-                  // _this.active = 0;
-                  // console.log(res)
                   // _this.$store.state.market.initChicang++
                   _this.$message({
                     type: 'success',
@@ -571,7 +575,6 @@ export default {
                   });
                 }else{
                   this.$message.error(res.message);
-                  // alert(res.message)
                 }
               })
           }).catch(() => {
@@ -637,8 +640,54 @@ export default {
       }
     },
     quickFS(){
-      this.selectorText = '确定反手'
-      this.selector = !this.selector;
+      // ipcRenderer.send('hangqingsend','11111111111122222')
+      this.clearSelection++
+      if(this.selectorText == '确定反手'){
+        this.selector = !this.selector;
+      }else{
+        this.selectorText = '确定反手'
+        this.selector = true;
+      }
+      
+      
+    },
+    //先开先平
+    ping(){
+      let _this = this
+      this.$confirm(
+        this.topMsg.data[0].futures_name+' , '+(this.topMsg.data[0].updown == '1'?'买':'卖')+this.topMsg.data[0].futures_num+' , 持仓价格:'+this.topMsg.data[0].futures_price+' , 是否平仓?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        let msg = JSON.stringify({
+          userID:JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId,
+          tradeNum: this.topMsg.data[0].futures_num,
+          tradePrice: this.topMsg.data[0].futures_price,
+          futuresCode: this.topMsg.data[0].futures_code,
+          updown: this.topMsg.data[0].updown,
+          priceType: this.topMsg.data[0].orderTradeType,
+          serialNum: this.topMsg.data[0].serialnum,
+          stopLoss: this.topMsg.data[0].stoploss,
+          stopProfit:this.topMsg.data[0].stopprofit
+        })
+        this.$pro.post('close_position', msg).then((res) => {
+          // console.log(res)
+          if(res.result == 1){
+            // this.axiosChiCang()
+              _this.$message({
+              type: 'success',
+              message: '成功'
+            });
+          }
+          
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消'
+        });          
+      });
     },
     quickPC(){
       let _this = this
@@ -672,8 +721,14 @@ export default {
       // this.reload()
     },
     onePC(){
-      this.selectorText = '确定平仓'
-      this.selector = !this.selector
+      this.clearSelection++
+      if(this.selectorText == '确定平仓'){
+         this.selector = !this.selector;
+      }else{
+        this.selectorText = '确定平仓'
+        this.selector = true;
+      }
+      
     },
     allPC(){
       let _this = this
@@ -682,7 +737,7 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning',
-        center: true
+        // center: true
       }).then(() => {
         var msg = JSON.stringify({
             userID:JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId,
@@ -744,37 +799,73 @@ export default {
     }
   },
   created(){
-    
+    let _this = this
+    // ipcRenderer.on('neiwai',function(event,arg){
+      // console.log(arg)
+      // if(arg == '外盘'){
+      //   _this.isbuy = true
+      // }else{
+      //   _this.isbuy = false
+      // }
+    // })
+
+    // 下单页面接收主进程发送过来的数据
+    ipcRenderer.on('code',(event,arg) => {
+      // console.log(arg)
+      if(!_this.islock){//非锁定状态就把数据传递给合约代码
+        _this.inputVal = ['自选',arg]
+      }
+    })
+
+    ipcRenderer.on('neiwai',(event,arg) => {
+      arg == '外盘'? _this.isbuy = true:_this.isbuy = false
+     
+    })
     this.hqOptions()
     this.postUserMsg()
     this.hangqingData = JSON.parse(localStorage.getItem(this.$store.state.localStorageHq))[0].item
+    
     let isLock = JSON.parse(localStorage.getItem('islock'))
     if(isLock.islock){ //判断是否是锁定合约代码状态，如果是锁定状态，每次都把数据渲染到选择框里
       this.islock = true
       this.inputVal = isLock.val
+    }else{
+      let arr = ['自选',localStorage.getItem('buycode')]
+      this.inputVal = arr
     }
-    let data = this.$Win.getParameter()
-    console.log(data) // {id: 1}
-     this.$electron.ipcRenderer.on('toxiadan',(event,arg) => {
-      console.log('Data >>',arg) //arg就是Main进程传输来的数据，id必须一致，否则接收无效
-    })
+
+    // let data = this.$Win.getParameter()
+    // // 判断用户点击内盘下单,还是外盘下单
+    // if(data.id == '2'){
+    //   if(localStorage.getItem('isbuy') == null){
+    //     this.isbuy = true
+    //   }else if(JSON.parse(localStorage.getItem('isbuy')) == true){
+    //     this.isbuy = true
+    //   }else{
+    //     this.isbuy = false
+    //   }
+    // }else{
+    //   if(localStorage.getItem('isbuy') == null){
+    //     this.isbuy = false
+    //   }else if(JSON.parse(localStorage.getItem('isbuy'))  == true){
+    //     this.isbuy = true
+    //   }else{
+    //     this.isbuy = false
+    //   }
+    // }
+   
+    
   },
   
   computed:{
      updataSocketData() {
       return this.$store.getters.updataSocketData;
     },
-    changeGetParameter(){
-      return this.$Win.getParameter()
-    },
     changeSocketData(){
       return this.$store.getters.quoteDataAC
     }
   },
   watch:{
-    changeGetParameter:function(val){
-      console.log(val)
-    },
     updataSocketData:function(val){
      
       // console.log("222",val) 
@@ -795,8 +886,13 @@ export default {
         }
       }
     },
+    inputVal(val){
+      
+      this.$store.state.chanpinInfo = val[1]
+    },
     // 监听持仓列表传递过来的数据
     childMsg(val){
+
       if(!this.islock){//非锁定状态就把数据传递给合约代码
         this.inputVal = ['自选',val.futures_code]
       }

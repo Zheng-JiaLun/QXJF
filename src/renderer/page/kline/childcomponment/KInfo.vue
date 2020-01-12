@@ -7,12 +7,12 @@
       <p class="flex1">
         <span class="spanL">卖出</span>
         <span class="spanM">{{proInfo.salePoint}}</span>
-        <span class="spanR">{{proInfo.soleF}}</span>
+        <span class="spanR">{{proInfo.soleF?proInfo.soleF:'0'}}</span>
       </p>
       <p class="flex1">
         <span class="spanL">买入</span>
         <span class="spanM">{{proInfo.buyPoint}}</span>
-        <span class="spanR">{{proInfo.buyF}}</span>
+        <span class="spanR">{{proInfo.buyF?proInfo.buyF:'0'}}</span>
       </p>
       <p class="jiaoyi">
         <span>{{isTransaction}}</span>
@@ -24,27 +24,27 @@
         <ul>
           <li class="flex flex-align-items-center flex-justify-content-sb">
             <span>最新</span>
-            <span style="color: #00BD00;">{{proInfo.print}}</span>
+            <span :style="proInfo.upDown > '0'?'color: #FF3322;':'color: #00BD00;'">{{proInfo.print?proInfo.print:'0'}}</span>
           </li>
           <li class="flex flex-align-items-center flex-justify-content-sb">
             <span>现手</span>
-            <span style="color: #D7B018;">{{proInfo.nowNum}}</span>
+            <span style="color: #D7B018;">{{proInfo.nowNum?proInfo.nowNum:'0'}}</span>
           </li>
           <li class="flex flex-align-items-center flex-justify-content-sb">
             <span>总手</span>
-            <span style="color: #D7B018;">{{proInfo.allNum}}</span>
+            <span style="color: #D7B018;">{{proInfo.allNum?proInfo.allNum:'0'}}</span>
           </li>
           <li class="flex flex-align-items-center flex-justify-content-sb">
             <span>持仓</span>
-            <span style="color: #3071E8;">{{proInfo.chicang}}</span>
+            <span style="color: #3071E8;">{{proInfo.chicang?proInfo.chicang:'0'}}</span>
           </li>
           <li class="flex flex-align-items-center flex-justify-content-sb">
             <span>涨停</span>
-            <span style="color: #00BD00;">{{proInfo.upClose}}</span>
+            <span style="color: #00BD00;">{{proInfo.upClose?proInfo.upClose:'0'}}</span>
           </li>
           <li class="flex flex-align-items-center flex-justify-content-sb">
             <span>跌停</span>
-            <span style="color: #00BD00;">{{proInfo.downClose}}</span>
+            <span style="color: #00BD00;">{{proInfo.downClose?proInfo.downClose:'0'}}</span>
           </li>
         </ul>
       </div>
@@ -52,11 +52,11 @@
         <ul>
           <li class="flex flex-align-items-center flex-justify-content-sb">
             <span>涨跌</span>
-            <span style="color: #FF3322;">{{proInfo.upDown}}</span>
+            <span :style="proInfo.upDown > '0'?'color: #FF3322;':'color: #00BD00;'">{{proInfo.upDown?proInfo.upDown:'0'}}</span>
           </li>
           <li class="flex flex-align-items-center flex-justify-content-sb">
             <span>涨幅</span>
-            <span style="color: #00BD00;">{{proInfo.upF}}%</span>
+            <span :style="proInfo.upDown > '0'?'color: #FF3322;':'color: #00BD00;'">{{proInfo.upF?proInfo.upF:'0'}}%</span>
           </li>
           <li class="flex flex-align-items-center flex-justify-content-sb">
             <span>开盘</span>

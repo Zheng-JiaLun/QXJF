@@ -8,11 +8,14 @@
             <tbody>
                 <!-- <router-link to="/kline"> -->
                 <!-- :style="{border:isactive == index ? '1px solid #A4A4A4' : ''}" -->
-                <tr v-for="(item,index) in childMsg" :key="index" v-if="panShow?(item.plate_type == '1'?true:false):(item.plate_type == '2'?true:false)" @dblclick="hangqingbg(index,item.code,item);"  
+              
+                <tr v-for="(item,index) in childMsg" :key="index" v-show="panshow?(item.plate_type == '1'?true:false):(item.plate_type == '2'?true:false)" @dblclick="hangqingbg(index,item.code,item);"  
                     :style="{background:isactive == index?'#22304C':''}"
                     @click='hangqing(index,item.code,item)'
-                    :class="item.changePoint?(item.changePoint>0?'changeUp':'changeDown'):' '"
+                   
+                    
                     >
+                     <!-- :class="item.changePoint?(item.changePoint>0?'changeUp':'changeDown'):' '" -->
                     <!-- :class="classUp?'changeUp':''" :class="{'changeUp':currentIndex == index}"-->
                      
                     <td style="color:#B3B3B3;" :style="!item.isStop?'background-color: #565656;':''">{{index+1}}</td>
@@ -71,10 +74,10 @@ import {ipcRenderer,ipcMain} from 'electron'  //导入ipcRenderer
 import {mapMutations,mapActions,mapGetters} from 'vuex';
 export default {
     name:'hangqingCP',
-    props:['msg','panShow'],
+    props:['msg','panshow'],
     data(){
         return{
-            childMsg:this.msg,
+            childMsg:[],
             isactive:-1,
             isStop:false,
             currentIndex:0,
@@ -171,21 +174,30 @@ export default {
         }
     },
     mounted(){
+        this.childMsg = this.msg
+        // console.log(this.msg)
     },
+    
      computed:{
         ...mapGetters([
             'quoteDataAC'
         ]),
         changeTime(){
             return this.$store.state.nowTime
+        },
+        changeMsg(){
+            return this.msg
         }
     },
      watch:{
-          panShow:function(val){
+          panshow:function(val){
             if(val){
 
             }
             console.log(val)
+        },
+        msg:function(val){
+            this.childMsg = val
         },
         changeTime:function(val){
             // console.log(this.msg)
@@ -237,13 +249,15 @@ export default {
                 this.isactive=a
                 this.$store.state.chanpinInfo = code
                 this.$store.state.activeIndex = '/kline'
+                console.log(this.$store.state.chanpinInfo)
                 this.$router.push('/kline')
             }   
         },
         hangqing(a,code,item){
+            this.isactive=a
             // console.log(this)
-            this.$electron.ipcRenderer.send('hangqingsend',code)
-            this.$store.state.selectInfo = code
+           ipcRenderer.send('selectCode',code)
+            // this.$store.state.selectInfo = code
         }
     },
    
@@ -295,6 +309,10 @@ table{
             color:rgba(179,179,179,1);
             padding: 2px 0px;   
         }
+        :first-child{
+            width: 5%;
+            // text-align: right;
+        }
     
     }
     tbody{
@@ -304,6 +322,10 @@ table{
         tr{
             height: 30px;
             cursor: pointer;
+            // :first-child{
+            
+            //     text-align: right;
+            // }
             td{
                 font-size:14px;
                 min-width: 56px;

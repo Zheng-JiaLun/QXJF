@@ -100,7 +100,7 @@
          type="card" >
           <!-- 引入持仓组件 -->
           <el-tab-pane label="持仓" name="chicang" id="chicang2">
-            <ChiCang  :selector="selector"  @childFn="parentFn"  @selectFn="selectFn"></ChiCang>
+            <ChiCang  :selector="selector" :clearSelection='clearSelection'  @childFn="parentFn"  @selectFn="selectFn"></ChiCang>
             <div class="determineBtn" v-show="selector">
               <button @click="determineBtn()">{{selectorText}}</button>
             </div>
@@ -151,6 +151,7 @@ export default {
             stopLoss:'0',
             stopPrint:'0',
             ischichang:true,
+            clearSelection:0,
             selector:false,
             selectorText:'确定反手',
             selectorArr:[],
@@ -230,6 +231,7 @@ export default {
       },
       buy(e){
         let _this = this
+        // localStorage.setItem('buycode',_this.inputVal[1])//用户(买卖)操作的合约存一个,继续展示到页面上
         if(e == 1){
           //买
           this.$confirm('确定买入?', '提示', {
@@ -327,8 +329,13 @@ export default {
       },
       //快捷反手
       quickFS(){
-        this.selectorText = '确定反手'
-        this.selector = !this.selector;
+        this.clearSelection++
+        if(this.selectorText == '确定反手'){
+          this.selector = !this.selector;
+        }else{
+          this.selectorText = '确定反手'
+          this.selector = true;
+        }
       },
        //市价/限价切换按钮
       priceModeBtn(){
@@ -373,8 +380,13 @@ export default {
       },
       //部分平仓
       onePC(){
-        this.selectorText = '确定平仓'
-        this.selector = !this.selector
+        this.clearSelection++
+        if(this.selectorText == '确定平仓'){
+          this.selector = !this.selector;
+        }else{
+          this.selectorText = '确定平仓'
+          this.selector = true;
+        }
       },
       //全部平仓
       allPC(){
@@ -384,7 +396,7 @@ export default {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning',
-          center: true
+          // center: true
         }).then(() => {
           var msg = JSON.stringify({
               userID:JSON.parse(localStorage.getItem(this.$store.state.localStorageUid)).userId,
@@ -440,11 +452,17 @@ export default {
       if(isLock.islock){ //判断是否是锁定合约代码状态，如果是锁定状态，每次都把数据渲染到选择框里
         this.islock = true
         this.inputVal = isLock.val
+      }else{
+        // let arr = ['自选',localStorage.getItem('buycode')]
+        // this.inputVal = arr
       }
     },
     computed:{
       changequoteDataAC(){
         return this.$store.getters.quoteDataAC
+      },
+      changeChanpinInfo(){
+        return this.$store.state.chanpinInfo
       }
     },
     watch:{
@@ -462,8 +480,11 @@ export default {
         }
       },
       inputVal(Val){
-        // console.log(Val)
-        
+        console.log(Val[1])
+        this.$store.state.chanpinInfo = Val[1]
+      },
+      changeChanpinInfo(val){
+        this.inputVal = ['自选',val]
       },
       // 监听持仓列表传递过来的数据
       childMsg(val){

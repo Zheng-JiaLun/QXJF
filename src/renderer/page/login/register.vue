@@ -142,7 +142,7 @@ export default {
             radio: null,
             userPla: '请输入你的手机号~',
             usercode:'请输入验证码',
-            pwdPla: '8-20位数字和字母组合',
+            pwdPla: '6-20位数字和字母组合',
             isone:true,
             istwo:false,
             isthree:false,
@@ -206,7 +206,20 @@ export default {
             if(this.btnMsg == '下一步'){
                 if(this.registerData.phone ==''||this.registerData.name==''||this.registerData.pwd==''||this.registerData.idNumber==''){
                     this.$message.error('请完善相关信息');
+                    console.log(this.registerData.phone.length)
                 }else{
+                    if(this.registerData.phone.length != '11'){
+                        this.$message.error('手机号错误');
+                        return
+                    }
+                    if(this.registerData.idNumber.length != '15' && this.registerData.idNumber.length != '18'){
+                        this.$message.error('身份证号错误');
+                        return
+                    }
+                    if(this.registerData.pwd.length < '6'){
+                        this.$message.error('密码不能小于6位');
+                        return
+                    }
                     this.isone = false
                     this.istwo = true
                     this.percentage = 50
